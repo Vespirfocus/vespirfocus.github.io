@@ -38,15 +38,13 @@
       bg.addColorStop(0, '#fff0f7');
       bg.addColorStop(.5, '#ffd3e6');
       bg.addColorStop(1, '#e2d6ff');
-      /* Görev çubuğu ve masaüstü kısayolu için tam yuvarlak simge: köşeler
-         saydam kalır. Maskable sürüm tam taşar; Android kendi maskesini uygular. */
-      if (!maskable) {
-        x.save();
-        x.beginPath();
-        x.arc(256, 256, 247, 0, Math.PI * 2);
-        x.closePath();
-        x.clip();
-      }
+      /* Görev çubuğu, masaüstü kısayolu ve mobil ana ekran için yuvarlak simge:
+         köşeler saydam kalır, böylece hiçbir yerde kare görünmez. */
+      x.save();
+      x.beginPath();
+      x.arc(256, 256, 247, 0, Math.PI * 2);
+      x.closePath();
+      x.clip();
       x.fillStyle = bg;
       x.fillRect(0, 0, 512, 512);
       var glow = x.createRadialGradient(170, 90, 10, 200, 160, 400);
@@ -119,21 +117,20 @@
         x.beginPath(); x.moveTo(226, 330 + dy * .35); x.lineTo(166, 316 + dy); x.stroke();
         x.beginPath(); x.moveTo(286, 330 + dy * .35); x.lineTo(346, 316 + dy); x.stroke();
       }
-      if (!maskable) {
-        /* Cam kenar: yuvarlak simgeye ince bir ışık halkası. */
-        x.strokeStyle = 'rgba(255,255,255,.55)';
-        x.lineWidth = 6;
-        x.beginPath();
-        x.arc(256, 256, 244, 0, Math.PI * 2);
-        x.stroke();
-        x.restore();
-      }
+      /* Cam kenar: yuvarlak simgeye ince bir ışık halkası. */
+      x.strokeStyle = 'rgba(255,255,255,.55)';
+      x.lineWidth = 6;
+      x.beginPath();
+      x.arc(256, 256, 244, 0, Math.PI * 2);
+      x.stroke();
+      x.restore();
       return c.toDataURL('image/png');
     }
     try {
       var base = location.origin + location.pathname;
       var scope = base.slice(0, base.lastIndexOf('/') + 1);
       var i192 = icon(192, false);
+      var i256 = icon(256, false);
       var i512 = icon(512, false);
       var i512m = icon(512, true);
       /* iOS kendi yuvarlatmasını uygular; saydam köşe bırakmamak için tam taşan sürüm. */
@@ -154,6 +151,7 @@
         categories: ['productivity', 'lifestyle'],
         icons: [
           { src: i192, sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: i256, sizes: '256x256', type: 'image/png', purpose: 'any' },
           { src: i512, sizes: '512x512', type: 'image/png', purpose: 'any' },
           { src: i512m, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
         ],
@@ -1862,11 +1860,12 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
 /* fosforlu kalem: sağ pati kalemi tutar, kitabın sağ sayfasında çizgi çeker.
    Yalnızca transform ve opacity oynar; okuma sırasında sayfa yeniden dizilmez. */
 .hl-line {
-  position: absolute; right: 5px; top: 64%; width: 62px; height: 7px; z-index: 3;
-  border-radius: 4px; background: var(--hl, #ffe066);
+  position: absolute; right: 5px; top: 62%; width: 72px; height: 8px; z-index: 3;
+  border-radius: 5px; background: var(--hl, #ffe066);
   opacity: 0; transform: scaleX(0); transform-origin: 100% 50%;
   pointer-events: none;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--hl, #ffe066) 40%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--hl, #ffe066) 45%, transparent),
+              0 2px 6px color-mix(in srgb, var(--hl, #ffe066) 50%, transparent);
 }
 .paw-pen {
   position: absolute; left: 2px; top: -8px; width: 58px; height: 8px; z-index: 3;
@@ -1894,7 +1893,7 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
   box-shadow: inset 0 1px 0 rgba(255,255,255,.35);
 }
 .cat-wrap[data-state="read"] .book.is-noting .hl-line { animation: hlSweep 1.05s var(--soft) .04s forwards; }
-.cat-wrap[data-state="read"] .book.has-note .hl-line { opacity: .88; transform: scaleX(1); }
+.cat-wrap[data-state="read"] .book.has-note .hl-line { opacity: .92; transform: scaleX(1); }
 /* Okurken kalem patide durur; çizgi çekilince hareket eder. */
 .cat-wrap[data-state="read"] .paw-pen { opacity: .95; }
 .cat-wrap.is-noting .paw-pen { opacity: 1; }
@@ -5374,8 +5373,8 @@ function catContextLines(now = new Date()) {
 }
 function catRhythmProfile() {
   const day = new Date().getDay();
-  if (day === 0 || day === 6) return { read: [8000, 12000], note: .62, first: 12000 };
-  return { read: [10000, 15000], note: .85, first: 9000 };
+  if (day === 0 || day === 6) return { read: [8000, 12000], first: 12000 };
+  return { read: [10000, 15000], first: 9000 };
 }
 /* Bir sonraki dakika başına kalan süre. Kedi her dakikada bir uyanıp okur;
    sayaç gibi duvar saatine hizalanır, sekme arkada kalsa bile kaymaz. */
@@ -5690,18 +5689,24 @@ function beginFocusPlay() {
     }
   ][variant];
   const offsets = [0, .12, .27, .42, .57, .74, 1];
-  const animate = (selector, values, property) => {
-    catPlayAnimations.push($(selector, wrap).animate(values.map((value, i) => ({
+  /* Aynı süre içinde daha geniş ve daha hızlı hareketler: yumak canlansın. */
+  const amplify = (values, k) => values.map((v) => v.replace(/(-?\d+(?:\.\d+)?)(px|deg)/g, (m, n, u) => (parseFloat(n) * k) + u));
+  const animate = (selector, values, property, k = 1.5) => {
+    catPlayAnimations.push($(selector, wrap).animate(amplify(values, k).map((value, i) => ({
       [property]: value, offset: offsets[i]
-    })), { duration: 4200, iterations: 3, easing: 'ease-in-out', composite: 'add' }));
+    })), { duration: 3200, iterations: 4, easing: 'ease-in-out', composite: 'add' }));
   };
-  animate('.yarn-toy', motions.toy, 'translate');
-  animate('.yarn-ball', motions.roll, 'rotate');
-  animate('.paw.right', motions.right, 'translate');
-  animate('.paw.left', motions.left, 'translate');
-  animate('.cat3d', motions.body, 'translate');
-  animate('.head', motions.head, 'rotate');
-  animate('.tail', motions.tail || ['0deg', '-2deg', '0deg', '2deg', '0deg', '-2deg', '0deg'], 'rotate');
+  animate('.yarn-toy', motions.toy, 'translate', 1.55);
+  animate('.yarn-ball', motions.roll, 'rotate', 1.4);
+  animate('.paw.right', motions.right, 'translate', 1.55);
+  animate('.paw.left', motions.left, 'translate', 1.55);
+  animate('.cat3d', motions.body, 'translate', 1.65);
+  animate('.head', motions.head, 'rotate', 1.55);
+  animate('.tail', motions.tail || ['0deg', '-2deg', '0deg', '2deg', '0deg', '-2deg', '0deg'], 'rotate', 1.5);
+  /* Yumak her zıplamada hafifçe ezilip gerilir. */
+  catPlayAnimations.push($('.yarn-ball', wrap).animate(['1', '1.09', '.94', '1.06', '1', '1.1', '1'].map((scaleValue, i) => ({
+    scale: scaleValue, offset: offsets[i]
+  })), { duration: 3200, iterations: 4, easing: 'ease-in-out', composite: 'add' }));
   const playLines = [
     ['Bir dokunuş… yumak usulca yuvarlandı.', 'Pat! Biraz sola, biraz sağa. Sen çalışmaya devam et.'],
     ['Bir pati sağa, bir pati sola. Sen çalış, ben bunu hallederim.', 'Kaçıyor! Ama benden kaçamaz.'],
@@ -5736,7 +5741,8 @@ function maybeWakeAndRead() {
     setCatState('read');
     preparePenColor();
     const readEndAt = Date.now() + readFor;
-    const wantNote = Math.random() < p.note;
+    /* Her okumada fosforlu kalemle çizgi çekilir; kullanıcı bu anı kaçırmasın. */
+    const wantNote = true;
     showReadingBubble(readFor);
     if (wantNote) {
       catAfter('note', rand(Math.round(readFor * .15), Math.round(readFor * .35)), () => {
@@ -6362,16 +6368,6 @@ function idleCatLines() {
   }
   return catContextLines();
 }
-/* Cihaz türü: hava durumu bildirimleri yalnızca mobilde gösterilir.
-   Masaüstünde hava cümleleri yalnızca uygulama içinde kalır. */
-function isMobileDevice() {
-  const ua = navigator.userAgent || '';
-  if (navigator.userAgentData && typeof navigator.userAgentData.mobile === 'boolean') {
-    return navigator.userAgentData.mobile || /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(ua);
-  }
-  if (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return true;
-  return /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(ua);
-}
 function canSendCatMessage(now = Date.now()) {
   if (!S.catMessages || !('Notification' in window) || Notification.permission !== 'granted') return false;
   if (timer && timer.running) return false;
@@ -6398,7 +6394,7 @@ async function fireCatMessage() {
   if (document.visibilityState !== 'hidden' || !S.catMessages) return;
   /* Gizli sekmede yeniden kur: 3 saatlik aralık dolunca mesaj gelsin, sessizce düşmesin. */
   if (!canSendCatMessage()) { armCatMessage(); return; }
-  const w = isMobileDevice() ? weatherLines(false) : [];
+  const w = weatherLines(false);
   const body = pick(w.length && Math.random() < .4 ? w : catAwayNoteLines());
   if (!(await sendCatMessage(body))) { armCatMessage(); return; }
   S.lastMsgAt = Date.now();
@@ -6508,15 +6504,13 @@ async function writeMessagePrefs() {
       /* Service worker'ın yazdığı "bugün şemsiye gönderildi" bilgisi korunur. */
       if (prev && typeof prev.umbrellaDay === 'string') umbrellaDay = prev.umbrellaDay;
     }
-    const mobile = isMobileDevice();
-    const w = mobile ? freshWeather() : null;
+    const w = freshWeather();
     const prefs = {
       enabled: !!S.catMessages,
       name: S.cat.name,
       url: location.origin + location.pathname,
       icon: notifyIcon(),
       lines: catAwayNoteLines(),
-      mobile,
       weatherLines: w ? weatherLines(false) : [],
       weatherAt: w ? w.at : 0,
       weatherCondition: w ? weatherAlertKind(w) : '',
@@ -7668,11 +7662,20 @@ try { pwaInstalled = localStorage.getItem('vespir.pwaInstalled') === '1'; } catc
 let focusSceneScrollY = 0;
 let focusInviteCleanup = 0;
 function hasInstalledPwa() {
-  return isStandalone() || pwaInstalled;
+  if (isStandalone()) return true;
+  /* Tarayıcı hâlâ kurulum penceresi sunabiliyorsa uygulama kurulu değildir;
+     eski kurulumdan kalan bayrak yanlış "Kurulu" demesin. */
+  if (deferredPrompt || window.__vespirInstall) return false;
+  return pwaInstalled;
 }
 function rememberPwaInstalled() {
   pwaInstalled = true;
   try { localStorage.setItem('vespir.pwaInstalled', '1'); } catch (e) {}
+}
+function clearPwaInstalled() {
+  if (!pwaInstalled) return;
+  pwaInstalled = false;
+  try { localStorage.removeItem('vespir.pwaInstalled'); } catch (e) {}
 }
 function syncFocusScene(scrollY = null) {
   const active = timer.running && timer.phase === 'focus';
@@ -7813,6 +7816,7 @@ function primeShellCache(reg) {
 function setupPWA() {
   if (isStandalone()) rememberPwaInstalled();
   deferredPrompt = window.__vespirInstall || deferredPrompt;
+  if (deferredPrompt) clearPwaInstalled();
   const standalone = matchMedia('(display-mode: standalone)');
   const onStandaloneChange = () => {
     if (!isStandalone()) return;
@@ -7828,6 +7832,8 @@ function setupPWA() {
     e.preventDefault();
     deferredPrompt = e;
     window.__vespirInstall = e;
+    /* Kurulum penceresi sunulabildiğine göre uygulama kurulu değil. */
+    clearPwaInstalled();
     updatePwaUI();
   });
   window.addEventListener('appinstalled', () => {
