@@ -172,6 +172,14 @@ function backgroundWake(hour) {
   };
 }
 
+/* Hava durumu bildirimleri yalnızca mobil cihazlarda gönderilir.
+   Sayfa tercih kaydına cihaz türünü de yazar; eski kayıtlarda UA'ya bakılır. */
+function prefsIsMobile(prefs) {
+  if (prefs && typeof prefs.mobile === 'boolean') return prefs.mobile;
+  const ua = (self.navigator && self.navigator.userAgent) || '';
+  return /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(ua);
+}
+
 async function anyVisibleWindow() {
   const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
   return wins.some((c) => c.visibilityState === 'visible');
@@ -179,6 +187,9 @@ async function anyVisibleWindow() {
 
 /* Genel Hava Durumu Hatırlatması (Günde en fazla bir kez, sabahları) */
 async function maybeWeatherAlert(prefs, now, hour) {
+  /* Masaüstünde hava bildirimi yok. */
+  if (!prefsIsMobile(prefs)) return false;
+
   // Hem yeni genişletilmiş alanı hem de eski wet alanını kontrol ederek geriye uyumluluk sağlar
   const condition = prefs.weatherCondition || prefs.wet;
   
@@ -207,7 +218,7 @@ async function maybeHello(prefs, now, hour) {
 
   let pool = Array.isArray(prefs.lines) && prefs.lines.length ? prefs.lines.slice() : HELLO_LINES_FALLBACK.slice();
   pool = pool.concat(timeBucket(hour));
-  const weatherPool = Array.isArray(prefs.weatherLines) ? prefs.weatherLines : [];
+  const weatherPool = prefsIsMobile(prefs) && Array.isArray(prefs.weatherLines) ? prefs.weatherLines : [];
   if (weatherPool.length && now - (Number(prefs.weatherAt) || 0) < WEATHER_FRESH && Math.random() < .4) {
     pool = weatherPool.slice();
   }

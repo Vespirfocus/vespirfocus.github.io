@@ -7,8 +7,8 @@
 <meta name="theme-color" content="#fdf3f7" id="metaTheme">
 <meta name="description" content="Vespır: 3B kedili, Liquid Glass tasarımlı bir odak arkadaşı. Kedi uyur, kitap okur, miyavlar; sen odaklanırsın.">
 <title>Vespır - En İyi Dostun</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23fdf3f7'/%3E%3Cpath d='M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z' fill='%23c96a8c'/%3E%3Ccircle cx='25' cy='36' r='2.6' fill='%232b2230'/%3E%3Ccircle cx='39' cy='36' r='2.6' fill='%232b2230'/%3E%3Cpath d='M30 42h4l-2 3z' fill='%232b2230'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" id="appleIcon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23fdf3f7'/%3E%3Cpath d='M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z' fill='%23c96a8c'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23fdf3f7'/%3E%3Cpath d='M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z' fill='%23c96a8c'/%3E%3Ccircle cx='25' cy='36' r='2.6' fill='%232b2230'/%3E%3Ccircle cx='39' cy='36' r='2.6' fill='%232b2230'/%3E%3Cpath d='M30 42h4l-2 3z' fill='%232b2230'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" id="appleIcon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23fdf3f7'/%3E%3Cpath d='M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z' fill='%23c96a8c'/%3E%3C/svg%3E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -38,6 +38,15 @@
       bg.addColorStop(0, '#fff0f7');
       bg.addColorStop(.5, '#ffd3e6');
       bg.addColorStop(1, '#e2d6ff');
+      /* Görev çubuğu ve masaüstü kısayolu için tam yuvarlak simge: köşeler
+         saydam kalır. Maskable sürüm tam taşar; Android kendi maskesini uygular. */
+      if (!maskable) {
+        x.save();
+        x.beginPath();
+        x.arc(256, 256, 247, 0, Math.PI * 2);
+        x.closePath();
+        x.clip();
+      }
       x.fillStyle = bg;
       x.fillRect(0, 0, 512, 512);
       var glow = x.createRadialGradient(170, 90, 10, 200, 160, 400);
@@ -110,6 +119,15 @@
         x.beginPath(); x.moveTo(226, 330 + dy * .35); x.lineTo(166, 316 + dy); x.stroke();
         x.beginPath(); x.moveTo(286, 330 + dy * .35); x.lineTo(346, 316 + dy); x.stroke();
       }
+      if (!maskable) {
+        /* Cam kenar: yuvarlak simgeye ince bir ışık halkası. */
+        x.strokeStyle = 'rgba(255,255,255,.55)';
+        x.lineWidth = 6;
+        x.beginPath();
+        x.arc(256, 256, 244, 0, Math.PI * 2);
+        x.stroke();
+        x.restore();
+      }
       return c.toDataURL('image/png');
     }
     try {
@@ -118,7 +136,8 @@
       var i192 = icon(192, false);
       var i512 = icon(512, false);
       var i512m = icon(512, true);
-      var i180 = icon(180, false);
+      /* iOS kendi yuvarlatmasını uygular; saydam köşe bırakmamak için tam taşan sürüm. */
+      var i180 = icon(180, true);
       var manifest = {
         id: base,
         name: 'Vespır — Odak Arkadaşı',
@@ -6343,6 +6362,16 @@ function idleCatLines() {
   }
   return catContextLines();
 }
+/* Cihaz türü: hava durumu bildirimleri yalnızca mobilde gösterilir.
+   Masaüstünde hava cümleleri yalnızca uygulama içinde kalır. */
+function isMobileDevice() {
+  const ua = navigator.userAgent || '';
+  if (navigator.userAgentData && typeof navigator.userAgentData.mobile === 'boolean') {
+    return navigator.userAgentData.mobile || /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(ua);
+  }
+  if (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return true;
+  return /Android|iPhone|iPad|iPod|Windows Phone|Mobile/i.test(ua);
+}
 function canSendCatMessage(now = Date.now()) {
   if (!S.catMessages || !('Notification' in window) || Notification.permission !== 'granted') return false;
   if (timer && timer.running) return false;
@@ -6369,7 +6398,7 @@ async function fireCatMessage() {
   if (document.visibilityState !== 'hidden' || !S.catMessages) return;
   /* Gizli sekmede yeniden kur: 3 saatlik aralık dolunca mesaj gelsin, sessizce düşmesin. */
   if (!canSendCatMessage()) { armCatMessage(); return; }
-  const w = weatherLines(false);
+  const w = isMobileDevice() ? weatherLines(false) : [];
   const body = pick(w.length && Math.random() < .4 ? w : catAwayNoteLines());
   if (!(await sendCatMessage(body))) { armCatMessage(); return; }
   S.lastMsgAt = Date.now();
@@ -6479,13 +6508,15 @@ async function writeMessagePrefs() {
       /* Service worker'ın yazdığı "bugün şemsiye gönderildi" bilgisi korunur. */
       if (prev && typeof prev.umbrellaDay === 'string') umbrellaDay = prev.umbrellaDay;
     }
-    const w = freshWeather();
+    const mobile = isMobileDevice();
+    const w = mobile ? freshWeather() : null;
     const prefs = {
       enabled: !!S.catMessages,
       name: S.cat.name,
       url: location.origin + location.pathname,
       icon: notifyIcon(),
       lines: catAwayNoteLines(),
+      mobile,
       weatherLines: w ? weatherLines(false) : [],
       weatherAt: w ? w.at : 0,
       weatherCondition: w ? weatherAlertKind(w) : '',
