@@ -5565,18 +5565,19 @@ function beginFocusCat() {
   });
   scheduleFocusCat(p.first);
 }
-/* Kitap ve yumak dengeli seçilir: sırayla gelmeleri daha olası, yumak hafif önde.
-   Yazı-tura gibi art arda aynı etkinlik uzun süre tekrar etmez. */
+/* Kitap ve yumak eşit sıklıkta seçilir: uzun vadede yarı yarıya.
+   Art arda aynı etkinlik gelme ihtimali biraz kırılır, böylece ritim dengeli kalır. */
 let lastFocusActivity = '';
 function pickFocusActivity() {
-  const pPlay = lastFocusActivity === 'read' ? .85 : lastFocusActivity === 'play' ? .3 : .6;
+  const pPlay = lastFocusActivity === 'read' ? .6 : lastFocusActivity === 'play' ? .4 : .5;
   lastFocusActivity = Math.random() < pPlay ? 'play' : 'read';
   return lastFocusActivity;
 }
 function scheduleFocusCat(delay) {
   if (!timer || !timer.running || timer.phase !== 'focus') return;
-  /* Varsayılan: 2 ya da 3 dakikada bir, dakika başında. Sayaç duvar saatine hizalı. */
-  catAfter('sleep', delay || (msToNextMinute() + 60000 * randInt(1, 2)), () => {
+  /* Her dakika başında bir etkinlik: kedi ya kitap okur ya yumakla oynar.
+     Sayaç duvar saatine hizalı, sekme arkada kalsa bile kaymaz. */
+  catAfter('sleep', delay || msToNextMinute(), () => {
     if (!timer || !timer.running || timer.phase !== 'focus') return;
     if (pickFocusActivity() === 'play') beginFocusPlay();
     else maybeWakeAndRead();
