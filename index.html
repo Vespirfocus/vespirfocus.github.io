@@ -4190,7 +4190,7 @@ body.install-invite-open #catStage { visibility: hidden; }
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">3</span>Tarayıcı Depolaması ve Ses Dosyaları</h3>
         <p>Ayarlar ve sayaç bilgileri tarayıcının yerel depolamasında (localStorage), seçtiğin özel sesler ise yerel dosya veritabanında (IndexedDB) tutulur. Ses dosyasının adı, türü ve içeriği, oturum başlangıcında veya sonunda çalınması için cihazında saklanır; uygulamada bu dosyaları sunucuya yükleyen bir özellik yoktur.</p>
-        <p>Vespır mesajları açıksa, uygulama kapalıyken bildirim gösterebilmek için küçük bir tercih kaydı (kedi adı, mesaj metinleri ve son mesaj zamanı) tarayıcının önbellek deposunda (Cache Storage) tutulur. Bu kayıt konum bilgisi içermez ve “Her şeyi sıfırla” ile temizlenir.</p>
+        <p>Vespır mesajları açıksa, uygulama kapalıyken bildirim gösterebilmek için küçük bir tercih kaydı (kedi adı, mesaj metinleri ve son mesaj zamanı) tarayıcının önbellek deposunda (Cache Storage) tutulur. Konum izni verdiysen kayıtta yalnızca yaklaşık (yaklaşık 10 km’ye yuvarlanmış) koordinat da bulunur; bu, güncel havaya göre uyarı gönderebilmek içindir. Kayıt cihazından çıkmaz ve “Her şeyi sıfırla” ile temizlenir.</p>
         <p>Depolama tarayıcı profiline ve uygulamanın açıldığı adrese bağlıdır. Farklı bir tarayıcı, cihaz, site adresi veya gizli pencere aynı verilere erişmeyebilir. Tarayıcı temizliği ya da depolama kısıtları veri kaybına yol açabilir.</p>
       </section>
 
@@ -4212,9 +4212,9 @@ body.install-invite-open #catStage { visibility: hidden; }
 
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">6</span>Vespır Mesajları, Bildirimler ve Hava Durumu</h3>
-        <p>“Vespır mesaj göndersin” açıksa kedi, sayaç dururken ara sıra davet ve hatırlatma cümleleri yazar. Sen başka sekmedeyken bildirim iznin varsa özlem mesajı gönderilebilir; bu mesajlar en fazla üç saatte bir gelir, 23.00–08.00 arasında hiç gelmez ve odak sayacı çalışırken rahatsızlık verilmez.</p>
+        <p>“Vespır mesaj göndersin” açıksa kedi, sayaç dururken ara sıra davet ve hatırlatma cümleleri yazar. Sen başka sekmedeyken bildirim iznin varsa özlem mesajı gönderilebilir; bu mesajlar en fazla üç saatte bir gelir, 23.00–05.00 arasında hiç gelmez ve odak sayacı çalışırken rahatsızlık verilmez. Hava uyarıları (şemsiye, mont, güneş gözlüğü gibi) günde en fazla bir kez gelir (23.00–05.00 arası hiç gelmez); bunun için konum izni gerekir ve konum yalnızca bu uyarılar ile hava cümleleri için kullanılır. Arka plan mesajları yalnızca bunu destekleyen tarayıcılarda (genellikle Chrome/Edge tabanlı, yüklü uygulama) çalışır; iPhone/Safari’de mesajlar uygulama açıkken görünür.</p>
         <ul class="legal-list">
-          <li><b>Hava mesajları:</b> Vespır'ın havaya göre konuşması uygulamanın doğal bir parçasıdır ve ayrı bir anahtarı yoktur. Tarayıcı konum izni verildiğinde konumun yaklaşık değere yuvarlanır ve yalnızca güncel havayı öğrenmek için Open-Meteo hizmetine gönderilir. Konumun Vespır dahil hiçbir üçüncü kişiyle paylaşılmaz, reklam veya profil amacıyla kullanılmaz, cihazında ya da başka bir sunucuda saklanmaz; hava sonucu yalnızca bellekte kısa süre tutulur. İzni reddedersen uygulama hiçbir şey bozulmadan çalışır, sadece hava cümleleri duyulmaz.</li>
+          <li><b>Hava mesajları:</b> Vespır'ın havaya göre konuşması uygulamanın doğal bir parçasıdır ve ayrı bir anahtarı yoktur. <b>Konum izni neden isteniyor?</b> Yalnızca iki şey için: Vespır’ın havaya uygun cümleler kurabilmesi ve mesajlar açıksa gün içinde (23.00–05.00 dışında) şemsiye, mont ya da güneş gözlüğü gibi hatırlatmalar gönderebilmesi. Başka hiçbir amaçla kullanılmaz. Tarayıcı konum izni verildiğinde konumun yaklaşık değere yuvarlanır ve yalnızca güncel havayı öğrenmek için Open-Meteo hizmetine gönderilir. Konumun Vespır dahil hiçbir üçüncü kişiyle paylaşılmaz, reklam veya profil amacıyla kullanılmaz, Vespır’ın kendi sunucusunda saklanmaz; yalnızca arka plan hava uyarısı için cihazındaki tarayıcı önbelleğinde yuvarlanmış koordinat olarak tutulur ve mesajlar kapatılınca ya da “Her şeyi sıfırla” ile silinir. Hava sonucu ise yalnızca bellekte kısa süre tutulur. İzni reddedersen uygulama hiçbir şey bozulmadan çalışır, sadece hava cümleleri duyulmaz.</li>
           <li><b>Uygulama kapalıyken:</b> Kurulu PWA sürümünde, tarayıcı destekliyorsa periyodik arka plan eşitlemesiyle seyrek mesaj gösterilebilir. Sıklığa tarayıcı karar verir; tercih kaydı cihazındaki önbellekte tutulur ve sıfırlamayla silinir.</li>
           <li><b>Kontrol sende:</b> Mesaj anahtarı Ayarlar → Zaman bölümünden kapatılabilir; bildirim ve konum izinlerini tarayıcı ayarlarından her zaman geri alabilirsin.</li>
         </ul>
@@ -4230,7 +4230,7 @@ body.install-invite-open #catStage { visibility: hidden; }
         <h3 class="legal-head"><span class="legal-num">8</span>İzinler ve Cihaz Özellikleri</h3>
         <ul class="legal-list">
           <li><b>Bildirimler:</b> Süre tamamlandığında ve Vespır mesajlarında haber vermek için, tarayıcı iznin varsa kullanılır. İzni tarayıcı ayarlarından geri alabilirsin.</li>
-          <li><b>Yaklaşık konum:</b> Hava mesajları için tarayıcı izniyle bir kez istenir. Yuvarlanmış koordinat yalnızca hava sorgusu için Open-Meteo’ya gönderilir; kimseyle paylaşılmaz, hiçbir yere kaydedilmez ve hassas konum istenmez. İzni tarayıcı ayarlarından her zaman geri alabilirsin.</li>
+          <li><b>Yaklaşık konum:</b> Yalnızca hava mesajları ve hava uyarısı için, tarayıcı izniyle istenir; izin penceresi çıkmadan önce Vespır bunun nedenini bir bilgi kartıyla açıklar; kartta “Şimdi değil” dersen 3 gün boyunca tekrar sorulmaz. Yuvarlanmış koordinat yalnızca hava sorgusu için Open-Meteo’ya gönderilir; kimseyle paylaşılmaz ve hassas konum istenmez. Mesajlar açıksa bu yuvarlanmış koordinat, arka plan hava uyarısı için yalnızca cihazındaki tarayıcı önbelleğinde saklanır. İzni tarayıcı ayarlarından her zaman geri alabilirsin.</li>
           <li><b>Dosya seçimi:</b> Yalnızca senin seçtiğin ses dosyası okunur. Uygulama tüm dosyalarına erişim istemez.</li>
           <li><b>Pano ve titreşim:</b> Kopyalama düğmeleri pano yazma özelliğini, etkinse küçük geri bildirimler cihaz titreşimini kullanabilir.</li>
           <li><b>İstenmeyen izinler:</b> Mevcut uygulama kamera veya mikrofon erişimi talep etmez.</li>
@@ -4261,7 +4261,7 @@ body.install-invite-open #catStage { visibility: hidden; }
 
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">12</span>Üçüncü Taraf Hizmetleri ve Dış Bağlantılar</h3>
-        <p>Google/Firebase kimlik doğrulama, site barındırma hizmeti sayfanın sunulması amacıyla kullanılır. Konum izni verilmişse Open-Meteo, yuvarlanmış yaklaşık koordinatla güncel hava bilgisini sağlamak için kullanılır; bu isteğe hesap kimliği eklenmez ve konum başka hiçbir tarafla paylaşılmaz. Bu sağlayıcılar verileri kendi politikaları kapsamında ve farklı ülkelerdeki altyapılarında işleyebilir; tüm verilerin yalnızca cihazında veya belirli bir ülkede kaldığı yönünde bir garanti verilmez.</p>
+        <p>Google/Firebase kimlik doğrulama, site barındırma hizmeti sayfanın sunulması amacıyla kullanılır. Konum izni verilmişse Open-Meteo, yuvarlanmış yaklaşık koordinatla güncel hava bilgisini sağlamak için kullanılır (uygulama açıkken hava cümleleri, mesajlar açıksa kapalıyken hava uyarısı için); bu isteğe hesap kimliği eklenmez ve konum başka hiçbir tarafla paylaşılmaz. Bu sağlayıcılar verileri kendi politikaları kapsamında ve farklı ülkelerdeki altyapılarında işleyebilir; tüm verilerin yalnızca cihazında veya belirli bir ülkede kaldığı yönünde bir garanti verilmez.</p>
         <p>İletişim ve sosyal medya bağlantılarını açtığında ilgili hizmetin kuralları geçerlidir. Destek için gönderdiğin mesajın içeriği ve iletişim bilgilerin, talebinin değerlendirilmesi amacıyla ilgili iletişim hizmeti üzerinden işlenir. Mesajına şifre veya oturum bilgisi ekleme.</p>
       </section>
 
@@ -6198,7 +6198,7 @@ async function testNotification() {
 
 /* ---------- Vespır'dan mesajlar: davet, özlem ve hava durumu ----------
    Mesajlar yalnızca sayaç dururken gelir; odak sırasında kimse rahatsız edilmez.
-   Konum sadece hava için bir kez okunur, yuvarlanır ve hiçbir yere kaydedilmez. */
+   Konum sadece hava için okunur ve 0,1°'ye yuvarlanır; mesajlar açıksa yalnızca cihazdaki tercih kaydına (arka plan hava uyarısı için) yazılır. */
 const MSG_GAP = 3 * 3600 * 1000;
 const MSG_RETURN_AFTER = 20 * 60 * 1000;
 const MSG_INAPP_GAP = 3 * 60 * 1000;
@@ -6214,10 +6214,11 @@ let msgAwayTimer = 0;
 let msgHiddenAt = 0;
 let lastInviteAt = 0;
 let lastWeatherLineAt = 0;
+let weatherGeo = null; /* yaklaşık (0,1°) koordinat; yalnızca SW'nin hava uyarısı sorgusu için tercih kaydına yazılır */
 
 function quietHours(now = new Date()) {
   const h = now.getHours();
-  return h >= 23 || h < 8;
+  return h >= 23 || h < 5;
 }
 function weatherKind(code, day) {
   if (code >= 95) return 'storm';
@@ -6414,13 +6415,116 @@ function greetAfterAway() {
   const w = weatherLines(false);
   catWaveHello(pick(w.length && Math.random() < .3 ? w : catMissLines()));
 }
+let locationExplained = false;
+let locationAskDeclined = false;
+const GEO_LATER_KEY = 'vespir-geo-later';
+const GEO_LATER_MS = 3 * 24 * 3600 * 1000;
+function geoAskSnoozed() {
+  if (locationAskDeclined) return true;
+  try {
+    const t = Number(localStorage.getItem(GEO_LATER_KEY));
+    return t > 0 && Date.now() - t < GEO_LATER_MS;
+  } catch (e) { return false; }
+}
+function ensureGeoAskStyle() {
+  if (document.getElementById('geoAskStyle')) return;
+  const st = document.createElement('style');
+  st.id = 'geoAskStyle';
+  st.textContent = `
+.geo-ask { position: fixed; inset: 0; z-index: 190; display: grid; place-items: center; padding: 14px; overflow: hidden;
+  background: var(--scrim, rgba(30,12,28,.4)); -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px); animation: geoFade .28s ease both; }
+.geo-card { width: min(340px, 100%); max-height: calc(100vh - 28px); max-height: calc(100dvh - 28px); overflow-y: auto; box-sizing: border-box;
+  border-radius: 22px; padding: 18px 16px 12px; text-align: center; color: var(--ink);
+  background: linear-gradient(160deg, var(--accent-soft), transparent 62%), var(--bg-0, #fff);
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line-2, transparent));
+  box-shadow: 0 40px 90px -34px color-mix(in srgb, var(--accent) 75%, transparent);
+  animation: geoPop .45s cubic-bezier(.34,1.56,.64,1) both; }
+.geo-badge { width: 42px; height: 42px; margin: 0 auto 8px; border-radius: 50%; display: grid; place-items: center; font-size: 21px; line-height: 1;
+  background: linear-gradient(140deg, var(--accent), var(--accent-2) 70%, var(--accent-3)); box-shadow: 0 10px 22px -10px var(--accent), inset 0 1px 0 rgba(255,255,255,.6); }
+.geo-card h2 { margin: 0 0 4px; font-size: 17px; line-height: 1.25; letter-spacing: -.015em; font-weight: 750; }
+.geo-lead { margin: 0 0 10px; font-size: 12px; line-height: 1.5; color: var(--ink-2); }
+.geo-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; text-align: left; }
+.geo-list li { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 13px; font-size: 12px; line-height: 1.4; color: var(--ink-2);
+  background: color-mix(in srgb, var(--accent) 7%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent); }
+.geo-list li span { font-size: 16px; flex: none; width: 20px; text-align: center; }
+.geo-actions { display: grid; gap: 2px; }
+.geo-actions .btn { width: 100%; min-width: 0; }
+.geo-actions .btn.primary { height: 46px; font-size: 13.5px; }
+.geo-actions .btn.text { height: 38px; }
+@keyframes geoFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes geoPop { from { opacity: 0; transform: translateY(24px) scale(.92); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .geo-ask, .geo-card { animation: none; } }`;
+  document.head.appendChild(st);
+}
+/* Tarayıcının konum izni penceresi özel metin taşıyamaz; bu yüzden soru çıkmadan hemen önce
+   nedenini açıkça anlatan bir kart gösteririz. Yalnızca izin henüz sorulmamışsa çıkar;
+   "Şimdi değil" denirse 3 gün boyunca tekrar sorulmaz. true = izin sorusuna geçilebilir. */
+async function explainLocationAsk() {
+  if (locationExplained) return true;
+  if (geoAskSnoozed()) return false;
+  try {
+    if (navigator.permissions && navigator.permissions.query) {
+      const st = await navigator.permissions.query({ name: 'geolocation' });
+      if (st.state !== 'prompt') return true;
+    }
+  } catch (e) {}
+  ensureGeoAskStyle();
+  return new Promise((resolve) => {
+    const prevFocus = document.activeElement;
+    const wrap = document.createElement('div');
+    wrap.className = 'geo-ask';
+    wrap.setAttribute('role', 'dialog');
+    wrap.setAttribute('aria-modal', 'true');
+    wrap.setAttribute('aria-labelledby', 'geoAskTitle');
+    wrap.innerHTML = `
+      <div class="geo-card">
+        <div class="geo-badge" aria-hidden="true">📍</div>
+        <h2 id="geoAskTitle">Konum izni gerekiyor</h2>
+        <p class="geo-lead">Tarayıcı birazdan izin isteyecek. Neden istendiği:</p>
+        <ul class="geo-list">
+          <li><span aria-hidden="true">🎯</span><div>Yalnızca güncel hava ve hava uyarısı için kullanılır.</div></li>
+          <li><span aria-hidden="true">🔒</span><div>Yaklaşık konum (~10 km) gönderilir, kimseyle paylaşılmaz.</div></li>
+          <li><span aria-hidden="true">⚙️</span><div>Reddedebilirsin; uygulama yine çalışır.</div></li>
+        </ul>
+        <div class="geo-actions">
+          <button type="button" class="btn primary" data-geo="yes">Devam et</button>
+          <button type="button" class="btn text" data-geo="later">Şimdi değil</button>
+        </div>
+      </div>`;
+    const finish = (ok) => {
+      document.removeEventListener('keydown', onKey, true);
+      wrap.remove();
+      try { if (prevFocus && prevFocus.focus) prevFocus.focus(); } catch (e) {}
+      if (ok) { locationExplained = true; }
+      else {
+        locationAskDeclined = true;
+        try { localStorage.setItem(GEO_LATER_KEY, String(Date.now())); } catch (e) {}
+      }
+      resolve(ok);
+    };
+    const onKey = (ev) => {
+      if (ev.key === 'Escape') { ev.preventDefault(); ev.stopPropagation(); finish(false); }
+    };
+    document.addEventListener('keydown', onKey, true);
+    const shownAt = Date.now();
+    wrap.addEventListener('click', (ev) => {
+      if (Date.now() - shownAt < 450) return; /* kartı açan dokunuşun yanlışlıkla kapatmasını önle */
+      const t = ev.target.closest('[data-geo]');
+      if (t) finish(t.getAttribute('data-geo') === 'yes');
+      else if (ev.target === wrap) finish(false);
+    });
+    document.body.appendChild(wrap);
+    const yes = wrap.querySelector('[data-geo="yes"]');
+    if (yes) yes.focus();
+  });
+}
 function updateWeather(force) {
   if (weatherDenied || !navigator.geolocation || !window.isSecureContext) return Promise.resolve(null);
   if (!force && weatherNow && Date.now() - weatherNow.at < WEATHER_TTL) return Promise.resolve(weatherNow);
   if (weatherBusy) return weatherBusy;
-  weatherBusy = new Promise((resolve) => {
+  weatherBusy = explainLocationAsk().then((ok) => ok ? new Promise((resolve) => {
     navigator.geolocation.getCurrentPosition(resolve, (error) => resolve({ error }), { enableHighAccuracy: false, maximumAge: WEATHER_TTL, timeout: 15000 });
-  }).then(async (pos) => {
+  }) : { error: { code: 0 } }).then(async (pos) => {
     if (pos.error) {
       if (pos.error.code === 1) {
         weatherDenied = true;
@@ -6431,6 +6535,7 @@ function updateWeather(force) {
     }
     const lat = pos.coords.latitude.toFixed(1);
     const lon = pos.coords.longitude.toFixed(1);
+    weatherGeo = { lat: Number(lat), lon: Number(lon) };
     const ctrl = new AbortController();
     const stop = setTimeout(() => ctrl.abort(), 10000);
     try {
@@ -6480,16 +6585,17 @@ function updateMsgStatus() {
     parts.push('<b>Uygulama içinde açık.</b> Sen uzaktayken mesaj alabilmen için bildirim izni gerekir.');
   } else {
     tone = 'ok';
-    parts.push('<b>Açık.</b> Sen uzaktayken en fazla üç saatte bir mesaj gelir; 23.00 ile 08.00 arası sessizdir.');
+    parts.push('<b>Açık.</b> Sen uzaktayken en fazla üç saatte bir mesaj gelir; hava uyarısı da dahil yalnızca 23.00 ile 05.00 arası sessizdir.');
+    if (!('periodicSync' in ServiceWorkerRegistration.prototype)) parts.push('Bu tarayıcı arka plan mesajlarını desteklemiyor (örneğin iPhone/Safari); mesajlar yalnızca uygulama açıkken gelir.');
   }
   const w = freshWeather();
   if (w) parts.push(`Hava: <b>${WEATHER_LABELS[weatherKind(w.code, w.day)]}${Number.isFinite(w.temp) ? ', ' + Math.round(w.temp) + ' °C' : ''}</b>.`);
-  else if (weatherDenied) parts.push('Konum izni kapalı olduğu için hava mesajları yok.');
+  else if (weatherDenied) parts.push('Konum izni kapalı olduğu için hava mesajları ve hava uyarısı yok. Konum yalnızca bunlar için istenir; istersen tarayıcı ayarlarından izni açabilirsin.');
   else parts.push(weatherBusy ? 'Hava durumu alınıyor…' : 'Hava durumu henüz alınamadı.');
   el.className = 'notify-status' + (tone ? ' ' + tone : '');
   el.innerHTML = parts.join(' ');
 }
-/* Uygulama kapalıyken service worker'ın okuyacağı küçük tercih kaydı (konum içermez). */
+/* Uygulama kapalıyken service worker'ın okuyacağı küçük tercih kaydı (yuvarlanmış yaklaşık konum içerir). */
 async function writeMessagePrefs() {
   if (!('caches' in window) || !/^https?:$/.test(location.protocol)) return;
   try {
@@ -6498,11 +6604,15 @@ async function writeMessagePrefs() {
     if (!S.catMessages) { await cache.delete(key); return; }
     const old = await cache.match(key);
     let umbrellaDay = '';
+    let umbrellaCheckedDay = '';
+    let prevGeo = null;
     if (old) {
       const prev = await old.json().catch(() => null);
       if (prev && Number(prev.lastMsgAt) > (S.lastMsgAt || 0)) S.lastMsgAt = Number(prev.lastMsgAt);
       /* Service worker'ın yazdığı "bugün şemsiye gönderildi" bilgisi korunur. */
       if (prev && typeof prev.umbrellaDay === 'string') umbrellaDay = prev.umbrellaDay;
+      if (prev && typeof prev.umbrellaCheckedDay === 'string') umbrellaCheckedDay = prev.umbrellaCheckedDay;
+      if (prev && prev.geo && Number.isFinite(Number(prev.geo.lat)) && Number.isFinite(Number(prev.geo.lon))) prevGeo = prev.geo;
     }
     const w = freshWeather();
     const prefs = {
@@ -6515,8 +6625,10 @@ async function writeMessagePrefs() {
       weatherAt: w ? w.at : 0,
       weatherCondition: w ? weatherAlertKind(w) : '',
       wet: w ? wetKind(w) : '',
+      geo: weatherDenied ? null : (weatherGeo || prevGeo),
       lastMsgAt: S.lastMsgAt || 0,
-      umbrellaDay
+      umbrellaDay,
+      umbrellaCheckedDay
     };
     await cache.put(key, new Response(JSON.stringify(prefs), { headers: { 'Content-Type': 'application/json' } }));
   } catch (e) {}
@@ -6529,7 +6641,7 @@ async function syncPeriodicMessages() {
     const want = S.catMessages && 'Notification' in window && Notification.permission === 'granted';
     if (want) {
       const st = await navigator.permissions.query({ name: 'periodic-background-sync' });
-      if (st.state === 'granted') await reg.periodicSync.register('vespir-hello', { minInterval: 8 * 3600 * 1000 });
+      if (st.state === 'granted') await reg.periodicSync.register('vespir-hello', { minInterval: 3 * 3600 * 1000 });
     } else {
       const tags = await reg.periodicSync.getTags();
       if (tags.includes('vespir-hello')) await reg.periodicSync.unregister('vespir-hello');
