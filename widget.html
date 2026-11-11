@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="noel" data-mode="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#050e16" id="metaTheme">
+<meta name="description" content="Vespır widget'ı: bugünkü odağını, kalan süreni ve Vespır'ın mesajlarını gösteren küçük kart." id="metaDesc">
+<link rel="manifest" id="manifestLink">
+<link rel="apple-touch-icon" id="appleIcon">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Vespır">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Vespır Widget</title>
+<script>
+/* Tema ve dil, ilk boyamadan önce okunur; ekran bir anlığına yanlış renkte açılmaz. */
+(function () {
+  try {
+    var raw = localStorage.getItem('vespir.v1');
+    var d = raw ? (JSON.parse(raw) || {}) : {};
+    var theme = typeof d.theme === 'string' ? d.theme : 'noel';
+    var mode = d.mode === 'light' || d.mode === 'dark' ? d.mode : 'dark';
+    var lang = d.lang === 'en' ? 'en' : 'tr';
+    var root = document.documentElement;
+    root.dataset.theme = theme;
+    root.dataset.mode = mode;
+    root.dataset.lang = lang;
+    root.lang = lang;
+    document.title = 'Vespır Widget';
+  } catch (e) {}
+})();
+</script>
+<style>
+:root {
+  --font: "Segoe UI Variable Text", "Segoe UI", "Aptos", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --display: "Segoe UI Variable Display", "Segoe UI", "Aptos Display", system-ui, sans-serif;
+  --bg-0: #050e16; --bg-1: #0b2b3d; --bg-2: #0e3a2c; --bg-3: #3a1418; --bg-4: #16283d;
+  --ink: #f2f9ff; --ink-2: #b9cfdd; --accent: #ff7a80; --accent-2: #6fd39a; --accent-3: #ffd166;
+  --on-accent: #1a090b;
+  --glass: rgba(255, 255, 255, .085);
+  --glass-2: rgba(255, 255, 255, .035);
+  --line: rgba(255, 255, 255, .16);
+  --line-2: rgba(255, 255, 255, .07);
+  --radius: 30px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+html { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--accent) 55%, transparent) transparent; }
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  border-radius: 99px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 70%, transparent), color-mix(in srgb, var(--accent-2) 60%, transparent));
+  border: 2px solid transparent; background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, var(--accent), var(--accent-2)); background-clip: padding-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: max(18px, env(safe-area-inset-top)) 16px calc(18px + env(safe-area-inset-bottom));
+  font-family: var(--font);
+  color: var(--ink);
+  background:
+    radial-gradient(120% 90% at 12% 0%, color-mix(in srgb, var(--accent) 30%, transparent), transparent 56%),
+    radial-gradient(100% 80% at 98% 6%, color-mix(in srgb, var(--accent-2) 26%, transparent), transparent 58%),
+    radial-gradient(90% 80% at 50% 112%, color-mix(in srgb, var(--accent-3) 17%, transparent), transparent 62%),
+    linear-gradient(158deg, var(--bg-0), var(--bg-1) 48%, var(--bg-2) 82%, var(--bg-0));
+  background-attachment: fixed;
+  overflow-x: hidden;
+  overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(50% 40% at 50% 0%, rgba(255, 255, 255, .10), transparent 72%),
+    radial-gradient(100% 60% at 50% 100%, rgba(0, 0, 0, .20), transparent 70%);
+  z-index: 0;
+}
+.ambience { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.ambience span {
+  position: absolute;
+  top: -12vh;
+  left: var(--x, 50%);
+  font-size: var(--s, 14px);
+  line-height: 1;
+  color: var(--p, rgba(255, 255, 255, .8));
+  opacity: var(--o, .55);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--p, #fff) 55%, transparent);
+  animation: drift var(--dur, 18s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  will-change: transform;
+}
+@keyframes drift {
+  0% { transform: translate3d(0, -8vh, 0) rotate(0deg); }
+  50% { transform: translate3d(var(--dx, 24px), 54vh, 0) rotate(180deg); }
+  100% { transform: translate3d(calc(var(--dx, 24px) * -0.4), 116vh, 0) rotate(360deg); }
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  width: min(360px, 100%);
+  display: grid;
+  gap: 12px;
+  animation: arrive .7s cubic-bezier(.22, 1, .36, 1) both;
+}
+@keyframes arrive { from { opacity: 0; transform: translateY(16px) scale(.975); } to { opacity: 1; transform: none; } }
+
+.widget {
+  position: relative;
+  padding: 1.5px;
+  border-radius: calc(var(--radius) + 1.5px);
+  background: linear-gradient(145deg,
+    color-mix(in srgb, var(--accent) 78%, white 14%),
+    color-mix(in srgb, var(--line) 55%, transparent) 34%,
+    color-mix(in srgb, var(--accent-2) 60%, transparent) 68%,
+    color-mix(in srgb, var(--accent-3) 52%, transparent));
+  box-shadow:
+    0 42px 90px -34px color-mix(in srgb, var(--accent) 52%, transparent),
+    0 18px 40px -22px rgba(0, 0, 0, .64);
+}
+.widget-in {
+  position: relative;
+  border-radius: var(--radius);
+  padding: 16px 16px 13px;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44%;
+  grid-template-areas: "top top" "hero mascot" "goal mascot" "message message" "foot foot";
+  column-gap: 6px;
+  background:
+    radial-gradient(120% 80% at 100% 0%, color-mix(in srgb, var(--accent) 52%, transparent), transparent 58%),
+    radial-gradient(120% 80% at -12% 108%, color-mix(in srgb, var(--accent-2) 42%, transparent), transparent 60%),
+    linear-gradient(160deg,
+      color-mix(in srgb, var(--accent-2) 30%, var(--bg-1)),
+      color-mix(in srgb, var(--bg-0) 86%, var(--accent) 14%) 62%,
+      color-mix(in srgb, var(--bg-3) 46%, transparent));
+}
+.widget-in::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(70% 50% at 16% 0%, rgba(255, 255, 255, .15), transparent 60%),
+    radial-gradient(55% 42% at 94% 102%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 70%);
+}
+.widget-in::after {
+  content: "";
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .6), transparent);
+  pointer-events: none;
+}
+.widget-in > .top { grid-area: top; }
+.widget-in > .hero { grid-area: hero; align-self: end; margin-top: 6px; }
+.widget-in > .goal { grid-area: goal; align-self: start; margin-top: 12px; }
+.widget-in > .mascot { grid-area: mascot; width: 100%; margin: 0; align-self: center; }
+.widget-in > .message { grid-area: message; margin-top: 10px; }
+.widget-in > .foot { grid-area: foot; margin-top: 11px; padding-top: 11px; }
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.logo {
+  width: 36px; height: 36px; flex: none;
+  border-radius: 12px;
+  display: grid; place-items: center;
+  background: linear-gradient(145deg, var(--accent), var(--accent-2));
+  box-shadow:
+    0 10px 22px -12px color-mix(in srgb, var(--accent) 90%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, .6);
+  color: #fff;
+}
+.logo svg { width: 26px; height: 26px; display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,.22)); }
+.brand-text { min-width: 0; }
+.word {
+  display: block;
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 780;
+  letter-spacing: -.04em;
+  line-height: 1.05;
+}
+.tag { display: none; }
+.chip {
+  display: inline-flex; align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: color-mix(in srgb, var(--accent) 74%, var(--ink));
+  font-size: 9px;
+  font-weight: 780;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.hero { display: flex; align-items: center; gap: 8px; }
+.stat-icon {
+  width: 40px; height: 40px; flex: none;
+  display: grid; place-items: center;
+  color: var(--ink);
+  filter: drop-shadow(0 9px 14px rgba(0, 0, 0, .26));
+  animation: flame 4.6s ease-in-out infinite;
+}
+.stat-icon svg { width: 100%; height: 100%; display: block; }
+@keyframes flame { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-2px) scale(1.04); } }
+.stat-copy { min-width: 0; display: flex; flex-direction: column; }
+.stat-line { display: flex; align-items: flex-end; gap: 5px; }
+.stat-num {
+  font-family: var(--display);
+  font-size: clamp(52px, 16vw, 68px);
+  font-weight: 820;
+  line-height: .84;
+  letter-spacing: -.07em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, .2);
+}
+.stat-num.is-clock { font-size: clamp(36px, 11.4vw, 48px); letter-spacing: -.05em; line-height: 1; }
+.stat-unit {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 760;
+  letter-spacing: -.02em;
+  color: var(--ink-2);
+  padding-bottom: 6px;
+}
+.stat-label {
+  margin-top: 5px;
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.goal-bar {
+  height: 10px;
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--ink) 14%, transparent);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.22);
+}
+.goal-bar i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-3) 55%, var(--accent-2));
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  transition: transform .6s cubic-bezier(.22, 1, .36, 1);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 55%, transparent);
+  position: relative;
+  overflow: hidden;
+}
+.goal-bar i::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.5) 50%, transparent 80%);
+  transform: translateX(-100%);
+  animation: shimmer 3.4s ease-in-out infinite;
+}
+@keyframes shimmer { 0% { transform: translateX(-100%); } 55%, 100% { transform: translateX(100%); } }
+.goal-note {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 9.5px;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.goal-note b { color: var(--ink); font-weight: 700; }
+
+.mascot {
+  position: relative;
+  filter: drop-shadow(0 18px 22px rgba(0, 0, 0, .3));
+  animation: breathe 6.5s ease-in-out infinite;
+  transform-origin: 50% 88%;
+}
+.mascot::before {
+  content: "";
+  position: absolute;
+  left: 50%; bottom: -4px;
+  width: 82%; height: 26px;
+  transform: translateX(-50%);
+  background: radial-gradient(50% 50% at 50% 50%, color-mix(in srgb, var(--accent) 40%, transparent), transparent 72%);
+  filter: blur(6px);
+  z-index: -1;
+}
+.mascot svg { width: 100%; height: auto; display: block; }
+@keyframes breathe { 0%, 100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.03) translateY(-2px); } }
+.eye { transform-box: fill-box; transform-origin: center; animation: blink 7.4s infinite; }
+.eye + .eye { animation-delay: .02s; }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 94% { transform: scaleY(.1); } }
+
+.headline {
+  font-family: var(--display);
+  font-size: clamp(19px, 5.6vw, 23px);
+  font-weight: 780;
+  line-height: 1.12;
+  letter-spacing: -.035em;
+  margin: 0 0 4px;
+  color: var(--ink);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  display: flex;
+  align-items: center;
+}
+.sub {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.swap { animation: swapIn .48s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes swapIn { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-top: 1px solid var(--line-2);
+}
+.mark {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  opacity: .72;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.open {
+  display: inline-flex; align-items: center; gap: 7px; flex: none;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 46%, transparent);
+  background: linear-gradient(140deg, var(--accent), var(--accent-2));
+  color: var(--on-accent);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 740;
+  letter-spacing: -.01em;
+  box-shadow:
+    0 10px 20px -12px color-mix(in srgb, var(--accent) 90%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, .55);
+  transition: transform .18s ease, filter .18s ease;
+}
+.open:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.open:active { transform: scale(.97); }
+.open svg { width: 12px; height: 12px; }
+
+.tools {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 8px;
+  padding: 0 3px;
+}
+.install {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: linear-gradient(150deg, var(--glass), var(--glass-2));
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  color: var(--ink);
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 720;
+  letter-spacing: -.015em;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 14px 30px -22px rgba(0, 0, 0, .7), inset 0 1px 0 var(--line);
+  transition: transform .18s ease, background .18s ease;
+}
+.install:hover { background: linear-gradient(150deg, color-mix(in srgb, var(--accent) 12%, var(--glass)), var(--glass-2)); }
+.install:active { transform: scale(.985); }
+.install svg { width: 16px; height: 16px; }
+.tools-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 1px 4px; }
+.back { color: var(--ink-2); font-size: 11px; text-decoration: none; }
+.back:hover { color: var(--ink); }
+.hint {
+  font-size: 10.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  opacity: .78;
+  text-align: center;
+  padding: 0 12px;
+  margin: 0;
+  min-height: 1.55em;
+}
+.hint b { color: var(--ink); font-weight: 650; }
+body.standalone .tools { display: none; }
+
+/* Widget yalnızca telefonda: bilgisayarda kısa bir bilgi gösterilir. */
+.phone-only { display: none; text-align: center; padding: 28px 20px; border: 1px solid var(--line); border-radius: 24px; background: var(--glass); line-height: 1.55; max-width: 360px; }
+body.not-phone .widget, body.not-phone .tools { display: none; }
+body.not-phone .phone-only { display: block; }
+
+@media (max-width: 340px) {
+  .widget-in { padding: 14px 13px 11px; grid-template-columns: minmax(0,1fr) 42%; }
+  .logo { width: 32px; height: 32px; }
+  .logo svg { width: 23px; height: 23px; }
+  .word { font-size: 16.5px; }
+  .stat-icon { width: 34px; height: 34px; }
+  .stat-num { font-size: 48px; }
+  .stat-num.is-clock { font-size: 34px; }
+  .headline { font-size: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+  .ambience { display: none; }
+}
+html[data-motion="low"] .ambience { display: none; }
+html[data-motion="low"] .mascot,
+html[data-motion="low"] .stat-icon,
+html[data-motion="low"] .eye,
+html[data-motion="low"] .goal-bar i::after { animation: none; }
+</style>
+</head>
+<body>
+<div class="ambience" id="ambience" aria-hidden="true"></div>
+<p class="phone-only" id="phoneOnly"></p>
+
+<main class="shell">
+  <section class="widget" aria-label="Vespır widget'ı" id="widgetAria">
+    <div class="widget-in">
+      <header class="top">
+        <div class="brand">
+          <span class="logo" id="logo" aria-hidden="true"></span>
+          <span class="brand-text">
+            <span class="word">Vespır</span>
+            <span class="tag" id="tagline">odak arkadaşın</span>
+          </span>
+        </div>
+        <span class="chip" id="phaseChip">Vespır’dan</span>
+      </header>
+
+      <div class="hero">
+        <span class="stat-icon" aria-hidden="true">
+          <svg viewBox="0 0 44 44" fill="none">
+            <path d="M22 2.4c2.3 6.2 8.8 10.4 8.8 18.4A8.8 8.8 0 0 1 22 29.6a8.8 8.8 0 0 1-8.8-8.8c0-4 2.2-6.6 4.6-9.2.4 2.8 1.6 4.4 3.4 5.4-.4-5 .6-9.8 4.8-14.6Z" fill="currentColor"/>
+            <g fill="var(--accent)">
+              <ellipse cx="22" cy="23.4" rx="3.7" ry="3.1"/>
+              <circle cx="17.7" cy="18.4" r="1.5"/>
+              <circle cx="22" cy="17" r="1.6"/>
+              <circle cx="26.3" cy="18.4" r="1.5"/>
+            </g>
+          </svg>
+        </span>
+        <div class="stat-copy">
+          <div class="stat-line">
+            <span class="stat-num" id="statNum">0</span>
+            <span class="stat-unit" id="statUnit">dk</span>
+          </div>
+          <span class="stat-label" id="statLabel">bugünkü odak</span>
+        </div>
+      </div>
+
+      <div class="goal">
+        <div class="goal-bar"><i id="goalFill"></i></div>
+        <div class="goal-note"><span id="goalText">hedef 120 dk</span><span id="goalPct">%0</span></div>
+      </div>
+
+      <div class="mascot" id="catFace" aria-hidden="true"></div>
+
+      <div class="message">
+        <div class="headline" id="message" role="status" aria-live="polite">Seni özledim, gel.</div>
+        <p class="sub" id="subline">Vespır seni bekliyor.</p>
+      </div>
+
+      <footer class="foot">
+        <span class="mark" id="mark">Vespır · widget</span>
+        <a class="open" id="openApp" href="./index.html">
+          <span id="openText">Vespır'ı aç</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg>
+        </a>
+      </footer>
+    </div>
+  </section>
+
+  <div class="tools">
+    <button class="install" id="installBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3.2"/><path d="M10.5 5.2h3"/><path d="M12 9.5v6"/><path d="m9.4 12.9 2.6 2.6 2.6-2.6"/></svg>
+      <span id="installText">Ana ekrana ekle</span>
+    </button>
+    <div class="tools-row">
+      <a class="back" id="backApp" href="./index.html">Uygulamaya dön</a>
+      <span class="back" id="themeMark">Noel · karanlık</span>
+    </div>
+    <p class="hint" id="installHint"></p>
+  </div>
+</main>
+
+<script>
+'use strict';
+(function () {
+  let EN = document.documentElement.dataset.lang === 'en';
+  const $ = (id) => document.getElementById(id);
+  const tr = (a, b) => (EN ? b : a);
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Uygulamadaki temaların ışık/karanlık paletleri: [bg0, bg1, bg2, bg3, bg4, ink, ink2, accent, accent2, accent3, on-accent] */
+  const PALETTES = {
+    sakura: {
+      dark: ['#150c18', '#4b1d3f', '#2d1a51', '#45211e', '#172b43', '#fff0f8', '#ddbdd0', '#ff80b5', '#b795ff', '#ffc38f', '#281021'],
+      light: ['#fdf3f7', '#ffd4e6', '#e2d6ff', '#ffe9d6', '#d9edff', '#43283d', '#78556e', '#ff5f9e', '#a87bff', '#ffb27a', '#ffffff']
+    },
+    midnight: {
+      dark: ['#040a16', '#0a2a5c', '#191a54', '#06393f', '#081426', '#eaf5ff', '#a9c2da', '#4da3ff', '#3fdde2', '#9d8bff', '#f2faff'],
+      light: ['#eef5ff', '#cbe4ff', '#dcd7ff', '#d2faf1', '#e9f1ff', '#12243b', '#425872', '#2f7df6', '#11bdd1', '#7c6bff', '#f4faff']
+    },
+    forest: {
+      dark: ['#06110c', '#103c26', '#1c3520', '#0b3030', '#1a2310', '#eefff3', '#b8d7c1', '#5fcf8d', '#b9df77', '#efbf68', '#0d2616'],
+      light: ['#f1f7ee', '#d4eecd', '#e5f0c5', '#cfeee4', '#f7f0d5', '#213a29', '#4e6a53', '#3c9b5f', '#82b345', '#d9a34b', '#f5fff7']
+    },
+    sunset: {
+      dark: ['#130b0a', '#4a1d1a', '#3d1631', '#2c1a3e', '#2c1d0e', '#fff3ec', '#ddbcad', '#ff9167', '#ff86b5', '#ffd37a', '#2b120a'],
+      light: ['#fff5ec', '#ffd8c0', '#ffc8dd', '#f1d5ff', '#ffeecb', '#43261a', '#7b5340', '#ff7849', '#ff5c99', '#ffb643', '#fff8f3']
+    },
+    lavender: {
+      dark: ['#0c0817', '#2d2058', '#3d1c4f', '#16264f', '#241437', '#f4edff', '#c5b6dd', '#a98aff', '#e58ae2', '#86b6ff', '#f7f2ff'],
+      light: ['#f8f4ff', '#e2d6ff', '#f6d9f6', '#d9e6ff', '#f4e8ff', '#322247', '#63527a', '#8f6cff', '#d66ad4', '#6fa8ff', '#fbf8ff']
+    },
+    ocean: {
+      dark: ['#030d14', '#063349', '#072e3c', '#0b2a52', '#04202a', '#e9faff', '#a9cdd9', '#38c6f4', '#45e6c2', '#6ba5ff', '#022430'],
+      light: ['#eefbff', '#c7ecff', '#d3f7ee', '#c9e0ff', '#e8fbff', '#0e3345', '#396477', '#0f9fd6', '#12c9a5', '#3f7ff7', '#f2fdff']
+    },
+    peach: {
+      dark: ['#170d0a', '#4a241b', '#3f1c28', '#33250f', '#291710', '#fff2ea', '#dcbbae', '#ffa07a', '#ff8db5', '#ffd07a', '#2d130a'],
+      light: ['#fff8f4', '#ffe0cd', '#ffd8e2', '#ffeecd', '#fff1ec', '#4a2a20', '#82594c', '#ff8a5c', '#ff6f9c', '#ffbc52', '#fff9f5']
+    },
+    mint: {
+      dark: ['#04110d', '#0b3a2e', '#173a22', '#073a3f', '#0a2a21', '#eafff7', '#aed9c9', '#4be0b4', '#8fdc7d', '#54d5e2', '#043327'],
+      light: ['#f1fdf8', '#c8f4e3', '#d8f5d0', '#c9f2f6', '#eefcf3', '#123a30', '#3f685c', '#18b98a', '#57c96a', '#21b9c9', '#f3fffb']
+    },
+    cocoa: {
+      dark: ['#120d0a', '#3a281c', '#38261c', '#2b2a17', '#221910', '#fff6ec', '#d8c2ae', '#d99a63', '#e0b173', '#bcc272', '#241408'],
+      light: ['#fbf6f1', '#ecdccb', '#f3dfd2', '#e6dcc2', '#f7f0e4', '#3d2a1e', '#6d5646', '#a86a3d', '#c98a4b', '#8a8f4f', '#fff9f3']
+    },
+    galaxy: {
+      dark: ['#07040f', '#211a52', '#3a1752', '#0c2a55', '#16102e', '#f1efff', '#bcb4e0', '#8f7dff', '#c77df0', '#5aa9ff', '#f7f5ff'],
+      light: ['#f3f1ff', '#ddd6ff', '#f0d8ff', '#d2e0ff', '#f6ecff', '#241c46', '#534a78', '#6b5bff', '#a95bd8', '#2f9bde', '#faf9ff']
+    },
+    noel: {
+      dark: ['#050e16', '#0b2b3d', '#0e3a2c', '#3a1418', '#16283d', '#f2f9ff', '#b9cfdd', '#ff7a80', '#6fd39a', '#ffd166', '#1a090b'],
+      light: ['#eef6fb', '#cfe6f7', '#dcefe2', '#ffe3dc', '#fdf1d8', '#22333d', '#4f6371', '#d64550', '#2f8f68', '#e2a63b', '#fff7f4']
+    },
+    halloween: {
+      dark: ['#07050a', '#1a0d12', '#241016', '#131810', '#1c1410', '#f0e6ea', '#c9b3bd', '#e02b2b', '#7ee23f', '#ff9422', '#fff2f0'],
+      light: ['#f1ecef', '#e3d2d8', '#ecd8dd', '#e1e6d3', '#ecdfcd', '#2a1c22', '#5c4650', '#b81f24', '#4f8f2a', '#d2761a', '#fff4f2']
+    }
+  };
+
+  const THEME_NAMES = {
+    sakura: ['Sakura', 'Sakura'], midnight: ['Gece yarısı', 'Midnight'], forest: ['Orman', 'Forest'],
+    sunset: ['Gün batımı', 'Sunset'], lavender: ['Lavanta', 'Lavender'], ocean: ['Okyanus', 'Ocean'],
+    peach: ['Şeftali', 'Peach'], mint: ['Nane', 'Mint'], cocoa: ['Kakao', 'Cocoa'],
+    galaxy: ['Galaksi', 'Galaxy'], noel: ['Noel', 'Christmas'], halloween: ['Cadılar Bayramı', 'Halloween']
+  };
+  function themeName(name) {
+    const pair = THEME_NAMES[name];
+    return pair ? pair[EN ? 1 : 0] : 'Vespır';
+  }
+
+  const THEME_LINES = {
+    noel: {
+      tr: ['Kar yağıyor, birlikte izleyelim.', 'Sıcak çikolata hazır; gel.', 'Noel ışıkları yandı, odaklanalım mı?'],
+      en: ['It’s snowing—let’s watch together.', 'Hot chocolate is ready; come.', 'The Christmas lights are on. Shall we focus?']
+    },
+    halloween: {
+      tr: ['Balkabağı feneri yandı; gel.', 'Bu gece biraz ürkütücüyüm... gel de gör.', 'Cadılar Bayramı yaklaşıyor; tüylerim diken diken.'],
+      en: ['The pumpkin lantern is lit; come.', 'I’m a little spooky tonight… come see.', 'Halloween is near; my fur is standing on end.']
+    },
+    sakura: {
+      tr: ['Kiraz çiçekleri açtı; gel.', 'Yapraklar uçuşuyor, birlikte izleyelim.'],
+      en: ['The cherry blossoms opened; come.', 'Petals are drifting—let’s watch together.']
+    },
+    galaxy: {
+      tr: ['Yıldızlar bu kadar parlakken gel, birlikte bakalım.'],
+      en: ['The stars are this bright—come look with me.']
+    },
+    ocean: {
+      tr: ['Dalgalar sakin; gel biraz nefes alalım.'],
+      en: ['The waves are calm; come take a breath with me.']
+    },
+    forest: {
+      tr: ['Orman sessiz; seni bekliyorum.'],
+      en: ['The forest is quiet; I’m waiting for you.']
+    }
+  };
+
+  const COMMON_LINES = {
+    tr: ['Bir kahve molası ne dersin?', 'Bugün neye odaklanıyoruz?', 'Biraz mola ver, sonra devam ederiz.', 'Seni bekliyorum; hazır olduğunda gel.', 'Birlikte çalışalım mı?'],
+    en: ['How about a coffee break?', 'What are we focusing on today?', 'Take a little break, then we’ll continue.', 'I’m waiting for you—come when you’re ready.', 'Shall we work together?']
+  };
+
+  const THEME_GLYPH = {
+    noel: ['❄', '', '✦'], halloween: ['🦇', '✦', ''], sakura: ['❀', '✿', '✦'],
+    galaxy: ['✦', '✧', '·'], midnight: ['✦', '✧', '·'], ocean: ['✧', '·', '✦'],
+    forest: ['✦', '·', '✿'], lavender: ['✦', '', '·'], peach: ['✦', '·', '✿'],
+    mint: ['✦', '·', '✿'], cocoa: ['✦', '·', '✧'], sunset: ['✦', '·', '✧']
+  };
+
+  let S = readState();
+  let prefsLines = [];
+  let prefsWeather = [];
+  let prefsLang = '';
+  let pool = [];
+  let msgIndex = 0;
+  let messageTimer = 0;
+  let lastStateRaw = '';
+  let lastStateDay = '';
+  let deferredPrompt = null;
+  function storedRaw() {
+    try { return localStorage.getItem('vespir.v1') || ''; } catch (e) { return ''; }
+  }
+
+  function todayKey() {
+    const d = new Date();
+    const p = (n) => String(n).padStart(2, '0');
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+
+  function readState() {
+    let d = {};
+    try { d = JSON.parse(localStorage.getItem('vespir.v1') || '{}') || {}; } catch (e) { d = {}; }
+    const cat = Object.assign({
+      name: 'Vespır', breed: 'tekir', fur: '#a59482', belly: '#f3ebe0', eyes: '#9cc45c',
+      patch: '#6f6153', patch2: '#423a33', collarOn: true, collar: '#ff5f9e', accessories: ['bell']
+    }, d.cat || {});
+    ['fur', 'belly', 'eyes', 'patch', 'patch2', 'collar'].forEach((key) => {
+      if (!/^#[0-9a-f]{6}$/i.test(cat[key] || '')) cat[key] = '#a59482';
+    });
+    const lang = d.lang === 'en' ? 'en' : 'tr';
+    const rawStats = d.stats && typeof d.stats === 'object' ? d.stats : {};
+    const fresh = rawStats.day === todayKey();
+    return {
+      theme: typeof d.theme === 'string' ? d.theme : 'noel',
+      mode: d.mode === 'light' ? 'light' : (d.mode === 'auto' ? 'auto' : 'dark'),
+      lang,
+      motion: d.motion === 'low' ? 'low' : 'high',
+      cat,
+      sessionName: typeof d.sessionName === 'string' ? d.sessionName : (lang === 'en' ? 'Deep Focus' : 'Derin Odak'),
+      timer: d.timer && typeof d.timer === 'object' ? d.timer : null,
+      dailyGoal: Math.min(600, Math.max(15, Math.round(Number(d.dailyGoal) || 120))),
+      stats: {
+        sec: fresh ? Math.max(0, Number(rawStats.sec) || 0) : 0,
+        sessions: fresh ? Math.max(0, Number(rawStats.sessions) || 0) : 0
+      }
+    };
+  }
+
+  function resolvedMode() {
+    if (S.mode === 'light' || S.mode === 'dark') return S.mode;
+    try { return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } catch (e) { return 'dark'; }
+  }
+
+  function applyTheme() {
+    EN = S.lang === 'en';
+    if (!PALETTES[S.theme]) S.theme = 'noel';
+    const dark = resolvedMode() === 'dark';
+    const pal = PALETTES[S.theme][dark ? 'dark' : 'light'];
+    const root = document.documentElement;
+    root.dataset.theme = S.theme;
+    root.dataset.mode = dark ? 'dark' : 'light';
+    root.dataset.lang = S.lang;
+    root.dataset.motion = S.motion;
+    root.lang = S.lang;
+    root.style.colorScheme = dark ? 'dark' : 'light';
+    const vars = ['--bg-0', '--bg-1', '--bg-2', '--bg-3', '--bg-4', '--ink', '--ink-2', '--accent', '--accent-2', '--accent-3', '--on-accent'];
+    vars.forEach((name, i) => root.style.setProperty(name, pal[i]));
+    root.style.setProperty('--glass', dark ? 'rgba(255,255,255,.085)' : 'rgba(255,255,255,.46)');
+    root.style.setProperty('--glass-2', dark ? 'rgba(255,255,255,.035)' : 'rgba(255,255,255,.22)');
+    root.style.setProperty('--line', dark ? 'rgba(255,255,255,.16)' : 'rgba(255,255,255,.72)');
+    root.style.setProperty('--line-2', dark ? 'rgba(255,255,255,.07)' : 'rgba(20,30,40,.10)');
+    const meta = $('metaTheme');
+    if (meta) meta.setAttribute('content', pal[0]);
+    const mark = $('themeMark');
+    if (mark) mark.textContent = themeName(S.theme) + ' · ' + (dark ? tr('karanlık', 'dark') : tr('aydınlık', 'light'));
+    buildAmbience();
+    buildFace();
+    buildIcon();
+    refreshCopy();
+    render();
+  }
+
+  function buildAmbience() {
+    const host = $('ambience');
+    if (!host) return;
+    host.innerHTML = '';
+    if (reduceMotion || S.motion === 'low') return;
+    const glyphs = THEME_GLYPH[S.theme] || ['✦', '·'];
+    const pal = PALETTES[S.theme][resolvedMode() === 'dark' ? 'dark' : 'light'];
+    const count = 9;
+    for (let i = 0; i < count; i++) {
+      const s = document.createElement('span');
+      const glyph = glyphs[i % glyphs.length];
+      s.textContent = glyph;
+      s.style.setProperty('--x', (4 + Math.random() * 92).toFixed(1) + '%');
+      s.style.setProperty('--s', (8 + Math.random() * (S.theme === 'halloween' ? 14 : 10)).toFixed(1) + 'px');
+      s.style.setProperty('--p', pal[i % 3 === 0 ? 7 : 8]);
+      s.style.setProperty('--o', (0.24 + Math.random() * 0.42).toFixed(2));
+      s.style.setProperty('--dx', (Math.random() * 90 - 45).toFixed(0) + 'px');
+      s.style.setProperty('--dur', (12 + Math.random() * 14).toFixed(1) + 's');
+      s.style.setProperty('--delay', (-Math.random() * 18).toFixed(1) + 's');
+      host.appendChild(s);
+    }
+  }
+
+  function luminance(hex) {
+    const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || ''));
+    if (!m) return .5;
+    const n = parseInt(m[1], 16);
+    const ch = (v) => { const s = v / 255; return s <= .03928 ? s / 12.92 : Math.pow((s + .055) / 1.055, 2.4); };
+    return .2126 * ch((n >> 16) & 255) + .7152 * ch((n >> 8) & 255) + .0722 * ch(n & 255);
+  }
+
+  /* Bir hex rengi açar (amt>0) veya koyulaştırır (amt<0); kediye derinlik veren gradyanlar için. */
+  function shade(hex, amt) {
+    const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || ''));
+    if (!m) return hex || '#a59482';
+    const n = parseInt(m[1], 16);
+    let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+    const t = amt < 0 ? 0 : 255, p = Math.min(1, Math.abs(amt));
+    r = Math.round((t - r) * p + r); g = Math.round((t - g) * p + g); b = Math.round((t - b) * p + b);
+    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+  }
+
+  function faceSVG() {
+    const c = S.cat;
+    const fur = c.fur || '#a59482';
+    const belly = c.belly || '#f3ebe0';
+    const eyes = c.eyes || '#9cc45c';
+    const patch = c.patch || '#6f6153';
+    const patch2 = c.patch2 || '#423a33';
+    const furLight = shade(fur, .26);
+    const furDark = shade(fur, -.2);
+    const furDeep = shade(fur, -.38);
+    const eyeLight = shade(eyes, .34);
+    const eyeDark = shade(eyes, -.28);
+    const whisker = luminance(fur) > .65 ? 'rgba(60,42,50,.5)' : 'rgba(255,255,255,.62)';
+    const uid = 'w' + Math.random().toString(36).slice(2, 8);
+
+    /* Türe göre alın/yanak desenleri; başın içine kırpılır. */
+    let marks = '';
+    if (['tekir', 'sarman', 'bengal'].includes(c.breed)) {
+      marks = `<g stroke="${patch2}" stroke-width="4.4" stroke-linecap="round" opacity=".5" fill="none">
+        <path d="M60 22v13"/><path d="M47 26c1 4 2.4 7.6 4.4 10.6"/><path d="M73 26c-1 4-2.4 7.6-4.4 10.6"/></g>`;
+    } else if (c.breed === 'siyam') {
+      marks = `<ellipse cx="60" cy="70" rx="19" ry="15" fill="${patch}" opacity=".88"/>`;
+    } else if (c.breed === 'van') {
+      marks = `<path d="M60 18c10 0 16 5.4 16 11.4 0 4.4-5 6.4-16 6.4s-16-2-16-6.4C44 23.4 50 18 60 18Z" fill="${patch}" opacity=".85"/>`;
+    } else if (c.breed === 'calico') {
+      marks = `<path d="M38 30c6-7 14-8.4 19 0-5 7-12 8.2-19 0Z" fill="${patch}" opacity=".9"/>
+        <path d="M82 30c-6-7-14-8.4-19 0 5 7 12 8.2 19 0Z" fill="${patch2}" opacity=".9"/>`;
+    } else if (c.breed === 'tuxedo') {
+      marks = `<path d="M60 34c6.4 0 10.4 6 10.4 13 0 6.4-4 11.4-10.4 16.4-6.4-5-10.4-10-10.4-16.4 0-7 4-13 10.4-13Z" fill="${belly}" opacity=".95"/>`;
+    } else if (c.breed === 'bombay') {
+      marks = `<ellipse cx="60" cy="60" rx="26" ry="22" fill="#000" opacity=".16"/>`;
+    } else if (c.breed === 'rus') {
+      marks = `<ellipse cx="60" cy="60" rx="26" ry="22" fill="#fff" opacity=".08"/>`;
+    } else if (c.breed === 'angora' || c.breed === 'persian') {
+      marks = `<path d="M30 66c4-4 8-4 12 0M78 66c4-4 8-4 12 0" stroke="${patch}" stroke-width="4" opacity=".35" stroke-linecap="round" fill="none"/>`;
+    }
+
+    const collar = c.collarOn
+      ? `<path d="M40 91 Q60 101 80 91" stroke="${c.collar || '#ff5f9e'}" stroke-width="6.4" stroke-linecap="round" fill="none"/>
+         <circle cx="60" cy="98" r="4.6" fill="#ffd45e" stroke="#b57a1c" stroke-width="1"/>
+         <path d="M58 97.4h4M60 99.4v1.6" stroke="#8f5c10" stroke-width="1" stroke-linecap="round"/>`
+      : '';
+
+    let hat = '';
+    if (S.theme === 'noel') {
+      hat = `<g>
+        <path d="M38 24 C 44 5 68 -1 82 9 C 88 13 90 20 87 26 C 70 15 52 15 38 24 Z" fill="#e8404e" stroke="#9c1f2b" stroke-width="1"/>
+        <path d="M36 25 Q60 13 88 27" stroke="#fff8f4" stroke-width="8.4" stroke-linecap="round" fill="none"/>
+        <circle cx="87" cy="11" r="6" fill="#fff8f4"/>
+        <circle cx="55" cy="14" r="1.3" fill="#fff" opacity=".85"/><circle cx="68" cy="10" r="1.1" fill="#fff" opacity=".7"/>
+      </g>`;
+    } else if (S.theme === 'halloween') {
+      hat = `<g>
+        <path d="M60 1 C 57 9 52 19 43 30 L77 30 C 69 19 64 9 62 1 Z" fill="#4b2f66" stroke="#2c1a3e" stroke-width="1"/>
+        <path d="M50 22 h20 l-2.4 8.4 H52.4 Z" fill="#2c1a3e"/>
+        <rect x="55" y="20.4" width="10" height="7" rx="1.6" fill="#f0c14b" stroke="#8f6a12" stroke-width=".8"/>
+        <ellipse cx="60" cy="30.4" rx="30" ry="6.4" fill="#3a2350"/>
+        <ellipse cx="60" cy="29.4" rx="27" ry="4.6" fill="#563370" opacity=".55"/>
+        <circle cx="61" cy="2.4" r="3" fill="#f0c14b"/>
+      </g>`;
+    } else if (S.theme === 'sakura') {
+      hat = `<g transform="translate(84 16)">
+        <g fill="#ff9ec6">
+          <ellipse cx="0" cy="-5.4" rx="3.3" ry="5"/>
+          <ellipse cx="5.1" cy="-1.6" rx="3.3" ry="5" transform="rotate(72 5.1 -1.6)"/>
+          <ellipse cx="3.2" cy="4.4" rx="3.3" ry="5" transform="rotate(144 3.2 4.4)"/>
+          <ellipse cx="-3.2" cy="4.4" rx="3.3" ry="5" transform="rotate(216 -3.2 4.4)"/>
+          <ellipse cx="-5.1" cy="-1.6" rx="3.3" ry="5" transform="rotate(288 -5.1 -1.6)"/>
+        </g>
+        <circle cx="0" cy="0" r="2.4" fill="#ffd86e"/>
+      </g>`;
+    }
+
+    return `<svg viewBox="0 0 120 132" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="${uid}f" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="${furLight}"/><stop offset=".55" stop-color="${fur}"/><stop offset="1" stop-color="${furDark}"/>
+        </linearGradient>
+        <radialGradient id="${uid}s" cx=".5" cy=".18" r=".85">
+          <stop offset="0" stop-color="rgba(255,255,255,.34)"/><stop offset=".6" stop-color="rgba(255,255,255,0)"/>
+        </radialGradient>
+        <radialGradient id="${uid}i" cx=".42" cy=".36" r=".8">
+          <stop offset="0" stop-color="${eyeLight}"/><stop offset=".62" stop-color="${eyes}"/><stop offset="1" stop-color="${eyeDark}"/>
+        </radialGradient>
+        <linearGradient id="${uid}e" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f7b9c6"/><stop offset="1" stop-color="#e88ba2"/>
+        </linearGradient>
+        <clipPath id="${uid}h"><path d="M60 18 C 81 18 97 34 97 56 C 97 77 81 92 60 92 C 39 92 23 77 23 56 C 23 34 39 18 60 18 Z"/></clipPath>
+      </defs>
+      <ellipse cx="60" cy="127" rx="35" ry="5" fill="rgba(0,0,0,.18)"/>
+      <path d="M85 116 C 103 112 108 95 96 88" stroke="url(#${uid}f)" stroke-width="10" stroke-linecap="round" fill="none"/>
+      <path d="M60 90 C 45 90 35 100 35 112 C 35 122 45 127 60 127 C 75 127 85 122 85 112 C 85 100 75 90 60 90 Z" fill="url(#${uid}f)"/>
+      <ellipse cx="60" cy="113" rx="13.5" ry="10" fill="${belly}" opacity=".94"/>
+      <ellipse cx="49" cy="123.5" rx="7.4" ry="4.6" fill="${belly}"/>
+      <ellipse cx="71" cy="123.5" rx="7.4" ry="4.6" fill="${belly}"/>
+      <path d="M46.4 122.4v2.6M49 122.2v2.9M51.6 122.4v2.6M68.4 122.4v2.6M71 122.2v2.9M73.6 122.4v2.6" stroke="${furDeep}" stroke-width=".9" stroke-linecap="round" opacity=".4"/>
+      <path d="M30 33 Q25 12 26 6 Q38 11 50 21 Z" fill="url(#${uid}f)"/>
+      <path d="M90 33 Q95 12 94 6 Q82 11 70 21 Z" fill="url(#${uid}f)"/>
+      <path d="M32 29 Q29.4 16.4 30.4 12.4 Q39 16.4 45 22 Z" fill="url(#${uid}e)" opacity=".9"/>
+      <path d="M88 29 Q90.6 16.4 89.6 12.4 Q81 16.4 75 22 Z" fill="url(#${uid}e)" opacity=".9"/>
+      <path d="M60 18 C 81 18 97 34 97 56 C 97 77 81 92 60 92 C 39 92 23 77 23 56 C 23 34 39 18 60 18 Z" fill="url(#${uid}f)"/>
+      <g clip-path="url(#${uid}h)">${marks}</g>
+      <path d="M60 18 C 81 18 97 34 97 56 C 97 77 81 92 60 92 C 39 92 23 77 23 56 C 23 34 39 18 60 18 Z" fill="url(#${uid}s)"/>
+      <ellipse cx="60" cy="72" rx="15.5" ry="11.4" fill="${belly}" opacity=".96"/>
+      <ellipse cx="37" cy="67" rx="6.4" ry="3.6" fill="#ff9db0" opacity=".34"/>
+      <ellipse cx="83" cy="67" rx="6.4" ry="3.6" fill="#ff9db0" opacity=".34"/>
+      <g class="eye">
+        <ellipse cx="45" cy="55" rx="9.6" ry="11" fill="url(#${uid}i)" stroke="rgba(24,14,22,.4)" stroke-width="1"/>
+        <ellipse cx="45" cy="56.4" rx="4.1" ry="7.6" fill="#1c141f"/>
+        <circle cx="42" cy="50.6" r="3" fill="#fff" opacity=".96"/>
+        <circle cx="48.4" cy="60" r="1.6" fill="#fff" opacity=".7"/>
+      </g>
+      <g class="eye">
+        <ellipse cx="75" cy="55" rx="9.6" ry="11" fill="url(#${uid}i)" stroke="rgba(24,14,22,.4)" stroke-width="1"/>
+        <ellipse cx="75" cy="56.4" rx="4.1" ry="7.6" fill="#1c141f"/>
+        <circle cx="72" cy="50.6" r="3" fill="#fff" opacity=".96"/>
+        <circle cx="78.4" cy="60" r="1.6" fill="#fff" opacity=".7"/>
+      </g>
+      <path d="M56 67.4 h8 c.9 0 1.4 1 .8 1.7 l-4 4.6 c-.4 .5 -1.2 .5 -1.6 0 l-4-4.6 c-.6-.7-.1-1.7 .8-1.7 Z" fill="#e08098" stroke="#b55a76" stroke-width=".7"/>
+      <path d="M60 73.4 v3 M60 76.4 q-3 3.4 -6.6 1.2 M60 76.4 q3 3.4 6.6 1.2" stroke="#5a3b45" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      <path d="M34 66 L14 62 M34 70 L13 70 M34 74 L15 78 M86 66 L106 62 M86 70 L107 70 M86 74 L105 78" stroke="${whisker}" stroke-width="1.5" stroke-linecap="round"/>
+      ${collar}
+      ${hat}
+    </svg>`;
+  }
+
+  function miniFaceSVG() {
+    return `<svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M11 17 Q8.4 7 9 4.4 Q15 7 20 12 Z" fill="currentColor"/>
+      <path d="M37 17 Q39.6 7 39 4.4 Q33 7 28 12 Z" fill="currentColor"/>
+      <path d="M24 10 C 33 10 39.5 16.6 39.5 25 C 39.5 33.4 33 39.5 24 39.5 C 15 39.5 8.5 33.4 8.5 25 C 8.5 16.6 15 10 24 10 Z" fill="currentColor"/>
+      <ellipse cx="18" cy="24.4" rx="2.7" ry="3.3" fill="rgba(22,13,22,.85)"/>
+      <ellipse cx="30" cy="24.4" rx="2.7" ry="3.3" fill="rgba(22,13,22,.85)"/>
+      <circle cx="17.1" cy="23.2" r=".9" fill="#fff" opacity=".9"/>
+      <circle cx="29.1" cy="23.2" r=".9" fill="#fff" opacity=".9"/>
+      <path d="M22.4 30 h3.2 l-1.6 2 Z" fill="rgba(22,13,22,.85)"/>
+    </svg>`;
+  }
+
+  function buildFace() {
+    const face = $('catFace');
+    if (face) face.innerHTML = faceSVG();
+    const logo = $('logo');
+    if (logo) logo.innerHTML = miniFaceSVG();
+  }
+
+  function makeIcon(size) {
+    const pal = PALETTES[S.theme][resolvedMode() === 'dark' ? 'dark' : 'light'];
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    const x = canvas.getContext('2d');
+    if (!x) return '';
+    const g = x.createLinearGradient(0, 0, size, size);
+    g.addColorStop(0, pal[7]);
+    g.addColorStop(1, pal[8]);
+    x.fillStyle = g;
+    x.beginPath();
+    const r = size * .22;
+    x.moveTo(r, 0);
+    x.arcTo(size, 0, size, size, r);
+    x.arcTo(size, size, 0, size, r);
+    x.arcTo(0, size, 0, 0, r);
+    x.arcTo(0, 0, size, 0, r);
+    x.closePath();
+    x.fill();
+    const glow = x.createRadialGradient(size * .3, size * .18, 2, size * .45, size * .4, size * .7);
+    glow.addColorStop(0, 'rgba(255,255,255,.5)');
+    glow.addColorStop(1, 'rgba(255,255,255,0)');
+    x.fillStyle = glow;
+    x.fillRect(0, 0, size, size);
+    const k = size / 64;
+    x.save();
+    x.translate(size * .18, size * .17);
+    x.scale(k * .64, k * .64);
+    x.fillStyle = 'rgba(255,255,255,.96)';
+    const head = new Path2D('M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z');
+    x.fill(head);
+    x.fillStyle = 'rgba(25,16,26,.82)';
+    x.beginPath(); x.ellipse(25, 35, 2.6, 3.2, 0, 0, Math.PI * 2); x.fill();
+    x.beginPath(); x.ellipse(39, 35, 2.6, 3.2, 0, 0, Math.PI * 2); x.fill();
+    x.fillStyle = 'rgba(200,110,140,.9)';
+    x.beginPath(); x.ellipse(32, 42, 2.2, 1.6, 0, 0, Math.PI * 2); x.fill();
+    x.restore();
+    return canvas.toDataURL('image/png');
+  }
+
+  function buildIcon() {
+    let i192 = '', i512 = '', i180 = '';
+    try { i192 = makeIcon(192); i512 = makeIcon(512); i180 = makeIcon(180); } catch (e) {}
+    const pal = PALETTES[S.theme][resolvedMode() === 'dark' ? 'dark' : 'light'];
+    const apple = $('appleIcon');
+    if (apple && i180) apple.href = i180;
+    const link = $('manifestLink');
+    if (link) {
+      const dir = new URL('./', document.baseURI).href;
+      const manifest = {
+        id: dir + 'widget.html',
+        name: tr('Vespır Widget', 'Vespır Widget'),
+        short_name: 'Vespır',
+        description: tr('Bugünkü odağını, hedefini ve Vespır’ın mesajlarını gösteren küçük kart.', 'A small card with today’s focus, your goal and messages from Vespır.'),
+        start_url: dir + 'widget.html',
+        scope: dir,
+        display: 'standalone',
+        display_override: ['standalone', 'minimal-ui'],
+        orientation: 'portrait',
+        background_color: pal[0],
+        theme_color: pal[0],
+        lang: S.lang,
+        categories: ['productivity', 'lifestyle'],
+        icons: [
+          { src: i192, sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: i512, sizes: '512x512', type: 'image/png', purpose: 'any' }
+        ].filter((i) => i.src)
+      };
+      try {
+        if (link.dataset.url) URL.revokeObjectURL(link.dataset.url);
+        const url = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }));
+        link.href = url;
+        link.dataset.url = url;
+      } catch (e) {}
+    }
+  }
+
+  function refreshCopy() {
+    EN = S.lang === 'en';
+    document.title = tr('Vespır Widget', 'Vespır Widget');
+    document.documentElement.lang = S.lang;
+    const tagline = $('tagline');
+    if (tagline) tagline.textContent = tr('odak arkadaşın', 'your focus friend');
+    const open = $('openText');
+    if (open) open.textContent = tr('Vespır’ı aç', 'Open Vespır');
+    const back = $('backApp');
+    if (back) back.textContent = tr('Uygulamaya dön', 'Back to the app');
+    const install = $('installText');
+    if (install) install.textContent = tr('Ana ekrana ekle', 'Add to Home Screen');
+    const mark = $('mark');
+    if (mark) mark.textContent = tr('Vespır · widget', 'Vespır · widget');
+    const desc = $('metaDesc');
+    if (desc) desc.setAttribute('content', tr('Vespır widget’ı: bugünkü odağını, kalan süreni ve Vespır’ın mesajlarını gösteren küçük kart.', 'The Vespır widget: a small card with today’s focus, your remaining time and messages from Vespır.'));
+    const aria = $('widgetAria');
+    if (aria) aria.setAttribute('aria-label', tr('Vespır widget’ı', 'Vespır widget'));
+    setInstallHint();
+  }
+
+  function setInstallHint() {
+    const hint = $('installHint');
+    if (!hint) return;
+    const standalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    if (standalone) { hint.innerHTML = ''; return; }
+    const ua = navigator.userAgent || '';
+    const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const android = /Android/i.test(ua);
+    if (deferredPrompt) {
+      hint.innerHTML = tr('Tek dokunuşla ekle; Vespır widget’ı ana ekranında seni beklesin.', 'One tap to install; let the Vespır widget wait for you on your home screen.');
+    } else if (ios) {
+      hint.innerHTML = tr('Safari’de <b>Paylaş</b> → <b>Ana Ekrana Ekle</b> yolunu kullan. Widget kendi simgesiyle açılır.', 'In Safari, use <b>Share</b> → <b>Add to Home Screen</b>. The widget opens with its own icon.');
+    } else if (android) {
+      hint.innerHTML = tr('Chrome menüsünden <b>Uygulamayı yükle</b> ya da <b>Ana ekrana ekle</b> seçeneğini seç.', 'From the Chrome menu, choose <b>Install app</b> or <b>Add to Home screen</b>.');
+    } else {
+      hint.innerHTML = tr('Adres çubuğundaki yükle simgesini kullan ya da tarayıcı menüsünden <b>Yükle</b> seç.', 'Use the install icon in the address bar, or choose <b>Install</b> from the browser menu.');
+    }
+  }
+
+  function timerView() {
+    const t = S.timer;
+    if (!t || !t.running) return null;
+    const end = Number(t.endAt) || 0;
+    if (!end) return null;
+    const left = Math.max(0, (end - Date.now()) / 1000);
+    if (left <= 0) {
+      const endedAt = end;
+      if (Date.now() - endedAt < 300000) {
+        return { ended: true, left: 0, total: Number(t.total) || 0, phase: t.phase === 'break' ? 'break' : 'focus' };
+      }
+      return null;
+    }
+    if (left > 86400) return null;
+    return {
+      left,
+      total: Math.max(1, Number(t.total) || left),
+      phase: t.phase === 'break' ? 'break' : 'focus'
+    };
+  }
+
+  function fmtClock(sec) {
+    const s = Math.max(0, Math.ceil(sec));
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return String(m).padStart(2, '0') + ':' + String(r).padStart(2, '0');
+  }
+
+  function greeting() {
+    const h = new Date().getHours();
+    if (h >= 5 && h < 12) return tr('Günaydın', 'Good morning');
+    if (h >= 12 && h < 18) return tr('İyi günler', 'Good afternoon');
+    if (h >= 18 && h < 23) return tr('İyi akşamlar', 'Good evening');
+    return tr('İyi geceler', 'Good night');
+  }
+
+  function buildPool() {
+    const miss = tr('Seni özledim, gel.', 'I miss you, come back.');
+    const out = [miss];
+    const add = (v) => {
+      if (typeof v !== 'string') return;
+      const s = v.replace(/\s+/g, ' ').trim();
+      if (s && !out.includes(s)) out.push(s);
+    };
+    (THEME_LINES[S.theme] && THEME_LINES[S.theme][S.lang] || []).forEach(add);
+    if (prefsLang === S.lang) {
+      prefsWeather.forEach(add);
+      prefsLines.forEach(add);
+    }
+    (COMMON_LINES[S.lang] || []).forEach(add);
+    pool = out.slice(0, 14);
+    if (msgIndex >= pool.length) msgIndex = 0;
+  }
+
+  function setText(el, text, animate) {
+    if (!el) return;
+    if (el.textContent === text) return;
+    el.textContent = text;
+    if (animate) {
+      el.classList.remove('swap');
+      void el.offsetWidth;
+      el.classList.add('swap');
+    }
+  }
+
+  function isMissLine(text) {
+    return text === tr('Seni özledim, gel.', 'I miss you, come back.');
+  }
+
+  function currentMessage(skipMiss) {
+    if (!pool.length) return tr('Seni özledim, gel.', 'I miss you, come back.');
+    let i = msgIndex % pool.length;
+    if (skipMiss && pool.length > 1 && isMissLine(pool[i])) i = (i + 1) % pool.length;
+    return pool[i];
+  }
+
+  function setGoal(p) {
+    const fill = $('goalFill');
+    if (fill) fill.style.transform = 'scaleX(' + Math.max(0, Math.min(1, p)).toFixed(3) + ')';
+  }
+
+  function render() {
+    const view = timerView();
+    const num = $('statNum');
+    const unit = $('statUnit');
+    const label = $('statLabel');
+    const chip = $('phaseChip');
+    const head = $('message');
+    const sub = $('subline');
+    const goalText = $('goalText');
+    const goalPct = $('goalPct');
+    const body = document.body;
+    if (!num || !head || !sub) return;
+
+    if (view && !view.ended) {
+      body.classList.add('running');
+      num.classList.add('is-clock');
+      setText(num, fmtClock(view.left), false);
+      unit.textContent = '';
+      chip.textContent = view.phase === 'focus' ? tr('Odak', 'Focus') : tr('Mola', 'Break');
+      label.textContent = view.phase === 'focus'
+        ? tr('odak · kalan süre', 'focus · time left')
+        : tr('mola · kalan süre', 'break · time left');
+      const done = Math.max(0, Math.min(1, 1 - view.left / view.total));
+      setGoal(done);
+      if (goalText) goalText.textContent = S.sessionName || tr('Derin Odak', 'Deep Focus');
+      if (goalPct) goalPct.textContent = '%' + Math.round(done * 100);
+      setText(head, currentMessage(true), false);
+      sub.textContent = tr('Sen odaklan, ben yanındayım.', 'You focus, I’m right here with you.');
+    } else if (view && view.ended) {
+      body.classList.remove('running');
+      num.classList.remove('is-clock');
+      setText(num, '0:00', false);
+      unit.textContent = '';
+      chip.textContent = tr('Bitti', 'Done');
+      label.textContent = tr('süre doldu', 'time’s up');
+      setGoal(1);
+      if (goalText) goalText.textContent = S.sessionName || tr('Derin Odak', 'Deep Focus');
+      if (goalPct) goalPct.textContent = '%100';
+      setText(head, tr('Süre doldu! Harika iş çıkardın.', 'Time’s up! Great work.'), false);
+      sub.textContent = tr('Şimdi Vespır seni bekliyor.', 'Vespır is waiting for you now.');
+    } else {
+      body.classList.remove('running');
+      num.classList.remove('is-clock');
+      const minutes = Math.floor(S.stats.sec / 60);
+      setText(num, String(minutes), false);
+      unit.textContent = tr('dk', 'min');
+      chip.textContent = tr('Vespır’dan', 'From Vespır');
+      label.textContent = tr('bugünkü odak', 'today’s focus');
+      const pct = Math.min(1, minutes / S.dailyGoal);
+      setGoal(pct);
+      if (goalText) {
+        goalText.textContent = tr('hedef ', 'goal ') + S.dailyGoal + tr(' dk', ' min') +
+          (S.stats.sessions ? ' · ' + S.stats.sessions + tr(' tur', ' rounds') : '');
+      }
+      if (goalPct) goalPct.textContent = '%' + Math.round(pct * 100);
+      setText(head, currentMessage(), false);
+      sub.textContent = greeting() + '. ' + tr('Vespır seni bekliyor.', 'Vespır is waiting for you.');
+    }
+  }
+
+  function rotateMessage() {
+    if (!pool.length || document.hidden) return;
+    msgIndex = (msgIndex + 1) % pool.length;
+    const view = timerView();
+    setText($('message'), currentMessage(!!view && !view.ended), true);
+  }
+
+  function restartRotation() {
+    clearInterval(messageTimer);
+    messageTimer = setInterval(rotateMessage, 9000);
+  }
+
+  async function loadPrefs() {
+    if (!('caches' in window)) return;
+    try {
+      const key = new URL('./__vespir-message-prefs', document.baseURI).href;
+      const cache = await caches.open('vespir-prefs');
+      const res = await cache.match(key);
+      const data = res ? await res.json() : null;
+      const enabled = data && data.enabled;
+      prefsLines = enabled && Array.isArray(data.lines) ? data.lines.filter((v) => typeof v === 'string') : [];
+      const weatherAge = data ? Date.now() - Number(data.weatherAt) : Infinity;
+      prefsWeather = enabled && weatherAge >= 0 && weatherAge < 3 * 3600000 && Array.isArray(data.weatherLines)
+        ? data.weatherLines.filter((v) => typeof v === 'string') : [];
+      prefsLang = enabled ? (data.lang === 'en' ? 'en' : (data.lang === 'tr' ? 'tr' : '')) : '';
+      buildPool();
+      render();
+    } catch (e) {}
+  }
+
+  function refreshState(force) {
+    const raw = storedRaw();
+    const day = todayKey();
+    if (!force && raw === lastStateRaw && day === lastStateDay) return false;
+    lastStateRaw = raw;
+    lastStateDay = day;
+    const prevCat = JSON.stringify(S.cat);
+    const prevTheme = S.theme;
+    const prevMode = S.mode;
+    const prevThemeLang = S.theme + '|' + S.lang;
+    S = readState();
+    if (prevTheme !== S.theme || prevMode !== S.mode || prevThemeLang !== S.theme + '|' + S.lang) {
+      applyTheme();
+      buildPool();
+      render();
+      restartRotation();
+    } else {
+      if (prevCat !== JSON.stringify(S.cat)) buildFace();
+      render();
+    }
+    return true;
+  }
+
+  let installBound = false;
+  function bind() {
+    const install = $('installBtn');
+    if (install && !installBound) {
+      installBound = true;
+      install.addEventListener('click', async () => {
+        if (deferredPrompt) {
+          try {
+            deferredPrompt.prompt();
+            const choice = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            setInstallHint();
+            if (choice && choice.outcome === 'accepted') {
+              install.textContent = tr('Ana ekrana eklendi', 'Added to Home Screen');
+              setTimeout(() => { install.textContent = tr('Ana ekrana ekle', 'Add to Home Screen'); }, 2600);
+            }
+          } catch (e) {}
+        } else {
+          const hint = $('installHint');
+          if (hint) {
+            hint.classList.remove('swap');
+            void hint.offsetWidth;
+            hint.classList.add('swap');
+          }
+          setInstallHint();
+        }
+      });
+    }
+  }
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    setInstallHint();
+  });
+  window.addEventListener('appinstalled', () => {
+    deferredPrompt = null;
+    setInstallHint();
+  });
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'vespir.v1' || e.key === null) refreshState(true);
+  });
+  if (window.matchMedia) {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const onScheme = () => { if (S.mode === 'auto') applyTheme(); };
+    if (mq.addEventListener) mq.addEventListener('change', onScheme);
+    else if (mq.addListener) mq.addListener(onScheme);
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      refreshState(true);
+      render();
+      loadPrefs();
+    }
+  });
+
+  if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
+    document.body.classList.add('standalone');
+  }
+
+  /* Widget yalnızca telefonlarda gösterilir. */
+  (function () {
+    const ua = navigator.userAgent || '';
+    const phone = /iPhone|iPod|Windows Phone/i.test(ua) || (/Android/i.test(ua) && /Mobile/i.test(ua)) ||
+      (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) <= 540);
+    if (phone || new URLSearchParams(location.search).has('preview')) return;
+    document.body.classList.add('not-phone');
+    const p = document.getElementById('phoneOnly');
+    if (p) p.textContent = (document.documentElement.dataset.lang === 'en')
+      ? 'The Vespır widget is made for phones. Open this page on your phone to add it to your home screen.'
+      : 'Vespır widget’ı yalnızca telefon içindir. Ana ekranına eklemek için bu sayfayı telefonunda aç.';
+  })();
+  lastStateRaw = storedRaw();
+  lastStateDay = todayKey();
+  applyTheme();
+  buildPool();
+  render();
+  restartRotation();
+  bind();
+  setInstallHint();
+  loadPrefs();
+  /* Sekme gizliyken döngüler boşuna çalışmasın; görünür olunca visibilitychange zaten yeniler. */
+  setInterval(() => { if (!document.hidden) refreshState(false); }, 2000);
+  setInterval(() => { if (!document.hidden) render(); }, 1000);
+  setInterval(() => { if (!document.hidden) loadPrefs(); }, 30000);
+
+  if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .then(() => navigator.serviceWorker.ready)
+      .then((reg) => {
+        if (reg.active) reg.active.postMessage({ type: 'CACHE_SHELL', url: location.href.split(/[?#]/)[0] });
+      })
+      .catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>

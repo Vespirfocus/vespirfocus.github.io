@@ -10,16 +10,45 @@
    sayfanın en son açıldığı andaki eski veriye bağımlı değildir. Bunun için tercih kaydında
    yalnızca 0,1° (~10 km) yuvarlanmış yaklaşık koordinat tutulur. */
 
-const APP_CACHE = 'vespir-app-v2';
+const APP_CACHE = 'vespir-app-v5';
+const SHELL_PATHS = ['index.html', 'widget.html'];
 
-self.addEventListener('install', () => self.skipWaiting());
+async function fetchWithDeadline(input, options = {}, delay = 5000) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), delay);
+  try { return await fetch(input, { ...options, signal: controller.signal }); }
+  finally { clearTimeout(timeout); }
+}
+
+self.addEventListener('install', (e) => e.waitUntil((async () => {
+  /* Güncelleme çevrimdışıyken gelse bile önce önceki kabuğu güvenceye al. */
+  try {
+    const cache = await caches.open(APP_CACHE);
+    const oldKeys = (await caches.keys()).filter((k) => k.startsWith('vespir-app-') && k !== APP_CACHE).reverse();
+    for (const key of oldKeys) {
+      const old = await caches.open(key);
+      for (const request of await old.keys()) {
+        if (!(await cache.match(request))) {
+          const response = await old.match(request);
+          if (response) await cache.put(request, response);
+        }
+      }
+    }
+    await Promise.all(SHELL_PATHS.map((path) => cacheShell(new URL(path, self.registration.scope).href)));
+  } catch (err) {}
+  await self.skipWaiting();
+})()));
 self.addEventListener('activate', (e) => e.waitUntil((async () => {
   await self.clients.claim();
-  /* Eski sürümün uygulama kabuğu kalmasın; mesaj tercihleri (vespir-prefs) korunur. */
-  const keys = await caches.keys();
-  await Promise.all(keys
-    .filter((k) => k.indexOf('vespir-app-') === 0 && k !== APP_CACHE)
-    .map((k) => caches.delete(k)));
+  try {
+    const cache = await caches.open(APP_CACHE);
+    const ready = await Promise.all(SHELL_PATHS.map((path) => cache.match(new URL(path, self.registration.scope).href)));
+    if (!ready.every(Boolean)) return;
+    const keys = await caches.keys();
+    await Promise.all(keys
+      .filter((k) => k.startsWith('vespir-app-') && k !== APP_CACHE)
+      .map((k) => caches.delete(k)));
+  } catch (err) {}
 })()));
 
 /* "/" ve "/index.html" aynı sayfadır; ikisi de önbelleğe yazılır ki
@@ -30,6 +59,20 @@ function shellKeys(url) {
   if (base.endsWith('/')) keys.push(new Request(base + 'index.html', { method: 'GET' }));
   else if (base.endsWith('/index.html')) keys.push(new Request(base.slice(0, -'index.html'.length), { method: 'GET' }));
   return keys;
+}
+
+/* Bildirim ve mesajlardan gelen adresleri uygulamanın kendi kaynağına sabitler.
+   Aksi hâlde bozulmuş bir tercih kaydı kullanıcıyı başka bir siteye açabilirdi. */
+function safeAppUrl(raw) {
+  try {
+    const url = new URL(raw || '', self.registration.scope);
+    const scope = new URL(self.registration.scope);
+    if (url.origin !== self.location.origin) return self.registration.scope;
+    if (!url.pathname.startsWith(scope.pathname)) return self.registration.scope;
+    return url.href;
+  } catch (e) {
+    return self.registration.scope;
+  }
 }
 
 async function putShell(url, res) {
@@ -43,14 +86,19 @@ async function cacheShell(rawUrl) {
     const url = new URL(rawUrl, self.registration.scope);
     if (url.origin !== self.location.origin) return;
     if (!url.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
-    const res = await fetch(url.href, { cache: 'reload', credentials: 'same-origin' });
+    const res = await fetchWithDeadline(url.href, { cache: 'reload', credentials: 'same-origin' });
     if (!res || !res.ok) return;
     await putShell(url, res);
   } catch (e) {}
 }
 
-/* Sayfa, bekleyen güncel worker'ı hemen devreye almak için SKIP_WAITING yollar. */
+/* Sayfa, bekleyen güncel worker'ı hemen devreye almak için SKIP_WAITING yollar.
+   Yalnızca uygulamanın kendi penceresinden gelen mesajlar kabul edilir. */
 self.addEventListener('message', (e) => {
+  if (e.origin && e.origin !== self.location.origin) return;
+  try {
+    if (e.source && e.source.url && new URL(e.source.url).origin !== self.location.origin) return;
+  } catch (err) { return; }
   const data = e.data || {};
   if (data.type === 'SKIP_WAITING') self.skipWaiting();
   if (data.type === 'CACHE_SHELL' && typeof data.url === 'string') {
@@ -63,21 +111,25 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET' || req.mode !== 'navigate') return;
   const url = new URL(req.url);
-  if (url.origin !== self.location.origin) return;
+  if (url.origin !== self.location.origin || !url.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
   e.respondWith((async () => {
+    let networkResponse;
     try {
-      const res = await fetch(req);
+      const res = await fetchWithDeadline(req);
       if (res && res.ok) e.waitUntil(putShell(url, res.clone()).catch(() => {}));
-      return res;
-    } catch (err) {
+      if (res && res.status < 500) return res;
+      networkResponse = res;
+    } catch (err) {}
+    try {
       const cache = await caches.open(APP_CACHE);
       const cached = await cache.match(req, { ignoreSearch: true, ignoreVary: true });
       if (cached) return cached;
-      return new Response('<!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vespır çevrimdışı</title><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#fdf3f7;color:#5b4652;font:16px/1.6 system-ui,sans-serif;text-align:center;padding:24px"><div><h1 style="margin:0 0 8px">Vespır şu an çevrimdışı</h1><p style="margin:0">Bağlantı gelince sayfayı yenile; patiler seni bekliyor.</p></div></body></html>', {
+    } catch (err) {}
+    if (networkResponse) return networkResponse;
+    return new Response('<!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vespır çevrimdışı</title><body style="margin:0;min-height:100vh;display:grid;place-items:center;background:#fdf3f7;color:#5b4652;font:16px/1.6 system-ui,sans-serif;text-align:center;padding:24px"><div><h1 style="margin:0 0 8px">Vespır şu an çevrimdışı</h1><p style="margin:0">Bağlantı gelince sayfayı yenile; patiler seni bekliyor.</p></div></body></html>', {
         status: 503,
         headers: { 'Content-Type': 'text/html; charset=utf-8' }
       });
-    }
   })());
 });
 
@@ -127,10 +179,51 @@ const WEATHER_ALERTS = {
 };
 
 const HELLO_LINES_FALLBACK = ['Seni özledim. Gel, birlikte çalışalım.'];
+const HELLO_LINES_FALLBACK_EN = ['I miss you. Come, let’s work together.'];
 const TIME_LINES = {
   morning: ['Sabahın tazeliğiyle kısa bir tura ne dersin?', 'Güne küçük bir zaferle başlamak için harika bir saat.'],
   noon: ['Öğleden sonra toparlanmak için kısa bir tur yeter.', 'Kahven hazırsa kitabım da hazır. Bekliyorum.'],
   evening: ['Akşam sakinliğinde günü güzel bir odakla taçlandıralım mı?', 'Televizyon biraz bekleyebilir; önce senin hedefin.']
+};
+const TIME_LINES_EN = {
+  morning: ['How about a short round with the freshness of morning?', 'A great hour to start the day with a small win.'],
+  noon: ['A short round is enough to reset the afternoon.', 'If your coffee is ready, so is my book. I’m waiting.'],
+  evening: ['Shall we crown the day with a gentle evening focus?', 'TV can wait a little; your goal comes first.']
+};
+
+/* Aynı hava uyarıları, İngilizce. Sayfa tercihleri İngilizceyse bunlar kullanılır. */
+const WEATHER_ALERTS_EN = {
+  rain: [
+    'It’s raining outside; don’t forget your umbrella before you head out.',
+    'Rainy weather. Remember to take your jacket or umbrella with you.',
+    'It’s raining, keep an umbrella with you today.'
+  ],
+  drizzle: [
+    'There’s a light drizzle; don’t forget your jacket or umbrella.',
+    'Drizzly weather. Check your umbrella before you leave.'
+  ],
+  storm: [
+    'There’s a storm; take your umbrella and jacket if you’re going out.',
+    'The weather looks rough. Take precautions before you step out, paw friend.'
+  ],
+  snow: [
+    'It’s snowing heavily outside! Don’t forget your thick coat and boots. ❄️',
+    'It may be snowy and icy today. Be careful while walking.',
+    'It’s snowing! Grab your scarf and beanie before you go out.'
+  ],
+  clear_hot: [
+    'The sky is perfectly clear and it’s quite hot. You might want your sunglasses! ☀️',
+    'A sunny, hot day. Don’t forget water if you’re heading out.',
+    'The sun is winking. It’s a wonderful day out there.'
+  ],
+  fog: [
+    'There’s thick fog outside and visibility is low. Be careful. 🌫️',
+    'A foggy day. Take extra care if you’re on the road.'
+  ],
+  windy: [
+    'The wind is blowing hard. Remember to put on something warm. 💨',
+    'It’s quite windy. Dress warmly before you go out.'
+  ]
 };
 
 function pickLine(list) {
@@ -164,10 +257,11 @@ async function savePrefs(patch) {
   } catch (e) {}
 }
 
-function timeBucket(hour) {
-  if (hour >= 5 && hour < 12) return TIME_LINES.morning;
-  if (hour >= 12 && hour < 18) return TIME_LINES.noon;
-  if (hour >= 18 && hour < 23) return TIME_LINES.evening;
+function timeBucket(hour, lang) {
+  const pool = lang === 'en' ? TIME_LINES_EN : TIME_LINES;
+  if (hour >= 5 && hour < 12) return pool.morning;
+  if (hour >= 12 && hour < 18) return pool.noon;
+  if (hour >= 18 && hour < 23) return pool.evening;
   return [];
 }
 
@@ -182,7 +276,13 @@ function isQuiet(hour) {
 
 async function anyVisibleWindow() {
   const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-  return wins.some((c) => c.visibilityState === 'visible');
+  return wins.some((c) => {
+    try {
+      const url = new URL(c.url);
+      return c.visibilityState === 'visible' && url.origin === self.location.origin &&
+        url.pathname.startsWith(new URL(self.registration.scope).pathname);
+    } catch (err) { return false; }
+  });
 }
 
 /* Sayfadaki weatherKind / weatherAlertKind ile aynı sınıflandırma (WMO kodları). */
@@ -206,7 +306,8 @@ function alertKind(w) {
 
 /* Worker uyandığında güncel havayı kendisi alır. Başarısızsa null döner. */
 async function fetchWeatherNow(geo) {
-  if (!geo || !Number.isFinite(Number(geo.lat)) || !Number.isFinite(Number(geo.lon))) return null;
+  if (!geo || typeof geo.lat !== 'number' || typeof geo.lon !== 'number' ||
+      !Number.isFinite(geo.lat) || !Number.isFinite(geo.lon) || Math.abs(geo.lat) > 90 || Math.abs(geo.lon) > 180) return null;
   const ctrl = new AbortController();
   const stop = setTimeout(() => ctrl.abort(), 8000);
   try {
@@ -251,17 +352,24 @@ async function maybeWeatherAlert(prefs, now, hour) {
     return false;
   }
 
+  const latest = await readPrefs();
+  if (!latest || !latest.enabled || self.Notification.permission !== 'granted' ||
+      isQuiet(new Date().getHours()) || await anyVisibleWindow()) return false;
+  if (JSON.stringify(latest.geo) !== JSON.stringify(prefs.geo)) return false;
+  prefs = latest;
+  if (prefs.umbrellaDay === localDay(Date.now())) return false;
   if (!condition || !WEATHER_ALERTS[condition]) {
     await savePrefs({ umbrellaCheckedAt: now });
     return false;
   }
 
+  const alerts = prefs.lang === 'en' ? WEATHER_ALERTS_EN : WEATHER_ALERTS;
   await self.registration.showNotification(prefs.name || 'Vespır', {
-    body: pickLine(WEATHER_ALERTS[condition]),
+    body: pickLine((alerts[condition] || WEATHER_ALERTS[condition])),
     icon: prefs.icon || undefined,
     badge: prefs.icon || undefined,
     tag: UMBRELLA_TAG,
-    data: { url: prefs.url || self.registration.scope }
+    data: { url: safeAppUrl(prefs.url || self.registration.scope) }
   });
   await savePrefs({ umbrellaDay: today, umbrellaCheckedAt: now });
   return true;
@@ -269,11 +377,16 @@ async function maybeWeatherAlert(prefs, now, hour) {
 
 /* Genel mesaj (özlem / davet / hava). En az MSG_GAP aralıkla. */
 async function maybeHello(prefs, now, hour) {
+  prefs = await readPrefs();
+  if (!prefs || !prefs.enabled || self.Notification.permission !== 'granted' || isQuiet(new Date().getHours())) return false;
   if (now - (Number(prefs.lastMsgAt) || 0) < MSG_GAP) return false;
   if (await anyVisibleWindow()) return false;
 
-  let pool = Array.isArray(prefs.lines) && prefs.lines.length ? prefs.lines.slice() : HELLO_LINES_FALLBACK.slice();
-  pool = pool.concat(timeBucket(hour));
+  const en = prefs.lang === 'en';
+  let pool = Array.isArray(prefs.lines) && prefs.lines.length
+    ? prefs.lines.slice()
+    : (en ? HELLO_LINES_FALLBACK_EN : HELLO_LINES_FALLBACK).slice();
+  pool = pool.concat(timeBucket(hour, prefs.lang));
   const weatherPool = Array.isArray(prefs.weatherLines) ? prefs.weatherLines : [];
   if (weatherPool.length && now - (Number(prefs.weatherAt) || 0) < WEATHER_FRESH && Math.random() < .4) {
     pool = weatherPool.slice();
@@ -284,7 +397,7 @@ async function maybeHello(prefs, now, hour) {
     icon: prefs.icon || undefined,
     badge: prefs.icon || undefined,
     tag: HELLO_TAG,
-    data: { url: prefs.url || self.registration.scope }
+    data: { url: safeAppUrl(prefs.url || self.registration.scope) }
   });
   await savePrefs({ lastMsgAt: now });
   return true;
@@ -311,7 +424,7 @@ self.addEventListener('periodicsync', (e) => {
 
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
-  const url = (e.notification.data && e.notification.data.url) || self.registration.scope;
+  const url = safeAppUrl((e.notification.data && e.notification.data.url) || self.registration.scope);
   e.waitUntil((async () => {
     const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     let target;
@@ -320,7 +433,7 @@ self.addEventListener('notificationclick', (e) => {
       /* Sorgu farkı (ör. ?src=pwa) aynı uygulama penceresi sayılsın. */
       try {
         const current = new URL(c.url);
-        if (target && current.origin === target.origin && current.pathname === target.pathname && 'focus' in c) return c.focus();
+        if (target && current.origin === target.origin && current.pathname.replace(/\/index\.html$/, '/') === target.pathname.replace(/\/index\.html$/, '/') && 'focus' in c) return c.focus();
       } catch (err) {}
     }
     if (self.clients.openWindow) return self.clients.openWindow(url);
