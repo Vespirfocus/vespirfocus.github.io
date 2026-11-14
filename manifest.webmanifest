@@ -1,0 +1,29 @@
+{
+  "id": "./",
+  "name": "Vespır — Odak Arkadaşı",
+  "short_name": "Vespır",
+  "description": "3B kedili, Liquid Glass tasarımlı odak arkadaşı. Kedi uyur, kitap okur, miyavlar; sen odaklanırsın.",
+  "lang": "tr",
+  "dir": "ltr",
+  "start_url": "./?src=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "prefer_related_applications": false,
+  "background_color": "#050e16",
+  "theme_color": "#050e16",
+  "categories": ["productivity", "lifestyle"],
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Odağı başlat",
+      "short_name": "Başla",
+      "url": "./index.html?start=1&nointro",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

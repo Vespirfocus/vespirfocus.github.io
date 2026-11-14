@@ -8,6 +8,7 @@
 <meta name="description" content="Vespır: 3B kedili, Liquid Glass tasarımlı bir odak arkadaşı. Kedi uyur, kitap okur, miyavlar; sen odaklanırsın.">
 <title>Vespır - En İyi Dostun</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23fdf3f7'/%3E%3Cpath d='M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z' fill='%23c96a8c'/%3E%3Ccircle cx='25' cy='36' r='2.6' fill='%232b2230'/%3E%3Ccircle cx='39' cy='36' r='2.6' fill='%232b2230'/%3E%3Cpath d='M30 42h4l-2 3z' fill='%232b2230'/%3E%3C/svg%3E">
+<link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" id="appleIcon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23fdf3f7'/%3E%3Cpath d='M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z' fill='%23c96a8c'/%3E%3C/svg%3E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -132,59 +133,19 @@
       var savedLang = 'tr';
       try { savedLang = (JSON.parse(localStorage.getItem('vespir.v1') || '{}') || {}).lang === 'en' ? 'en' : 'tr'; } catch (e0) {}
       var en = savedLang === 'en';
-      /* Widget kısayolu yalnızca telefonlara eklenir; masaüstü kurulumunda görünmez. */
-      var isPhone = /iPhone|iPod|Windows Phone/i.test(navigator.userAgent)
-        || (/Android/i.test(navigator.userAgent) && /Mobile/i.test(navigator.userAgent))
-        || (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) <= 540);
-      var i192 = icon(192, false);
-      var i256 = icon(256, false);
-      var i512 = icon(512, false);
-      var i512m = icon(512, true);
-      /* iOS kendi yuvarlatmasını uygular; saydam köşe bırakmamak için tam taşan sürüm. */
+      /* Manifest artık manifest.webmanifest dosyasından geliyor; burada yalnızca
+         iOS'un ana ekran simgesi üretilir. Üç büyük simgeyi her açılışta yeniden
+         çizmek de gereksiz bir başlangıç maliyetiydi. */
       var i180 = icon(180, true);
-      var manifest = {
-        id: base,
-        name: en ? 'Vespır — Focus Companion' : 'Vespır — Odak Arkadaşı',
-        short_name: 'Vespır',
-        description: en
-          ? 'A focus companion with a 3D cat and a Liquid Glass design. She sleeps, reads and meows while you focus.'
-          : '3B kedili, Liquid Glass tasarımlı odak arkadaşı. Kedi uyur, kitap okur, miyavlar; sen odaklanırsın.',
-        lang: savedLang,
-        dir: 'ltr',
-        start_url: base + '?src=pwa',
-        scope: scope,
-        display: 'standalone',
-        display_override: ['standalone', 'minimal-ui'],
-        background_color: '#fdf3f7',
-        theme_color: '#050e16',
-        categories: ['productivity', 'lifestyle'],
-        icons: [
-          { src: i192, sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: i256, sizes: '256x256', type: 'image/png', purpose: 'any' },
-          { src: i512, sizes: '512x512', type: 'image/png', purpose: 'any' },
-          { src: i512m, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
-        ],
-        shortcuts: (function () {
-          var s = [{
-            name: en ? 'Start focusing' : 'Odağı başlat',
-            short_name: en ? 'Start' : 'Başla',
-            url: base + '?start=1&nointro',
-            icons: [{ src: i192, sizes: '192x192', type: 'image/png' }]
-          }];
-          if (isPhone) s.push({
-            name: en ? 'Vespır widget' : 'Vespır widget',
-            short_name: en ? 'Widget' : 'Widget',
-            description: en ? 'A themed Vespır card with messages from your cat.' : 'Temaya uyumlu, Vespır mesajları gösteren kart.',
-            url: new URL('widget.html', base).href,
-            icons: [{ src: i192, sizes: '192x192', type: 'image/png' }]
-          });
-          return s;
-        })()
-      };
-      var link = document.createElement('link');
-      link.rel = 'manifest';
-      link.href = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }));
-      document.head.appendChild(link);
+      /* Gerçek manifest dosyası <head> içinde bağlı. Blob manifest ve data:
+         simgeler Android'de WebAPK kurulumunu engelleyip uygulamayı kısayola
+         düşürüyordu; kısayolun silinmesi de telefonda tuhaflığa yol açıyordu. */
+      if (!document.querySelector('link[rel="manifest"][href*="manifest.webmanifest"]')) {
+        var link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = 'manifest.webmanifest';
+        document.head.appendChild(link);
+      }
       var apple = document.getElementById('appleIcon');
       if (apple) apple.href = i180;
       document.documentElement.dataset.pwa = 'ready';
@@ -193,6 +154,13 @@
 </script>
 <script>
   (function () {
+    /* Cihaz gücü: düşük bellekli telefonlarda ağır arka plan süslemeleri
+       kapanır (CSS tarafında html[data-lowfx="1"]). Ana animasyonlar kalır. */
+    try {
+      var dm = navigator.deviceMemory || 8;
+      var coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;
+      document.documentElement.dataset.lowfx = (coarse && dm <= 4) ? '1' : '0';
+    } catch (eL) {}
     try {
       var raw = localStorage.getItem('vespir.v1');
       if (!raw) return;
@@ -1032,7 +1000,7 @@ main.app input, main.app textarea { user-select: text; -webkit-user-select: text
 @keyframes cardSheen { 0%, 55% { transform: rotate(-8deg) translateX(-55%); } 82%, 100% { transform: rotate(-8deg) translateX(55%); } }
 /* Noel: kartın üst kenarında minik bir ışık dizisi. */
 .noel-lights {
-  position: absolute; left: 24px; right: 24px; top: 5px; height: 13px; z-index: 3;
+  position: absolute; left: 24px; right: 24px; top: 3px; height: 13px; z-index: 3;
   pointer-events: none; display: none; opacity: .9;
   background:
     radial-gradient(circle at 11px 6px, #ffd166 0 2.6px, rgba(255, 209, 102, .34) 3.4px, transparent 5px) 0 0/88px 13px repeat-x,
@@ -1051,9 +1019,22 @@ main.app input, main.app textarea { user-select: text; -webkit-user-select: text
   border-radius: 50%; opacity: .6;
 }
 html[data-theme="noel"] .noel-lights { display: block; }
+/* Işık dizisi kartın içeriğine değmesin: Noel'de üstte ayrı bir boşluk
+   ayrılır, böylece "ODAK" etiketi ve seans adı temiz kalır. */
+html[data-theme="noel"] .timer-card { padding-top: 26px; }
+html[data-theme="noel"] main.app.focus-active #timerCard { padding-top: 26px; }
+@media (max-width: 768px) {
+  html[data-theme="noel"] .timer-card { padding-top: 24px; }
+}
+@media (max-width: 768px) and (max-height: 620px) {
+  html[data-theme="noel"] .timer-card { padding-top: 22px; }
+}
 @keyframes noelLightsGlow { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
 html[data-theme="noel"] .timer-card { box-shadow: 0 30px 80px -50px color-mix(in srgb, var(--accent) 55%, transparent), inset 0 1px 0 rgba(255, 255, 255, .55); }
-html[data-theme="noel"] .ring-progress { filter: drop-shadow(0 0 9px color-mix(in srgb, var(--accent) 55%, transparent)); }
+/* Halkanın ışıması ayrı ve statik katmandan gelir. Harekete bağlı
+   drop-shadow her saniye yeniden bulanıklaştırma yapıp kasmaya yol açıyordu. */
+html[data-theme="noel"] .ring-glow { stroke-width: 18; }
+html[data-theme="noel"] .timer-card[data-running="true"] .ring-glow { opacity: .24; }
 html[data-theme="noel"] .preview-panel { background: radial-gradient(70% 80% at 50% 84%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%), linear-gradient(150deg, rgba(255, 255, 255, .12), transparent 60%); }
 /* Cadılar Bayramı: köşelerde ince, gerçek örümcek ağı. */
 html[data-theme="halloween"] .timer-card::after {
@@ -1136,6 +1117,8 @@ html[data-theme="halloween"] .timer-card::after {
 .ring-wrap {
   position: relative; width: min(342px, 80vw); aspect-ratio: 1;
   margin: 8px auto 4px; touch-action: pan-y;
+  /* Halkanın içindeki değişimler kartın tamamını yeniden düzenlemesin. */
+  contain: layout style;
 }
 .ring-wrap::before {
   content: ""; position: absolute; inset: 11%; border-radius: 50%;
@@ -1196,9 +1179,15 @@ html[data-theme="halloween"] .timer-card::after {
 .time .colon { display: inline-block; transform: translateY(-3px); margin: 0 1px; opacity: .72; font-weight: 500; transition: opacity .35s; }
 .timer-card[data-running="true"] .time .colon { animation: colonBlink 2s ease-in-out infinite; }
 @keyframes colonBlink { 0%, 45% { opacity: .7; } 58%, 100% { opacity: .28; } }
-.time .digit { display: inline-block; min-width: .59em; text-align: center; }
+.time .digit {
+  display: inline-block; min-width: .59em; text-align: center;
+  /* Rakamlar kendi katmanında oynar: her saniye metin yeniden çizilmez,
+     yalnızca kompozitör taşır. Kasma bu yüzden kesilir. */
+  will-change: transform;
+  backface-visibility: hidden;
+}
 .time .digit.tick { animation: digitTick .38s var(--spring); }
-@keyframes digitTick { 38% { transform: translateY(-4px) scale(1.075); } }
+@keyframes digitTick { 38% { transform: translate3d(0, -4px, 0) scale(1.045); } }
 .time.long { font-size: clamp(48px, 7vw, 62px); }
 .ring-sub { margin-top: 5px; font-size: 11.5px; font-weight: 500; letter-spacing: .015em; color: var(--ink-2); max-width: 78%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cat-note {
@@ -3280,6 +3269,19 @@ html[data-theme="halloween"] .acc-santa { filter: grayscale(.55) saturate(.6) br
 }
 .book-page.left::after { background: repeating-linear-gradient(90deg, transparent 0 8px, rgba(95,70,55,.15) 8px 9px); inset: 14px 16px; opacity: .35; }
 .book-spine { position: absolute; left: 50%; top: 1px; bottom: 1px; width: 2px; transform: translateX(-50%); background: linear-gradient(transparent, rgba(90,60,45,.4), transparent); }
+/* Kitabın kimliği: başlık ve sayfalar temaya göre JS ile doldurulur. */
+.book-kicker, .book-title, .book-copy { position: absolute; z-index: 1; pointer-events: none; }
+.book-kicker { left: 12px; top: 9px; font-size: 5.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: #8a6a4f; opacity: .8; }
+.book-title { left: 12px; right: 10px; top: 19px; font-family: var(--display); font-size: 8.5px; font-weight: 700; line-height: 1.15; letter-spacing: .06em; text-transform: uppercase; color: #5b3a2a; }
+.book-copy { left: 12px; right: 12px; top: 44px; font-size: 6px; line-height: 1.55; color: rgba(90,62,42,.78); }
+.book-page.right .book-kicker { top: 10px; }
+.book-page.right .book-copy { top: 22px; }
+.book-ribbon {
+  position: absolute; left: 50%; top: -7px; width: 9px; height: 36px; z-index: 4;
+  transform: translateX(-50%); background: linear-gradient(180deg, #8a6aa8, #5b3f78);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+  box-shadow: 0 2px 4px rgba(40,20,10,.25); opacity: .92; pointer-events: none;
+}
 /* === Temaya göre kitap: Noel şenlikli, Cadılar Bayramı nekronomikon === */
 html[data-theme="noel"] .book::before {
   background: linear-gradient(135deg, #c0392b, #8e2318 52%, #2f6b3a);
@@ -3298,6 +3300,10 @@ html[data-theme="noel"] .book-page.right::before {
 }
 html[data-theme="noel"] .page-flip { background: linear-gradient(135deg, #fffdf6, #f4e6cf); }
 html[data-theme="noel"] .book-spine { background: linear-gradient(transparent, rgba(120,30,25,.5), transparent); }
+html[data-theme="noel"] .book-kicker { color: #a03a2c; }
+html[data-theme="noel"] .book-title { color: #7c241c; }
+html[data-theme="noel"] .book-copy { color: rgba(52,84,50,.8); }
+html[data-theme="noel"] .book-ribbon { background: linear-gradient(180deg, #e05252, #8e2318); }
 html[data-theme="halloween"] .book::before {
   background: linear-gradient(135deg, #6e1414, #3a0c0c 50%, #140a10);
   box-shadow: inset 0 1px 0 rgba(255,120,120,.18), inset 0 0 0 2px rgba(126,226,63,.12);
@@ -3317,6 +3323,10 @@ html[data-theme="halloween"] .book-page.right::before {
 }
 html[data-theme="halloween"] .page-flip { background: linear-gradient(135deg, #2a2320, #171210); box-shadow: inset 8px 0 10px -8px rgba(0,0,0,.55); }
 html[data-theme="halloween"] .book-spine { background: linear-gradient(transparent, rgba(126,226,63,.35), transparent); }
+html[data-theme="halloween"] .book-kicker { color: #9fdc7a; opacity: .9; }
+html[data-theme="halloween"] .book-title { color: #d6f5b0; text-shadow: 0 0 7px rgba(126,226,63,.4); }
+html[data-theme="halloween"] .book-copy { color: rgba(190,225,160,.75); }
+html[data-theme="halloween"] .book-ribbon { background: linear-gradient(180deg, #8a1414, #3a0c0c); box-shadow: 0 0 8px rgba(126,226,63,.25); }
 .page-flip {
   position: absolute; right: 0; top: 0; width: 50%; height: 100%;
   background: linear-gradient(135deg, #fffdf6, #f2e3cc);
@@ -3476,6 +3486,24 @@ html[data-theme="halloween"] .book-spine { background: linear-gradient(transpare
 .cat-wrap[data-state="play"] .tail { rotate: -8deg; }
 .cat-wrap[data-state="play"] .paw.left { transform: translateZ(62px) translate(14px, -3px) rotate(-8deg); }
 .cat-wrap[data-state="play"] .paw.right { transform: translateZ(62px) translate(-14px, -3px) rotate(8deg); }
+/* Yumak her temada kendi dünyasına ait: Noel'de şeker kamışı, Cadılar'da
+   lanetli, kükürtlü bir tüy yumağı. Renkler değişir, oyun aynı kalır. */
+html[data-theme="noel"] .yarn-ball {
+  --yarn-hi: #ffffff; --yarn-mid: #e24a4a; --yarn-lo: #8d1b21;
+  --yarn-thread: rgba(255, 236, 236, .88); --yarn-shade: rgba(96, 12, 20, .3);
+}
+html[data-theme="halloween"] .yarn-ball {
+  --yarn-hi: #dcf7c6; --yarn-mid: #86b06a; --yarn-lo: #2f4a26;
+  --yarn-thread: rgba(190, 255, 190, .62); --yarn-shade: rgba(8, 18, 6, .5);
+  box-shadow: inset -5px -6px 8px var(--yarn-shade), 0 0 14px rgba(120, 255, 140, .28), 0 7px 9px -5px var(--shadow);
+}
+html[data-theme="halloween"] .yarn-ball::before { border-style: dotted; }
+html[data-theme="halloween"] .yarn-ball i { border-color: rgba(210, 255, 200, .55); }
+html[data-theme="halloween"] .cat-wrap[data-state="play"] .yarn-toy { animation: hwYarnCreep 4.6s ease-in-out infinite; }
+@keyframes hwYarnCreep {
+  0%, 100% { transform: translateZ(70px) rotate(-4deg); }
+  50% { transform: translateZ(70px) rotate(5deg) translateY(-1px); }
+}
 
 /* ============ ODAK ÖDÜLÜ: 3D mama kabı ============ */
 /* Yalnızca ödül anında görünür. Kase kedinin önünde durur; gölge, çanak,
@@ -4288,7 +4316,7 @@ input[type="range"]::-moz-range-thumb { width: 15px; height: 15px; border-radius
 .theme-swatch[data-preview="cocoa"] { background: linear-gradient(140deg, #e8d5bd, #f3e4ce 48%, #d8c1a6); }
 .theme-swatch[data-preview="galaxy"] { background: linear-gradient(140deg, #0a0620, #2d1260 52%, #081b3d); }
 .theme-swatch[data-preview="noel"] { background: linear-gradient(140deg, #0b2b3d, #12503c 48%, #8e222c); }
-.theme-swatch[data-preview="halloween"] { background: linear-gradient(140deg, #241b2d, #3a2b31 50%, #6b5a45); }
+.theme-swatch[data-preview="halloween"] { background: linear-gradient(140deg, #07050a, #3a0c0c 48%, #16240f); }
 .theme-swatch[data-preview="sakura"]::after { background: rgba(255, 150, 190, .4); }
 .theme-swatch[data-preview="midnight"]::after { background: rgba(120, 200, 255, .22); }
 .theme-swatch[data-preview="forest"]::after { background: rgba(255, 255, 255, .3); }
@@ -4300,7 +4328,7 @@ input[type="range"]::-moz-range-thumb { width: 15px; height: 15px; border-radius
 .theme-swatch[data-preview="cocoa"]::after { background: rgba(255, 235, 205, .32); }
 .theme-swatch[data-preview="galaxy"]::after { background: rgba(170, 120, 255, .26); }
 .theme-swatch[data-preview="noel"]::after { background: rgba(255, 225, 180, .26); }
-.theme-swatch[data-preview="halloween"]::after { background: rgba(190, 160, 205, .2); }
+.theme-swatch[data-preview="halloween"]::after { background: rgba(126, 226, 63, .18); }
 .theme-info { display: flex; align-items: center; justify-content: space-between; gap: 5px; padding: 7px 4px 2px; }
 .theme-info span { display: flex; flex-direction: column; gap: 1px; }
 .theme-info b { font-size: 11.5px; font-weight: 650; letter-spacing: -.01em; }
@@ -4359,6 +4387,23 @@ input[type="range"]::-moz-range-thumb { width: 15px; height: 15px; border-radius
 .goal-note b { color: var(--ink-2); font-weight: 650; }
 .goal-card .range-row { padding: 4px 0 0; }
 .goal-card .chip.active { color: var(--accent); background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 24%, transparent); }
+/* Günlük hedef: hazır süreler yerine kullanıcının kendi seçtiği saat + dakika. */
+.goal-actions { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; margin-top: 12px; }
+.goal-edit-btn { min-width: 138px; height: 32px; justify-content: center; font-size: 10.5px; letter-spacing: .06em; }
+.goal-target { font-size: 9.5px; letter-spacing: .03em; color: var(--ink-3); text-align: center; }
+.goal-picker { margin-top: 10px; padding: 10px 11px; border-radius: 14px; border: 1px solid var(--line); background: color-mix(in srgb, var(--ink) 4%, transparent); display: grid; gap: 8px; }
+.goal-picker[hidden] { display: none !important; }
+.goal-picker-row { display: grid; grid-template-columns: minmax(0, 1fr) 30px 46px 30px; align-items: center; gap: 7px; }
+.goal-picker-label { font-size: 9px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.goal-picker-value { font-family: var(--display); font-size: 15px; font-weight: 680; font-variant-numeric: tabular-nums; text-align: center; color: var(--ink); }
+.goal-step { width: 28px; height: 28px; padding: 0; border-radius: 9px; display: grid; place-items: center; font-size: 14px; font-weight: 700; line-height: 1; color: var(--ink-2); background: var(--pill-bg); border: 1px solid var(--line); transition: transform .16s var(--spring), background .2s; }
+.goal-step:active { transform: scale(.9); background: var(--accent-soft); }
+.goal-picker-actions { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
+.goal-picker-actions .mini-btn { min-width: 92px; height: 30px; justify-content: center; }
+@media (max-width: 420px) {
+  .goal-picker-row { grid-template-columns: minmax(0, 1fr) 28px 42px 28px; gap: 6px; }
+  .goal-step { width: 28px; height: 28px; }
+}
 .notify-status { margin-top: 9px; font-size: 10px; line-height: 1.45; color: var(--ink-3); }
 .notify-status b { color: var(--ink-2); font-weight: 650; }
 .notify-status.ok b { color: #2f9b6a; }
@@ -4416,18 +4461,6 @@ html[data-mode="dark"] .notify-status.warn b { color: #ffc07a; }
 .pwa-copy { flex: 1; min-width: 0; }
 .pwa-copy b { font-size: 11.5px; display: flex; align-items: center; gap: 5px; }
 .pwa-copy small { display: block; font-size: 9.5px; color: var(--ink-3); margin-top: 2px; line-height: 1.4; }
-.widget-card { margin-top: 12px; display: flex; align-items: stretch; gap: 11px; padding: 12px 13px; border-radius: 18px; border: 1px solid var(--line); background: linear-gradient(140deg, color-mix(in srgb, var(--accent-2) 11%, transparent), transparent 74%); }
-.widget-copy { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.widget-copy b { font-size: 11.5px; }
-.widget-copy > small { display: block; font-size: 9.5px; color: var(--ink-3); margin-top: 2px; line-height: 1.45; }
-.widget-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-.widget-hint { margin-top: 7px !important; font-size: 8.8px !important; opacity: .82; }
-.widget-preview { position: relative; flex: none; width: 92px; min-height: 116px; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: linear-gradient(165deg, color-mix(in srgb, var(--accent-soft) 90%, var(--glass-3)), color-mix(in srgb, var(--bg-1) 56%, var(--glass))); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 2px; padding: 8px 6px; box-shadow: inset 0 1px 0 rgba(255,255,255,.35); }
-.wp-sky { position: absolute; inset: 0; background: radial-gradient(circle at 22% 18%, rgba(255,255,255,.7), transparent 34%), radial-gradient(circle at 80% 26%, color-mix(in srgb, var(--accent-3) 38%, transparent), transparent 42%); opacity: .8; }
-.wp-cat { position: relative; width: 44px; height: 44px; margin-bottom: 1px; filter: drop-shadow(0 4px 6px rgba(40,20,35,.22)); }
-.wp-cat svg { width: 100%; height: 100%; display: block; }
-.widget-preview b { position: relative; font-family: var(--display); font-size: 11px; letter-spacing: -.02em; }
-.widget-preview small { position: relative; font-size: 8px; line-height: 1.25; color: var(--ink-2); text-align: center; max-width: 82px; }
 .lang-seg button { height: 38px; }
 .lang-seg button small { font-size: 8px; font-weight: 700; letter-spacing: .1em; padding: 1px 4px; border-radius: 5px; border: 1px solid var(--line-2); opacity: .72; }
 .lang-seg button.active small { border-color: color-mix(in srgb, var(--accent) 36%, transparent); color: var(--accent); opacity: 1; }
@@ -5372,7 +5405,6 @@ main.app.focus-active .ring-center .ring-sub {
 @media (max-width: 620px) {
   main.app.focus-active .ring-center .ring-sub { font-size: 10.5px; max-width: 96%; }
 }
-#catStage.focus-active #catBubble { display: none !important; }
 /* Odak sahnesi yalnızca halka, süre, duraklat ve kediden oluşur: arka planda
    uçuşan kar/parçacıklar da susar. */
 body.focus-active #snowCanvas,
@@ -5381,8 +5413,7 @@ body.focus-active .particles { opacity: 0 !important; pointer-events: none; }
 /* Yalnız görünmeyen hareketler bekler; sahne geri gelince aynı animasyon sürer. */
 html.page-hidden *, html.page-hidden *::before, html.page-hidden *::after,
 body.focus-active .particle,
-body.install-invite-open .particle,
-body.widget-open .particle { animation-play-state: paused !important; }
+body.install-invite-open .particle { animation-play-state: paused !important; }
 .focus-invite {
   position: fixed; inset: 0; z-index: 200; overflow-y: auto;
   display: grid; align-items: center; padding: 28px;
@@ -5723,6 +5754,198 @@ html[data-mode="light"] .hw-house { opacity: .5; }
 /* Karanlıkta yanıp sönen ikinci çift göz. */
 .hw-eyes-b { left: auto; right: 13%; top: 46%; gap: 18px; animation: hwEyes 13s steps(1) infinite; animation-delay: -4s; }
 .hw-eyes-b i { background: #ffd27a; box-shadow: 0 0 10px rgba(255, 190, 90, .9), 0 0 24px rgba(255, 150, 50, .5); }
+/* Köşe örümcek ağları: statik, ince, maliyetsiz. */
+.hw-web { position: absolute; top: 0; width: clamp(90px, 14vw, 180px); height: auto; opacity: .5; pointer-events: none; }
+.hw-web-l { left: 0; }
+.hw-web-r { right: 0; transform: scaleX(-1); }
+html[data-mode="light"] .hw-web { opacity: .32; }
+/* Uçan kuzgun: yalnızca transform + opacity; kanat çırpma scaleY ile. */
+.hw-raven {
+  position: absolute; left: -12%; top: 13%; width: clamp(42px, 5vw, 68px); height: auto;
+  opacity: 0; pointer-events: none; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .45));
+  animation: hwRavenFly 36s linear infinite;
+}
+.hw-raven-wing { transform-origin: 50% 60%; animation: hwRavenWing 1.1s ease-in-out infinite; }
+@keyframes hwRavenFly {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(-2deg); }
+  6% { opacity: .75; }
+  50% { transform: translate3d(60vw, -4vh, 0) rotate(2deg); }
+  94% { opacity: .7; }
+  100% { opacity: 0; transform: translate3d(124vw, 2vh, 0) rotate(-2deg); }
+}
+@keyframes hwRavenWing { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(.55); } }
+/* Mezardan çıkan iskelet el: yavaşça yükselir, geri gömülür. */
+.hw-hand {
+  position: absolute; left: 21%; bottom: 5vh; width: clamp(38px, 4.5vw, 58px); height: auto;
+  opacity: 0; pointer-events: none; transform-origin: 50% 100%;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, .5));
+  animation: hwHandRise 16s ease-in-out infinite;
+}
+@keyframes hwHandRise {
+  0%, 18% { opacity: 0; transform: translateY(26px) rotate(-8deg); }
+  30% { opacity: .85; transform: translateY(0) rotate(-3deg); }
+  46% { opacity: .85; transform: translateY(-3px) rotate(2deg); }
+  62% { opacity: .7; transform: translateY(4px) rotate(-2deg); }
+  78%, 100% { opacity: 0; transform: translateY(28px) rotate(-8deg); }
+}
+/* Mezarlık mumları: alev yalnızca opacity/scale ile titrer. */
+.hw-candle {
+  position: absolute; bottom: 5vh; width: 10px; height: 26px; border-radius: 2px 2px 3px 3px;
+  background: linear-gradient(180deg, #e8dcc0, #b9a98a 70%, #8f8068);
+  box-shadow: inset -2px 0 3px rgba(60, 40, 20, .35), 0 8px 14px -8px rgba(0, 0, 0, .6);
+  opacity: .85; pointer-events: none;
+}
+.hw-candle::before {
+  content: ""; position: absolute; left: 50%; top: -12px; width: 8px; height: 13px;
+  transform: translateX(-50%); transform-origin: 50% 100%;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: radial-gradient(circle at 50% 72%, #fff6c8 0 18%, #ffcf6b 42%, #ff9422 72%, rgba(255, 120, 20, 0) 100%);
+  filter: drop-shadow(0 0 6px rgba(255, 180, 80, .8));
+  animation: hwFlame 1.7s ease-in-out infinite;
+}
+.hw-candle.c1 { left: 18%; }
+.hw-candle.c2 { right: 24%; height: 20px; }
+.hw-candle.c2::before { animation-delay: -.6s; }
+@keyframes hwFlame {
+  0%, 100% { opacity: .85; transform: translateX(-50%) scaleY(1); }
+  35% { opacity: 1; transform: translateX(-52%) scaleY(1.12); }
+  70% { opacity: .75; transform: translateX(-48%) scaleY(.9); }
+}
+/* Perili ev penceresinde beliren silüet. */
+.hw-house-watcher { animation: hwWatcher 11s steps(1) infinite; }
+@keyframes hwWatcher {
+  0%, 54%, 100% { opacity: 0; }
+  56%, 68% { opacity: .85; }
+  70% { opacity: 0; }
+  72%, 78% { opacity: .6; }
+  80% { opacity: 0; }
+}
+@media (max-width: 620px) {
+  .hw-web { width: 96px; }
+  .hw-raven { top: 10%; }
+  .hw-hand { left: 16%; bottom: 4vh; }
+  .hw-candle.c1 { left: 12%; }
+  .hw-candle.c2 { display: none; }
+}
+/* Telefonda Cadılar Bayramı: kalabalık siluetler yazının ve kartın üstüne
+   binmesin. Sahne sadeleşir ama karanlığı, kanı ve iskeleti kalır. */
+@media (max-width: 620px) {
+  .hw-house, .hw-hand, .hw-candle, .hw-web, .hw-raven, .hw-eyes, .hw-eyes-b, .hw-pumpkin { display: none; }
+  .hw-tree { height: 34vh; opacity: .55; }
+  .hw-fog { height: 24vh; opacity: .55; }
+  .hw-fog-b { display: none; }
+  .hw-graveyard { height: 15vh; opacity: .62; }
+  .hw-tomb.t1 { left: 3%; width: 38px; height: 52px; bottom: 2vh; }
+  .hw-tomb.t2 { display: none; }
+  .hw-tomb.t3 { right: 4%; width: 42px; height: 60px; bottom: 2vh; }
+  .hw-tomb.t4 { display: none; }
+  .hw-ghost-a { left: 8%; top: 22%; }
+  .hw-ghost-b { right: 6%; top: 40%; }
+  .hw-vignette { background: radial-gradient(118% 100% at 50% 44%, transparent 52%, rgba(4, 1, 6, .46) 84%, rgba(2, 0, 3, .72) 100%); }
+}
+/* ============ PERFORMANS / DÜŞÜK BELLEK ============ */
+/* 3 GB'lık telefonlarda (ör. Galaxy A04s) yalnızca arka plan süslemeleri
+   kapanır. Sayaç, halka, rakam pop'u, kedi ve ödül animasyonları aynen kalır. */
+html[data-lowfx="1"] .hw-ghost,
+html[data-lowfx="1"] .hw-raven,
+html[data-lowfx="1"] .hw-hand,
+html[data-lowfx="1"] .hw-web,
+html[data-lowfx="1"] .hw-candle,
+html[data-lowfx="1"] .hw-tree,
+html[data-lowfx="1"] .hw-house,
+html[data-lowfx="1"] .halloween-deco,
+html[data-lowfx="1"] .hw-eyes,
+html[data-lowfx="1"] .hw-eyes-b { display: none !important; }
+html[data-lowfx="1"] .hw-fog-b,
+html[data-lowfx="1"] .hw-fog-c { display: none; }
+/* Cam bulanıklığı her karede kartın arkasını yeniden rasterize eder. Kartın
+   içi saniyede bir oynarken bu maliyet kasmaya dönüşüyor. */
+main.app.focus-active .timer-card,
+html[data-lowfx="1"] .glass-strong { -webkit-backdrop-filter: none; backdrop-filter: none; }
+html[data-lowfx="1"] .glass,
+html[data-lowfx="1"] .glass-mini,
+html[data-lowfx="1"] .glass-strong,
+html[data-lowfx="1"] .cat-bubble { -webkit-backdrop-filter: none; backdrop-filter: none; }
+/* Sürekli dönen arka plan süsleri zayıf cihazda tamamen durur: tek kare bile
+   harcamazlar. Sayaç, halka, kedi ve rakam animasyonları etkilenmez. */
+html[data-lowfx="1"] .ambient::before,
+html[data-lowfx="1"] .blob,
+html[data-lowfx="1"] .card-sheen,
+html[data-lowfx="1"] .card-aurora,
+html[data-lowfx="1"] .cat-halo,
+html[data-lowfx="1"] .brand-mark::after { animation: none !important; }
+/* Sayaç rakamları yalnızca kompozitörde oynasın: alt katman yeniden çizilmesin. */
+.time { contain: layout paint; }
+
+/* ============ CADILAR ÖDÜLÜ: GERÇEK KAZAN ============ */
+/* Eski kazan mor bir kâse gibi duruyordu; tabak sanılması normaldi. Artık dökme
+   demir gövde, kalın ağız kenarı, yan kulplar, üç ayak ve parlak yeşil iksir var. */
+.cauldron-pot {
+  background:
+    radial-gradient(56% 34% at 34% 18%, rgba(255, 255, 255, .16), transparent 62%),
+    linear-gradient(96deg, #100c16, #2a2333 26%, #453a52 48%, #241d2c 74%, #0c0911);
+  box-shadow:
+    inset -8px -12px 18px rgba(4, 2, 8, .62),
+    inset 6px 6px 14px rgba(255, 255, 255, .09),
+    0 12px 18px -12px rgba(4, 2, 8, .7);
+  border-bottom-left-radius: 42% 74%;
+  border-bottom-right-radius: 42% 74%;
+}
+/* Üç demir ayak: kazan yere oturmaz, üstünde durur. */
+.cauldron-pot::after {
+  content: ""; position: absolute; left: 8px; right: 8px; bottom: -5px; height: 12px;
+  background:
+    radial-gradient(6px 6px at 14% 100%, #241d2c 0 5px, transparent 5px),
+    radial-gradient(6px 6px at 50% 100%, #1a1522 0 5px, transparent 5px),
+    radial-gradient(6px 6px at 86% 100%, #241d2c 0 5px, transparent 5px);
+}
+.cauldron-rim {
+  border: 8px solid #3a3145;
+  box-shadow:
+    inset 0 3px 0 rgba(255, 255, 255, .2),
+    inset 0 -2px 4px rgba(0, 0, 0, .5),
+    0 3px 6px rgba(4, 2, 8, .5);
+}
+/* Ağzın iki yanındaki kulp: kazanı kazan yapan detay. */
+.cauldron-rim::before,
+.cauldron-rim::after {
+  content: ""; position: absolute; top: 50%; width: 13px; height: 9px;
+  border: 3px solid #3a3145; border-radius: 999px;
+  transform: translateY(-50%);
+}
+.cauldron-rim::before { left: -18px; border-right-color: transparent; }
+.cauldron-rim::after { right: -18px; border-left-color: transparent; }
+.cauldron-brew {
+  background: radial-gradient(ellipse at 50% 40%, #e8ffd2, #8ce87f 40%, #2f9256 78%, #145034 100%);
+  box-shadow:
+    inset 0 6px 12px rgba(255, 255, 255, .42),
+    inset 0 -6px 10px rgba(10, 60, 30, .5),
+    0 0 22px rgba(120, 240, 140, .65);
+}
+
+/* ============ KIYAFET OTURUŞU ============ */
+/* Fırfırlı elbise: gövde kumaşın tamamını kaplar, etek belden başlayıp yere iner. */
+.outfit[data-kind="dress"] .of-body {
+  inset: 2px -1px 30px; border-radius: 44% 44% 24% 24% / 22% 22% 26% 26%;
+}
+.outfit[data-kind="dress"] .of-extra {
+  left: -8px; right: -8px; bottom: 0; height: 86px;
+  clip-path: polygon(19% 0, 81% 0, 100% 100%, 0 100%);
+}
+.outfit[data-kind="dress"] .of-badge { top: 94px; }
+.outfit[data-kind="dress"] .of-extra2 { top: 98px; }
+/* Tulum: omuzlar da kumaşla örtülür, askılar yukarıdan cebe bağlanır. */
+.outfit[data-kind="overalls"] .of-body { inset: 4px -2px 0; }
+.outfit[data-kind="overalls"] .of-extra { top: 26px; }
+/* Yelek: gövde dolu, önde gerçek bir gömlek ve düğmeler görünür. */
+.outfit[data-kind="vest"] .of-collar { width: 44px; height: 34px; top: 24px; z-index: 6; }
+.outfit[data-kind="vest"] .of-extra {
+  top: 30px; left: 50%; width: 34px; height: 104px; transform: translateX(-50%); z-index: 5;
+  background: linear-gradient(180deg, #fbf8f1, #e9e2d3);
+  border-radius: 2px 2px 10px 10px;
+  box-shadow: inset 0 0 0 1px rgba(90, 70, 45, .14), 0 2px 4px -2px rgba(40, 25, 10, .3);
+}
+.outfit[data-kind="vest"] .of-badge { z-index: 7; }
 @media (max-width: 620px) {
   .hw-skeleton { right: 6px; bottom: 6px; width: 96px; }
   .hw-tomb.t3 { right: 20%; }
@@ -5734,7 +5957,10 @@ html[data-mode="light"] .hw-house { opacity: .5; }
   .hw-eyes-b { right: 9%; top: 42%; gap: 13px; }
 }
 html[data-theme="halloween"] .timer-card { box-shadow: 0 34px 90px -54px color-mix(in srgb, var(--accent) 62%, transparent), inset 0 1px 0 rgba(255, 255, 255, .16); }
-html[data-theme="halloween"] .ring-progress { filter: drop-shadow(0 0 9px color-mix(in srgb, var(--accent) 52%, transparent)); }
+html[data-theme="halloween"] .ring-glow { stroke-width: 18; }
+html[data-theme="halloween"] .timer-card[data-running="true"] .ring-glow {
+  animation: hwGlowPulse 3.6s ease-in-out infinite;
+}
 html[data-theme="halloween"] .preview-panel {
   background:
     radial-gradient(72% 82% at 50% 84%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 72%),
@@ -5756,8 +5982,13 @@ html[data-theme="halloween"] .preview-panel {
   .hw-tree-l, .hw-tree-r { animation: none !important; }
   .hw-ghost-a, .hw-ghost-b { animation-name: hwGhostReduced !important; animation-duration: 26s !important; animation-iteration-count: infinite !important; }
   .hw-house-win { animation-name: hwWinFlicker !important; animation-duration: 6.5s !important; animation-iteration-count: infinite !important; }
+  .hw-raven, .hw-raven-wing { animation: none !important; }
+  .hw-hand { animation-name: hwHandReduced !important; animation-duration: 9s !important; animation-iteration-count: infinite !important; }
+  .hw-candle::before { animation: none !important; }
+  .hw-house-watcher { animation: none !important; opacity: .4 !important; }
 }
 @keyframes hwGhostReduced { 0%, 100% { opacity: .08; } 50% { opacity: .26; } }
+@keyframes hwHandReduced { 0%, 100% { opacity: .3; } 50% { opacity: .62; } }
 
 /* ============ TARAYICI UYUMLULUK YEDEKLERİ ============ */
 @supports not (color: color-mix(in srgb, red, blue)) {
@@ -5774,6 +6005,127 @@ html[data-theme="halloween"] .preview-panel {
 .timer-card .timer-head .phase-pill { flex: 0 0 auto; white-space: nowrap; max-width: 100%; }
 .timer-card .timer-head .cycle-dots { flex: 0 0 auto; margin-left: auto; }
 .timer-card .cycle-dot { flex: 0 0 auto; }
+/* ============================================================
+   TELEFON ODAK SAHNESİ — kedi dairenin bir tık üstünde
+   Eski kural kediyi ekranın en tepesine sabitliyor, kartla arasında
+   büyük bir boşluk bırakıyordu. Artık kedi, patileri tam sayacın üst
+   kenarına (dairenin hemen üstüne) gelecek şekilde yerleşir.
+   ============================================================ */
+@media (max-width: 768px) and (orientation: portrait) {
+  main.app.focus-active {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    height: 100%; min-height: 0;
+    padding: var(--m-card-top) calc(12px + env(safe-area-inset-right, 0px))
+             calc(14px + env(safe-area-inset-bottom, 0px)) calc(12px + env(safe-area-inset-left, 0px));
+    overflow-y: auto; overflow-x: hidden;
+  }
+  main.app.focus-active .stage-col { margin: 0 auto; width: 100%; max-width: 470px; }
+  #catStage.focus-active {
+    position: fixed; top: var(--m-cat-top); left: 50%;
+    width: 100%; max-width: 470px; height: 168px;
+    transform: translateX(-50%); z-index: 55;
+  }
+  #catStage.focus-active #catMount {
+    --stage-scale: var(--side-cat);
+    --ms: calc(min(var(--cat-scale), 1.1) * var(--stage-scale) * var(--fit-scale));
+    left: 50%; top: 4px; bottom: auto;
+    transform: translateX(-50%) scale(var(--ms)); transform-origin: 50% 0;
+  }
+  #catStage.focus-active #catPerch { display: none; }
+  #catStage.focus-active #catBubble {
+    left: calc(50% + 62px); right: auto; top: 6px; bottom: auto;
+    width: min(190px, calc(50vw - 66px)); transform-origin: 0 10px;
+  }
+  #catStage.focus-active #catBubble::after {
+    left: -5px; top: 16px; bottom: auto;
+    border: 0; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+}
+
+/* Konuşma balonu her temada görünür; Noel ve Cadılar Bayramı kendi dokusunu verir. */
+html[data-theme="noel"] .cat-bubble {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
+  box-shadow: 0 24px 50px -28px var(--shadow), inset 0 1px 0 rgba(255,255,255,.6),
+    0 0 24px -10px color-mix(in srgb, var(--accent-2) 58%, transparent);
+}
+html[data-theme="halloween"] .cat-bubble {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+  box-shadow: 0 24px 50px -28px var(--shadow), inset 0 1px 0 rgba(255,255,255,.16),
+    0 0 26px -8px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+/* ============ CADILAR BAYRAMI — DAHA KORKUNÇ ============ */
+/* Sayaç kartının üst kenarından sızan kan. */
+.hw-blood {
+  position: absolute; left: 0; right: 0; top: 0; height: 70px; display: none;
+  z-index: 2; pointer-events: none; border-radius: inherit; overflow: hidden;
+  background:
+    radial-gradient(9px 26px at 11% 0, rgba(128, 12, 14, .78), transparent 74%),
+    radial-gradient(13px 42px at 26% 0, rgba(96, 8, 10, .74), transparent 76%),
+    radial-gradient(7px 18px at 44% 0, rgba(140, 16, 18, .6), transparent 72%),
+    radial-gradient(11px 34px at 61% 0, rgba(110, 10, 12, .7), transparent 76%),
+    radial-gradient(8px 22px at 79% 0, rgba(134, 14, 16, .64), transparent 74%),
+    radial-gradient(6px 15px at 92% 0, rgba(120, 12, 14, .56), transparent 72%),
+    linear-gradient(180deg, rgba(92, 8, 10, .5), transparent 82%);
+  opacity: .82;
+}
+html[data-theme="halloween"] .hw-blood { display: block; }
+html[data-mode="light"] .hw-blood { opacity: .5; }
+/* Ekranın üstünden süzülen kan perdesi: sahnenin en arkasında, statik. */
+html[data-theme="halloween"] .halloween-scene::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 20vh;
+  pointer-events: none; opacity: .78;
+  background:
+    radial-gradient(15px 58px at 7% 0, rgba(120, 8, 10, .6), transparent 76%),
+    radial-gradient(9px 34px at 18% 0, rgba(96, 6, 8, .5), transparent 74%),
+    radial-gradient(19px 72px at 33% 0, rgba(132, 10, 12, .55), transparent 78%),
+    radial-gradient(8px 26px at 47% 0, rgba(104, 8, 10, .45), transparent 72%),
+    radial-gradient(16px 62px at 63% 0, rgba(124, 9, 11, .52), transparent 77%),
+    radial-gradient(10px 38px at 78% 0, rgba(98, 6, 8, .46), transparent 74%),
+    radial-gradient(13px 50px at 92% 0, rgba(116, 8, 10, .5), transparent 76%),
+    linear-gradient(180deg, rgba(74, 4, 6, .46), transparent 86%);
+}
+/* Sahne yerinde kımıldıyor gibi: 2 px'lik, çok yavaş bir kayma. */
+html[data-theme="halloween"] .halloween-scene { animation: hwSceneCreep 26s ease-in-out infinite alternate; }
+@keyframes hwSceneCreep {
+  0% { transform: translate3d(-.18%, 0, 0); }
+  100% { transform: translate3d(.18%, -.28%, 0); }
+}
+/* Karanlık nefes alıyor: vinyet yavaşça koyulaşır. */
+html[data-theme="halloween"] .hw-vignette { animation: hwBreath 9.5s ease-in-out infinite; }
+@keyframes hwBreath { 0%, 100% { opacity: .82; } 50% { opacity: 1; } }
+/* Daire ve süre kanlı bir ışıkla nabız atar. */
+html[data-theme="halloween"] .ring-deco { stroke: rgba(224, 43, 43, .22); }
+html[data-theme="halloween"] .ring-track { stroke: rgba(224, 43, 43, .16); }
+html[data-theme="halloween"] .ring-glow { fill: rgba(224, 43, 43, .1); }
+@keyframes hwGlowPulse {
+  0%, 100% { opacity: .18; }
+  50% { opacity: .32; }
+}
+html[data-theme="halloween"] .time { text-shadow: 0 0 22px rgba(224, 43, 43, .32); }
+html[data-theme="halloween"] .brand-text strong { text-shadow: 0 0 14px rgba(224, 43, 43, .3); }
+/* Elektrik kesilir gibi karanlığa gömülme: kısa, ürkütücü karartmalar.
+   (Yazı yok; korku tamamen ışık ve gölgeyle verilir.) */
+html[data-theme="halloween"] .halloween-scene::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(128% 108% at 50% 32%, rgba(2, 0, 4, 0) 26%, rgba(2, 0, 4, .55) 74%, rgba(0, 0, 0, .86) 100%);
+  opacity: 0; animation: hwGloom 16.5s ease-in-out infinite;
+}
+@keyframes hwGloom {
+  0%, 52%, 100% { opacity: 0; }
+  55% { opacity: .78; }
+  57% { opacity: .12; }
+  59.5% { opacity: .9; }
+  63% { opacity: .2; }
+  66%, 94% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme="halloween"] .hw-vignette { animation: none; opacity: .95; }
+  html[data-theme="halloween"] .ring-progress { animation: none; }
+  html[data-theme="halloween"] .halloween-scene::after { animation: none; opacity: .35; }
+}
 </style>
 </head>
 <body>
@@ -5791,6 +6143,34 @@ html[data-theme="halloween"] .preview-panel {
   <i class="hw-fog hw-fog-c"></i>
   <div class="hw-horror">
     <i class="hw-vignette"></i>
+    <svg class="hw-web hw-web-l" viewBox="0 0 180 180" fill="none" aria-hidden="true">
+      <g stroke="#cdd3e8" stroke-opacity=".5" stroke-width="1" stroke-linecap="round">
+        <path d="M0 0H180M0 0 166 52M0 0 132 102M0 0 86 142M0 0 36 168M0 0V180"/>
+        <path d="M62 0Q52 8 56 18Q44 25 45 35Q31 39 29 48Q17 49 12 57Q5 57 0 61"/>
+        <path d="M112 0Q97 14 102 33Q82 44 81 63Q59 71 53 87Q31 91 22 104Q9 105 0 112"/>
+        <path d="M166 0Q147 22 153 49Q125 67 122 95Q91 109 79 131Q47 139 33 156Q13 159 0 166"/>
+      </g>
+    </svg>
+    <svg class="hw-web hw-web-r" viewBox="0 0 180 180" fill="none" aria-hidden="true">
+      <g stroke="#cdd3e8" stroke-opacity=".5" stroke-width="1" stroke-linecap="round">
+        <path d="M0 0H180M0 0 166 52M0 0 132 102M0 0 86 142M0 0 36 168M0 0V180"/>
+        <path d="M62 0Q52 8 56 18Q44 25 45 35Q31 39 29 48Q17 49 12 57Q5 57 0 61"/>
+        <path d="M112 0Q97 14 102 33Q82 44 81 63Q59 71 53 87Q31 91 22 104Q9 105 0 112"/>
+        <path d="M166 0Q147 22 153 49Q125 67 122 95Q91 109 79 131Q47 139 33 156Q13 159 0 166"/>
+      </g>
+    </svg>
+    <svg class="hw-raven" viewBox="0 0 100 60" aria-hidden="true">
+      <g fill="#0d0913" stroke="#241a30" stroke-width="1" stroke-linejoin="round">
+        <g class="hw-raven-wing">
+          <path d="M42 28C36 14 42 5 58 2c-6 8-7 17-6 26Z"/>
+          <path d="M48 32c-2 12 4 21 16 25-5-9-6-18-5-26Z"/>
+        </g>
+        <path d="M10 30 28 25v11Z"/>
+        <path d="M26 26c10-8 32-8 42 0 4 4 2 10-4 12-12 6-28 4-36-2Z"/>
+        <circle cx="70" cy="24" r="8"/>
+        <path d="M76 21 90 25 76 29Z"/>
+      </g>
+    </svg>
     <svg class="hw-tree hw-tree-l" viewBox="0 0 200 320" fill="none" aria-hidden="true" preserveAspectRatio="xMidYMax meet">
       <g stroke="#080510" stroke-linecap="round" fill="none">
         <path d="M100 320C98 250 96 210 100 168" stroke-width="15"/>
@@ -5838,6 +6218,10 @@ html[data-theme="halloween"] .preview-panel {
         <rect x="126" y="116" width="12" height="15" rx="2"/>
         <path d="M76 78a6 6 0 0 1 12 0v8H76Z"/>
       </g>
+      <g class="hw-house-watcher" fill="#060409">
+        <circle cx="132" cy="122" r="3.1"/>
+        <path d="M126.5 131c.4-4 2.6-6 5.5-6s5.1 2 5.5 6Z"/>
+      </g>
       <path d="M74 150v-22h16v22Z" fill="#060409"/>
     </svg>
     <svg class="hw-ghost hw-ghost-a" viewBox="0 0 80 100" fill="none" aria-hidden="true">
@@ -5862,6 +6246,21 @@ html[data-theme="halloween"] .preview-panel {
     </svg>
     <div class="hw-graveyard">
       <i class="hw-tomb t1"></i><i class="hw-tomb t2"></i><i class="hw-tomb t3"></i><i class="hw-tomb t4"></i>
+      <svg class="hw-hand" viewBox="0 0 60 96" fill="none" aria-hidden="true">
+        <g stroke="#d9d3c1" stroke-linecap="round">
+          <path d="M30 96V72" stroke-width="9"/>
+          <path d="M22 62 16 36" stroke-width="5"/>
+          <path d="M28 58 27 24" stroke-width="5"/>
+          <path d="M34 58l3-32" stroke-width="5"/>
+          <path d="M39 62l8-22" stroke-width="5"/>
+          <path d="M22 68 8 58" stroke-width="5"/>
+        </g>
+        <path d="M18 70c-2-9 3-16 12-16s14 7 12 16c-1.6 7-5.6 10-12 10s-10.4-3-12-10Z" fill="#d9d3c1" stroke="#1d1a22" stroke-width="1"/>
+        <g fill="#1d1a22" opacity=".35">
+          <circle cx="16" cy="36" r="2"/><circle cx="27" cy="24" r="2"/><circle cx="37" cy="26" r="2"/><circle cx="47" cy="40" r="2"/><circle cx="8" cy="58" r="2"/>
+        </g>
+      </svg>
+      <i class="hw-candle c1"></i><i class="hw-candle c2"></i>
     </div>
     <i class="hw-eyes" aria-hidden="true"><i></i><i></i></i>
     <i class="hw-eyes hw-eyes-b" aria-hidden="true"><i></i><i></i></i>
@@ -5872,11 +6271,7 @@ html[data-theme="halloween"] .preview-panel {
         </linearGradient>
       </defs>
       <g stroke="#1d1a22" stroke-width="1.1" stroke-linejoin="round">
-        <path d="M101 141c14 0 23-8 25-20 2-11-2-19 1-28" fill="none" stroke="url(#hwBoneG)" stroke-width="5" stroke-linecap="round"/>
-        <path d="M101 141c14 0 23-8 25-20 2-11-2-19 1-28" fill="none" stroke="#1d1a22" stroke-width="1" stroke-linecap="round" opacity=".45"/>
-        <path d="M88 122c10 0 17 8 16 17-1 6 0 11 4 17 3 5-1 9-6 8" fill="url(#hwBoneG)"/>
-        <path d="M96 145c2 7 2 13 6 18" fill="none" stroke="url(#hwBoneG)" stroke-width="5" stroke-linecap="round"/>
-        <path d="M99 163h14" stroke="url(#hwBoneG)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M88 128c6-4 10-2 12 3 2 6-2 11-8 12-6 1-10-3-10-8 0-3 2-5 6-7Z" fill="url(#hwBoneG)"/>
         <path d="M74 128c-6-4-10-2-12 3-2 6 2 11 8 12 6 1 10-3 10-8 0-3-2-5-6-7Z" fill="url(#hwBoneG)"/>
         <path d="M71 62v66" stroke="url(#hwBoneG)" stroke-width="6" stroke-linecap="round"/>
         <g fill="none" stroke="url(#hwBoneG)" stroke-width="4" stroke-linecap="round">
@@ -5958,6 +6353,7 @@ html[data-theme="halloween"] .preview-panel {
           <circle cx="21.1" cy="17.4" r=".72" fill="#ffd27a"/>
         </svg>
       </div>
+      <div class="hw-blood" aria-hidden="true"></div>
       <div class="timer-head">
         <div class="phase-pill" id="phasePill"><i aria-hidden="true"></i><span id="phaseText">Odak</span></div>
         <div class="cycle-dots" id="cycleDots" aria-label="Seans ritmi"></div>
@@ -6079,22 +6475,6 @@ html[data-theme="halloween"] .preview-panel {
         </div>
         <p class="focus-invite-status" id="focusInstallStatus" role="status">“Tamam, yapalım” ile kurulum seçeneklerini gör. “Hayır, şimdi değil” ile kurmadan odaklan.</p>
       </div>
-      <div class="focus-step" data-step="widget" id="focusStepWidget" hidden>
-        <span class="eyebrow"><span id="focusWidgetName">Vespır</span> · <span id="focusWidgetKind">ana ekran kartı</span></span>
-        <h2 id="focusWidgetTitle">Bir de ana ekran kartı ekleyelim mi?</h2>
-        <p id="focusWidgetDescription">Vespır artık yanında. Dilersen ana ekranına temana uyan küçük bir Vespır kartı da ekleyebilirsin; odaklanmaya başlamadan önce bir bakışta gününü görürsün.</p>
-        <ul class="focus-invite-benefits">
-          <li>Bugünkü odak dakikaların ve hedefin tek bakışta.</li>
-          <li>Odak sürerken kalan süre canlı sayılır.</li>
-          <li>Kartta “Seni özledim, gel” gibi Vespır mesajları döner.</li>
-          <li>Seçtiğin tema, kedi ve dil karta otomatik taşınır.</li>
-        </ul>
-        <div class="focus-invite-actions">
-          <button class="btn primary" id="focusWidgetBtn" type="button">Widget’ı ekle</button>
-          <button class="btn text" id="focusWidgetSkipBtn" type="button">Şimdi değil, odaklan</button>
-        </div>
-        <p class="focus-invite-status" id="focusWidgetStatus" role="status">Widget sayfası yeni sekmede açılır; tarayıcı menüsünden “Ana ekrana ekle”ye dokunman yeterli.</p>
-      </div>
     </div>
   </section>
 </div>
@@ -6188,7 +6568,7 @@ html[data-theme="halloween"] .preview-panel {
 
         <div class="field-label">Aksesuarlar <small>birden fazla seçebilirsin</small></div>
         <div class="chips" id="accessoryGroup"></div>
-        <p class="note">Noel teması seçiliyken Vespır kendiliğinden noel şapkası takar. Şapkayı yıl boyunca takmak istersen buradan seçebilirsin.</p>
+        <p class="note">Noel şapkası, geyik boynuzu, cadı şapkası ve balkabağı burada her zaman seçilebilir. Tema değişse de kıyafet ve aksesuarların korunur.</p>
 
         <div class="field-label">Uygulama <small>Vespır'ı cebine al</small></div>
         <div class="pwa-card">
@@ -6199,24 +6579,6 @@ html[data-theme="halloween"] .preview-panel {
           <button class="mini-btn accent" id="installBtn2" type="button">Ana ekrana ekle</button>
         </div>
 
-        <div class="field-label" hidden>Ana ekran widget'ı <small>temaya uyumlu kart</small></div>
-        <div class="widget-card" hidden>
-          <div class="widget-preview" aria-hidden="true">
-            <span class="wp-sky"></span>
-            <span class="wp-cat" id="widgetPreviewCat"></span>
-            <b>Vespır</b>
-            <small id="widgetPreviewMsg">seni özledim, gel</small>
-          </div>
-          <div class="widget-copy">
-            <b id="widgetCopyTitle">Temaya uyumlu Vespır kartı</b>
-            <small id="widgetCopyNote">Seçtiğin tema, kedi ve dil widget'a taşınır. Boştayken bugünkü odak dakikalarını ve hedefini, odak sürerken kalan süreyi gösterir.</small>
-            <div class="widget-actions">
-              <button class="mini-btn accent" id="widgetOpenBtn" type="button">Widget'ı aç</button>
-              <button class="mini-btn" id="widgetInstallBtn" type="button">Ana ekrana ekle</button>
-            </div>
-            <small class="widget-hint" id="widgetHint">İpucu: Widget sayfasını açıp tarayıcı menüsünden “Ana ekrana ekle”yi seç. Kurulu uygulamada simgeye uzun basıp “Widget” kısayolunu kullanabilirsin.</small>
-          </div>
-        </div>
       </section>
 
       <section class="pane" data-pane="look">
@@ -6225,7 +6587,7 @@ html[data-theme="halloween"] .preview-panel {
           <button type="button" data-lang="tr"><span>Türkçe</span><small>TR</small></button>
           <button type="button" data-lang="en"><span>English</span><small>EN</small></button>
         </div>
-        <p class="note">Dil değişince arayüz, bildirimler ve widget aynı dili konuşur.</p>
+        <p class="note">Dil değişince arayüz ve bildirimler aynı dili konuşur.</p>
 
         <div class="field-label">Görünüm <small>veya üstteki güneşe dokun</small></div>
         <div class="seg" id="modeGroup"></div>
@@ -6252,14 +6614,27 @@ html[data-theme="halloween"] .preview-panel {
           <div class="goal-top"><b id="goalNow">0<small>/120 dk</small></b><span id="goalPct">%0<br>tamamlandı</span></div>
           <div class="goal-bar"><i id="goalFill"></i></div>
           <div class="goal-note"><span><b id="goalLeft">120 dk kaldı</b></span><span id="goalSessions">0 seans</span></div>
-          <div class="chips" id="goalPresets" style="margin-top:11px">
-            <button class="chip" type="button" data-goal="60">1 saat</button>
-            <button class="chip" type="button" data-goal="120">2 saat</button>
-            <button class="chip" type="button" data-goal="180">3 saat</button>
-            <button class="chip" type="button" data-goal="240">4 saat</button>
-            <button class="chip" type="button" data-goal="360">6 saat</button>
-            <button class="chip" type="button" data-goal="480">8 saat</button>
-            <button class="chip" type="button" data-goal="600">10 saat</button>
+          <div class="goal-actions">
+                          <button class="mini-btn accent goal-edit-btn" id="goalEditBtn" type="button" aria-expanded="false" aria-controls="goalPicker">Düzenle</button>
+            <span class="goal-target" id="goalTarget">Hedef: 2 sa</span>
+          </div>
+          <div class="goal-picker" id="goalPicker" hidden>
+            <div class="goal-picker-row">
+              <span class="goal-picker-label">Saat</span>
+              <button class="goal-step" type="button" data-goal-step="hour" data-dir="-1" aria-label="Saati azalt">−</button>
+              <output class="goal-picker-value" id="goalHourOut">2</output>
+              <button class="goal-step" type="button" data-goal-step="hour" data-dir="1" aria-label="Saati artır">+</button>
+            </div>
+            <div class="goal-picker-row">
+              <span class="goal-picker-label">Dakika</span>
+              <button class="goal-step" type="button" data-goal-step="minute" data-dir="-5" aria-label="Dakikayı azalt">−</button>
+              <output class="goal-picker-value" id="goalMinOut">00</output>
+              <button class="goal-step" type="button" data-goal-step="minute" data-dir="5" aria-label="Dakikayı artır">+</button>
+            </div>
+            <div class="goal-picker-actions">
+              <button class="mini-btn" id="goalCancelBtn" type="button">Vazgeç</button>
+              <button class="mini-btn accent" id="goalSaveBtn" type="button">Kaydet</button>
+            </div>
           </div>
         </div>
 
@@ -6365,11 +6740,6 @@ html[data-theme="halloween"] .preview-panel {
           <button class="about-cta contact-cta" id="privacyBtn" type="button">
             <span class="about-cta-ico contact-cta-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.2 19 6v5.4c0 4.2-2.8 7.6-7 9.4-4.2-1.8-7-5.2-7-9.4V6Z"/><path d="m8.8 12 2.2 2.2 4.2-4.4"/></svg></span>
             <span class="about-cta-copy"><b>Gizlilik ve Güvenlik</b><small>Yerel veriler, hesaplar ve izinler</small></span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
-          </button>
-          <button class="about-cta contact-cta" id="widgetBtn" type="button">
-            <span class="about-cta-ico contact-cta-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><path d="M17 13.5v7M13.5 17h7"/></svg></span>
-            <span class="about-cta-copy"><b>Widget</b><small>Seri, günlük hedef ve sayaç kartı</small></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
           </button>
         </div>
@@ -6710,7 +7080,7 @@ const THEMES = {
   cocoa:    { label: 'Kakao',       tag: 'sıcak & kitap kokulu', particle: 'leaf', metaLight: '#fbf6f1', metaDark: '#120d0a' },
   galaxy:   { label: 'Galaksi',     tag: 'derin & büyülü',   particle: 'star',  metaLight: '#f3f1ff', metaDark: '#07040f' },
   noel:     { label: 'Noel',        tag: 'kar & sıcak ışık', particle: 'snow',  metaLight: '#eef6fb', metaDark: '#050e16' },
-  halloween:{ label: 'Cadılar Bayramı', tag: 'kanlı ay & sis',  particle: 'bat',   metaLight: '#f1ecef', metaDark: '#07050a' }
+  halloween:{ label: 'Cadılar Bayramı', tag: 'kanlı ay & gölgeler',  particle: 'bat',   metaLight: '#f1ecef', metaDark: '#07050a' }
 };
 /* Tüm temalar, kıyafetler ve aksesuarlar her zaman seçilebilir. */
 const GENDERS = { kiz: 'Dişi', erkek: 'Erkek' };
@@ -6827,9 +7197,114 @@ const BOOK_LINES_EN = [
   'turning the page…',
   'meow. I’ll memorize this one.'
 ];
+const BOOK_LINES_NOEL = [
+  '“kar usulca yağarken…”',
+  'sayfa 12: sıcak çikolata tarifi.',
+  '“ve kedi şöminenin yanında uyudu…”',
+  'mrrp. bu bölüm içimi ısıttı.',
+  '“kar taneleri gibi küçük adımlar…”',
+  'bir tutam tarçın, bir tutam sabır.',
+  'miyav! altını çizdim.',
+  '“kış geceleri uzun, dostluk sıcak.”',
+  'sayfayı çeviriyorum…',
+  'prr… bu masal güzel bitiyor.'
+];
+const BOOK_LINES_NOEL_EN = [
+  '“as the snow falls softly…”',
+  'page 12: a hot cocoa recipe.',
+  '“and the cat slept by the fireplace…”',
+  'mrrp. this chapter warmed me up.',
+  '“small steps, like snowflakes…”',
+  'a pinch of cinnamon, a pinch of patience.',
+  'meow! I underlined it.',
+  '“winter nights are long, friendship is warm.”',
+  'turning the page…',
+  'prr… this tale ends well.'
+];
+const BOOK_LINES_HALLOWEEN = [
+  '“ay kanarken gölgeler adını fısıldıyor…”',
+  'sayfa XIII: kazanın altındaki gölge.',
+  '“ve kedi ölülerin fısıltısını duydu…”',
+  'mrrp… bu satır tüylerimi diken diken etti.',
+  '“mezarlıkta bir adım sesi, sonra bir tane daha…”',
+  'bir tutam ölü gece, bir tutam cesaret.',
+  'miyav! bu cümle beni ürküttü.',
+  '“gölge senden önce oradaydı.”',
+  'sayfa kendi kendine çevriliyor…',
+  'prr… bu büyü hâlâ sürüyor.',
+  '“mum söndü ama gözler açık.”',
+  'hırr… bu bölümü yüksek sesle okumayacağım.'
+];
+const BOOK_LINES_HALLOWEEN_EN = [
+  '“when the moon bleeds, the shadows whisper your name…”',
+  'page XIII: the shadow beneath the cauldron.',
+  '“and the cat heard the whispers of the dead…”',
+  'mrrp… this line raised every fur on my back.',
+  '“a footstep in the graveyard, then another…”',
+  'a pinch of dead night, a pinch of courage.',
+  'meow! this sentence frightened me.',
+  '“the shadow was there before you.”',
+  'the page turns by itself…',
+  'prr… the spell is still going.',
+  '“the candle went out, but the eyes stayed open.”',
+  'hiss… I will not read this chapter out loud.'
+];
+const BOOK_WORLDS = {
+  classic: {
+    tr: { kicker: 'pati masalları', title: 'Sıcak Sayfalar', chapter: 'sayfa 42', left: '“Güneş patilerimi ısıtırken...”', right: 'mırnav teorisi üzerine kısa bir not.' },
+    en: { kicker: 'paw tales', title: 'Warm Pages', chapter: 'page 42', left: '“As the sun warms my paws...”', right: 'a short note on the theory of purring.' }
+  },
+  noel: {
+    tr: { kicker: 'kış defteri', title: 'Kış Masalları', chapter: 'bölüm 12', left: '“Kar usulca yağarken...”', right: 'sıcak çikolata ve sabır tarifi.' },
+    en: { kicker: 'winter journal', title: 'Winter Tales', chapter: 'chapter 12', left: '“As the snow falls softly...”', right: 'a recipe for hot cocoa and patience.' }
+  },
+  halloween: {
+    tr: { kicker: 'yasak bölüm', title: 'Nekronomikon', chapter: 'bölüm XIII', left: '“Ay kanarken gölgeler adını fısıldıyor...”', right: 'ölülerin diliyle yazılmış bir dua.' },
+    en: { kicker: 'forbidden chapter', title: 'Necronomicon', chapter: 'chapter XIII', left: '“When the moon bleeds, the shadows whisper your name...”', right: 'a prayer written in the tongue of the dead.' }
+  }
+};
+function bookWorldKey() {
+  return S.theme === 'noel' || S.theme === 'halloween' ? S.theme : 'classic';
+}
+function bookWorld() {
+  return BOOK_WORLDS[bookWorldKey()][S.lang === 'en' ? 'en' : 'tr'];
+}
+function bookLines() {
+  const key = bookWorldKey();
+  const en = S.lang === 'en';
+  if (key === 'noel') return en ? BOOK_LINES_NOEL_EN : BOOK_LINES_NOEL;
+  if (key === 'halloween') return en ? BOOK_LINES_HALLOWEEN_EN : BOOK_LINES_HALLOWEEN;
+  return en ? BOOK_LINES_EN : BOOK_LINES;
+}
+function bookMeows() {
+  const en = S.lang === 'en';
+  if (bookWorldKey() === 'halloween') return en ? ['mrrp…', 'meow?', 'prr!', 'hiss…'] : ['mrrp…', 'miyav?', 'prr!', 'hırr…'];
+  return en ? ['meow.', 'mrrp…', 'prr!', 'meow?', 'mrr.'] : ['miyav.', 'mrrp…', 'prr!', 'miyav?', 'mırnav.'];
+}
+function readingBubbleTitle() {
+  return S.cat.name + ' · ' + bookWorld().title;
+}
+function updateBookIdentity() {
+  const key = bookWorldKey();
+  const world = bookWorld();
+  $$('.book').forEach((book) => {
+    book.dataset.book = key;
+    const left = $('.book-page.left', book);
+    const right = $('.book-page.right', book);
+    const set = (el, sel, val) => {
+      const node = el && $(sel, el);
+      if (node && node.textContent !== val) node.textContent = val;
+    };
+    set(left, '.book-kicker', world.kicker);
+    set(left, '.book-title', world.title);
+    set(left, '.book-copy', world.left);
+    set(right, '.book-kicker', world.chapter);
+    set(right, '.book-copy', world.right);
+  });
+}
 
 const DEFAULTS = () => ({
-  v: 2,
+  v: 3,
   theme: 'noel',
   mode: 'dark',
   lang: 'tr',
@@ -6873,6 +7348,12 @@ function loadSettings() {
   s.stats = Object.assign({}, base.stats, saved.stats || {});
   if (!THEMES[s.theme]) s.theme = base.theme;
   if (!['light', 'dark', 'auto'].includes(s.mode)) s.mode = base.mode;
+  /* v3: uygulama karanlık Noel temasıyla açılır. Bu kural yalnızca bir kez
+     uygulanır; kullanıcı sonradan temasını/modunu değiştirirse tercihi korunur. */
+  if (!saved.v || Number(saved.v) < 3) {
+    s.theme = base.theme;
+    s.mode = base.mode;
+  }
   if (!['tr', 'en'].includes(s.lang)) s.lang = base.lang;
   s.motion = 'high';
   s.particles = true;
@@ -6907,7 +7388,7 @@ function loadSettings() {
   s.catMessages = s.catMessages !== false;
   delete s.weather;
   s.lastMsgAt = Math.max(0, Number(s.lastMsgAt) || 0);
-  s.dailyGoal = clamp(Math.round(Number(s.dailyGoal) || 120), 15, 600);
+  s.dailyGoal = clamp(Math.round(Number(s.dailyGoal) || 120), 15, 720);
   s.focusMin = clamp(Math.round(Number(s.focusMin) || 25), 1, 240);
   s.breakMin = clamp(Math.round(Number(s.breakMin) || 5), 1, 30);
   s.volume = clamp(Number(s.volume), 0, 1);
@@ -6927,7 +7408,7 @@ function loadSettings() {
   ['fur', 'belly', 'eyes', 'patch', 'patch2', 'collar'].forEach((k) => {
     if (!/^#[0-9a-f]{6}$/i.test(s.cat[k] || '')) s.cat[k] = base.cat[k];
   });
-  s.v = 2;
+  s.v = 3;
   s.stats.sec = Number.isFinite(Number(s.stats.sec)) ? Math.max(0, Number(s.stats.sec)) : 0;
   s.stats.sessions = Number.isFinite(Number(s.stats.sessions)) ? Math.max(0, Math.round(Number(s.stats.sessions))) : 0;
   s.stats.hourMark = Number.isFinite(Number(s.stats.hourMark)) ? Math.max(0, Math.floor(Number(s.stats.hourMark))) : 0;
@@ -7002,16 +7483,6 @@ const EN = {
   'Tamam, yapalım': "Yes, let's do it",
   'Hayır, şimdi değil': 'Not now',
   '“Tamam, yapalım” ile kurulum seçeneklerini gör. “Hayır, şimdi değil” ile kurmadan odaklan.': 'Choose “Yes, let’s do it” to see install options. Choose “Not now” to focus without installing.',
-  '· ana ekran kartı': '· home screen card',
-  'Bir de ana ekran kartı ekleyelim mi?': 'Add a home screen card too?',
-  'Vespır artık yanında. Dilersen ana ekranına temana uyan küçük bir Vespır kartı da ekleyebilirsin; odaklanmaya başlamadan önce bir bakışta gününü görürsün.': 'Vespır is with you now. If you like, add a small Vespır card to your home screen that matches your theme; see your day at a glance before you start focusing.',
-  'Bugünkü odak dakikaların ve hedefin tek bakışta.': 'Your focus minutes and goal for today at a glance.',
-  'Odak sürerken kalan süre canlı sayılır.': 'The remaining time counts down live while you focus.',
-  'Kartta “Seni özledim, gel” gibi Vespır mesajları döner.': 'Vespır messages like “I miss you, come back” rotate on the card.',
-  'Seçtiğin tema, kedi ve dil karta otomatik taşınır.': 'Your theme, cat and language carry over to the card automatically.',
-  'Widget’ı ekle': 'Add the widget',
-  'Şimdi değil, odaklan': 'Not now, focus',
-  'Widget sayfası yeni sekmede açılır; tarayıcı menüsünden “Ana ekrana ekle”ye dokunman yeterli.': 'The widget page opens in a new tab; just tap “Add to Home Screen” in your browser menu.',
   'Kapat': 'Close',
   'miyav · hoş geldin': 'meow · welcome',
   'Ben': 'I’m',
@@ -7056,22 +7527,16 @@ const EN = {
   'Tek seferde bir kıyafet giyer; aksesuarlarla birlikte takılabilir. Kıyafet seçimi de bu tarayıcıda saklanır.': 'She wears one outfit at a time; accessories can be added too. Her outfit choice is also saved in this browser.',
   'Aksesuarlar': 'Accessories',
   'birden fazla seçebilirsin': 'pick more than one',
-  'Noel teması seçiliyken Vespır kendiliğinden noel şapkası takar. Şapkayı yıl boyunca takmak istersen buradan seçebilirsin.': 'When the Christmas theme is selected, Vespır puts on a Santa hat by herself. If you want the hat all year, pick it here.',
+  'Noel şapkası, geyik boynuzu, cadı şapkası ve balkabağı burada her zaman seçilebilir. Tema değişse de kıyafet ve aksesuarların korunur.': 'The Santa hat, reindeer antlers, witch hat and pumpkin are always available here. Your outfit and accessories stay the same when the theme changes.',
   'Uygulama': 'App',
   "Vespır'ı cebine al": 'put Vespır in your pocket',
   "Vespır'ı cebine koy": 'Put Vespır in your pocket',
   'Ana ekrana ekle': 'Add to home screen',
   'Kurulu': 'Installed',
-  'Ana ekran widget\'ı': 'Home screen widget',
-  'temaya uyumlu kart': 'theme-aware card',
-  'Temaya uyumlu Vespır kartı': 'A Vespır card that matches your theme',
-  "Seçtiğin tema, kedi ve dil widget'a taşınır. Boştayken bugünkü odak dakikalarını ve hedefini, odak sürerken kalan süreyi gösterir.": 'Your theme, cat and language carry over to the widget. It shows today’s focus minutes and goal while idle, and the remaining time while you focus.',
-  "Widget'ı aç": 'Open widget',
-  'İpucu: Widget sayfasını açıp tarayıcı menüsünden “Ana ekrana ekle”yi seç. Kurulu uygulamada simgeye uzun basıp “Widget” kısayolunu kullanabilirsin.': 'Tip: open the widget page and choose “Add to Home screen” from the browser menu. In the installed app, long-press the icon and use the “Widget” shortcut.',
   'Dil': 'Language',
   'language': 'dil',
   'Uygulama dili': 'App language',
-  'Dil değişince arayüz, bildirimler ve widget aynı dili konuşur.': 'When you change the language, the interface, notifications and widget speak the same language.',
+  'Dil değişince arayüz ve bildirimler aynı dili konuşur.': 'When you change the language, the interface and notifications speak the same language.',
   'veya üstteki güneşe dokun': 'or tap the sun above',
   'Temalar': 'Themes',
   'her biri ayrı bir dünya': 'each a different world',
@@ -7146,7 +7611,7 @@ const EN = {
   'tatlı & kalpli': 'sweet & heartfelt', 'sakin & neon': 'calm & neon', 'doğal & yumuşak': 'natural & soft',
   'sıcak & cesur': 'warm & bold', 'rüya gibi & sakin': 'dreamy & calm', 'ferah & derin': 'airy & deep',
   'yumuşak & tatlı': 'soft & sweet', 'taze & huzurlu': 'fresh & peaceful', 'sıcak & kitap kokulu': 'warm & book-scented',
-  'derin & büyülü': 'deep & magical', 'kar & sıcak ışık': 'snow & warm light', 'kanlı ay & sis': 'blood moon & fog',
+  'derin & büyülü': 'deep & magical', 'kar & sıcak ışık': 'snow & warm light', 'kanlı ay & gölgeler': 'blood moon & shadows',
   'Aydınlık': 'Light', 'Karanlık': 'Dark', 'Otomatik': 'Auto',
   'Tekir': 'Tabby', 'Sarman': 'Orange Tabby', 'Britanya Kısa Tüylü': 'British Shorthair', 'Siyam': 'Siamese',
   'Van Kedisi': 'Turkish Van', 'Üç Renkli': 'Calico', 'Bombay': 'Bombay', 'Rus Mavisi': 'Russian Blue',
@@ -7237,7 +7702,6 @@ const EN = {
   'bu dünya güzelmiş.': 'this world is lovely.',
   'miyav! renkler değişti.': 'meow! the colors changed.',
   'prr… yeni bir köşe.': 'prr… a new corner.',
-  'Cadılar Bayramı açıldı! Şapkamı taktım, hadi kutlayalım.': 'Halloween is unlocked! I put on my hat, let’s celebrate.',
   'Kar yağdı!': 'It’s snowing!',
   'kaldığımız yerden devam. miyav.': 'continuing where we left off. meow.',
   'bunu senin için sakladım.': 'I saved this for you.',
@@ -7318,7 +7782,14 @@ const EN = {
   'E-posta adresini panoya kopyala': 'Copy the email address to the clipboard',
   'Vespır Instagram sayfasını yeni sekmede aç': 'Open the Vespır Instagram page in a new tab',
   'Vespır Nedir?': 'What is Vespır?',
-  'patileri birleştirelim': 'let’s join paws'
+  'patileri birleştirelim': 'let’s join paws',
+  'Düzenle': 'Edit',
+  'Kaydet': 'Save',
+  'Vazgeç': 'Cancel',
+  'Saat': 'Hours',
+  'Dakika': 'Minutes',
+  'Hedef saat': 'Goal hours',
+  'Hedef dakika': 'Goal minutes'
 };
 const EN_LOWER = new Map(Object.keys(EN).map((k) => [k.toLocaleLowerCase('tr'), EN[k]]));
 function t(text) {
@@ -7526,9 +7997,9 @@ function refreshLanguageChrome() {
   updatePwaUI();
   updateStageMeta();
   updateCatSummary();
+  updateBookIdentity();
   updateCatNote();
   updatePerch();
-  updateWidgetCard();
   if ($('#focusInvite').classList.contains('open')) syncFocusInviteCopy();
   applyLanguageDom(document.body);
 }
@@ -7542,7 +8013,7 @@ function setLanguage(lang, opts = {}) {
   saveNow();
   refreshLanguageChrome();
   try { document.dispatchEvent(new CustomEvent('vespir:lang')); } catch (e) {}
-  /* Widget ve arka plan bildirimleri de yeni dilde mesaj üretsin. */
+  /* Arka plan bildirimleri de yeni dilde mesaj üretsin. */
   try { writeMessagePrefs(); } catch (e) {}
   if (!opts.quiet) toast(next === 'en' ? 'Language switched to English.' : 'Dil Türkçeye döndü.');
 }
@@ -7629,7 +8100,6 @@ function saveNow() {
     S = merged;
     savedBaseline = copyState(S);
     if (!sameState(previous, S)) setTimeout(() => paintStoredState(previous), 0);
-    if (window.VespirWidgetBridge) window.VespirWidgetBridge.push();
   } catch (e) {
     /* Kota dolarsa uygulama durmasın: yalnızca bilinen alanlar yazılır,
        eski sürümlerden kalan şişkin anahtarlar localStorage'a taşınmaz. */
@@ -7687,6 +8157,9 @@ function applyTheme(animate = false, sourceEl = null) {
     html.dataset.motion = 'high';
     html.style.colorScheme = mode;
     updatePawColor();
+    /* Kitap teması renklerle aynı anda değişsin: tema geçişi animasyonlu
+       yoldan gelse de Vespır doğru kitabı okur. */
+    updateBookIdentity();
   };
   /* Küçük yardımcı güncellemeler: ayrı karede çalışır, swap karesini şişirmez. */
   const runChrome = () => {
@@ -7703,7 +8176,9 @@ function applyTheme(animate = false, sourceEl = null) {
     scheduleAtmosphere();
     updateCatVisuals();
     syncSnow();
-    if (window.VespirWidgetBridge) window.VespirWidgetBridge.push();
+    /* Tema değişince Vespır'ın okuduğu kitap da o dünyaya geçer:
+       Noel → kış masalları, Cadılar Bayramı → Nekronomikon. */
+    updateBookIdentity();
     /* Uygulama kapalıyken gelen bildirimler de yeni temanın simgesini taşısın. */
     if (typeof S !== 'undefined' && S.catMessages) writeMessagePrefs();
   };
@@ -7888,7 +8363,9 @@ function buildSnowFlakes() {
      dolduruyordu. 50 civarı tane aynı kar hissini verir, yarı maliyetle. */
   /* 2560 px geniş ekranda 56 tane tek tek yay çiziminde kare atlaması
      yapıyordu; 48 tane aynı yoğunluk hissini koruyup akıcı kalıyor. */
-  const count = Math.round(Math.min(48, Math.max(24, (snow.w * snow.h) / 34000)));
+  /* Düşük bellekli telefonda tane sayısı yarıya iner; kar hissi aynı kalır. */
+  const cap = document.documentElement.dataset.lowfx === '1' ? 28 : 48;
+  const count = Math.round(Math.min(cap, Math.max(20, (snow.w * snow.h) / 34000)));
   snow.flakes = [];
   for (let i = 0; i < count; i++) snow.flakes.push(makeSnowFlake(true));
 }
@@ -8266,8 +8743,7 @@ function resetSnowFlake(f) {
 }
 function sceneEffectsVisible() {
   return !document.hidden && !document.body.classList.contains('focus-active')
-    && !document.body.classList.contains('install-invite-open')
-    && !document.body.classList.contains('widget-open');
+    && !document.body.classList.contains('install-invite-open');
 }
 function syncSceneEffects() {
   const visible = sceneEffectsVisible();
@@ -8587,7 +9063,7 @@ function initFx() {
 }
 function resizeFx() {
   if (!fx.canvas) return;
-  fx.dpr = Math.min(1.5, window.devicePixelRatio || 1);
+  fx.dpr = Math.min(document.documentElement.dataset.lowfx === '1' ? 1 : 1.5, window.devicePixelRatio || 1);
   fx.canvas.width = Math.floor(window.innerWidth * fx.dpr);
   fx.canvas.height = Math.floor(window.innerHeight * fx.dpr);
 }
@@ -8792,11 +9268,12 @@ function catMarkup(state = 'idle', interactive = false) {
         <div class="paw left"><i></i><i></i><i></i></div>
         <div class="paw right"><i></i><i></i><i></i><b class="paw-pen"></b></div>
         <div class="book" aria-hidden="true">
-          <div class="book-page left"></div>
-          <div class="book-page right"></div>
+          <div class="book-page left"><span class="book-kicker"></span><strong class="book-title"></strong><span class="book-copy"></span></div>
+          <div class="book-page right"><span class="book-kicker"></span><span class="book-copy"></span></div>
           <div class="page-flip"></div>
           <div class="hl-line"></div>
           <div class="book-spine"></div>
+          <i class="book-ribbon"></i>
         </div>
         <div class="yarn-toy" aria-hidden="true"><div class="yarn-ball"><i></i><i></i><i></i></div></div>
         <div class="acc acc-pumpkin" aria-hidden="true"><i></i></div>
@@ -8910,9 +9387,14 @@ function updateCatVisuals() {
     const face = $('#brandFace');
     if (face) face.innerHTML = brandFaceSVG();
   }
+  updateBookIdentity();
   const b = $('#catBubble');
   const bubbleTitle = $('#bubbleTitle');
-  if (bubbleTitle && b) bubbleTitle.textContent = c.name;
+  if (bubbleTitle && b) {
+    const wrap = $('#catMount .cat-wrap');
+    const reading = wrap && wrap.dataset.state === 'read' && b.dataset.mode === 'read';
+    bubbleTitle.textContent = reading ? readingBubbleTitle() : c.name;
+  }
   updateCatSummary();
   updateStageMeta();
   updateCatNote();
@@ -9204,7 +9686,7 @@ function showReadingBubble(duration = 14000) {
   clearBubbleTimers();
   b.dataset.mode = 'read';
   const title = $('#bubbleTitle');
-  if (title) title.textContent = S.lang === 'en' ? S.cat.name + ' is reading' : S.cat.name + ' okuyor';
+  if (title) title.textContent = readingBubbleTitle();
   const words = $('#bubbleWords');
   if (!words) return;
   const spans = $$('span', words);
@@ -9213,8 +9695,8 @@ function showReadingBubble(duration = 14000) {
     let text = '';
     for (let i = 0; i < 6; i++) {
       text = Math.random() < .24
-        ? pick(S.lang === 'en' ? ['meow.', 'mrrp…', 'prr!', 'meow?', 'mrr.'] : ['miyav.', 'mrrp…', 'prr!', 'miyav?', 'mırnav.'])
-        : pick(S.lang === 'en' ? BOOK_LINES_EN : BOOK_LINES);
+        ? pick(bookMeows())
+        : pick(bookLines());
       if (text !== lastLine) break;
     }
     lastLine = text;
@@ -9223,7 +9705,7 @@ function showReadingBubble(duration = 14000) {
   const paint = (el, text) => {
     const shown = t(text);
     el.textContent = shown;
-    const meow = /^(miyav|mrrp|prr|mırnav|meow|mrr|purr)/i.test(shown);
+    const meow = /^(miyav|mrrp|prr|mırnav|meow|mrr|purr|hiss|hırr)/i.test(shown);
     el.classList.toggle('meow-line', meow);
     el.classList.toggle('read-line', !meow);
   };
@@ -9410,9 +9892,8 @@ function catContextLines(now = new Date()) {
   return lines;
 }
 function catRhythmProfile() {
-  const day = new Date().getDay();
-  if (day === 0 || day === 6) return { read: [8000, 12000], first: 12000 };
-  return { read: [10000, 15000], first: 9000 };
+  /* Okuma sahnesi ~30 saniye sürer: kitap açık kalır, balon satır satır akar. */
+  return { read: [28000, 32000], first: 14000 };
 }
 /* Bir sonraki dakika başına kalan süre. Kedi her dakikada bir uyanıp okur;
    sayaç gibi duvar saatine hizalanır, sekme arkada kalsa bile kaymaz. */
@@ -9591,13 +10072,15 @@ function updateCatNote() {
   if (rewardActive) {
     text = en ? `${name} is eating` : `${name} mama yiyor`;
   } else if (timer && timer.running && timer.phase === 'focus') {
+    const bookTitle = bookWorld().title;
     text = en
-      ? (state === 'play' ? `${name} is playing with yarn` : state === 'lonely' ? `${name} is waiting for you` : state === 'read' ? `${name} is reading` : state === 'stretch' ? `${name} is stretching` : state === 'happy' ? `${name} is very happy` : `${name} is sleeping with you`)
-      : (state === 'play' ? `${name} tüy yumağıyla oynuyor` : state === 'lonely' ? `${name} seni bekliyor` : state === 'read' ? `${name} kitap okuyor` : state === 'stretch' ? `${name} geriniyor` : state === 'happy' ? `${name} çok mutlu` : `${name} seninle uyuyor`);
+      ? (state === 'play' ? `${name} is playing with yarn` : state === 'lonely' ? `${name} is waiting for you` : state === 'read' ? `${name} is reading “${bookTitle}”` : state === 'stretch' ? `${name} is stretching` : state === 'happy' ? `${name} is very happy` : `${name} is sleeping with you`)
+      : (state === 'play' ? `${name} tüy yumağıyla oynuyor` : state === 'lonely' ? `${name} seni bekliyor` : state === 'read' ? `${name} “${bookTitle}” okuyor` : state === 'stretch' ? `${name} geriniyor` : state === 'happy' ? `${name} çok mutlu` : `${name} seninle uyuyor`);
   } else if (timer && timer.running && timer.phase === 'break') {
+    const bookTitle = bookWorld().title;
     text = en
-      ? (state === 'read' ? `${name} is reading a break book` : `${name} is breathing`)
-      : (state === 'read' ? `${name} mola kitabı okuyor` : `${name} nefes alıyor`);
+      ? (state === 'read' ? `${name} is reading “${bookTitle}” on break` : `${name} is breathing`)
+      : (state === 'read' ? `${name} molada “${bookTitle}” okuyor` : `${name} nefes alıyor`);
   } else if (timer && timer.phase === 'break') {
     text = en ? `${name} is enjoying the break` : `${name} molanın tadını çıkarıyor`;
   } else if (timer && timer.running) {
@@ -9612,18 +10095,24 @@ function updateCatNote() {
 function updatePerch() {
   const time = cachedEl('#perchTime');
   const status = cachedEl('#perchStatus');
-  if (time && timer) time.textContent = fmtClock(timer.remaining);
+  /* Her saniye aynı metni yazmak gereksiz stil geçersizleştirmesi üretiyordu. */
+  if (time && timer) {
+    const label = fmtClock(timer.remaining);
+    if (time.textContent !== label) time.textContent = label;
+  }
   if (status) {
+    let nextStatus = '';
     if (rewardActive) {
-      status.textContent = t(rewardLabel());
+      nextStatus = t(rewardLabel());
     } else {
       const state = currentCatState();
       const en = S.lang === 'en';
       const word = en
         ? (state === 'play' ? 'playing' : state === 'lonely' ? 'waiting for you' : state === 'read' ? 'reading' : state === 'stretch' ? 'stretching' : state === 'happy' ? 'happy' : 'sleeping')
         : (state === 'play' ? 'oynuyor' : state === 'lonely' ? 'seni bekliyor' : state === 'read' ? 'kitap okuyor' : state === 'stretch' ? 'geriniyor' : state === 'happy' ? 'mutlu' : 'uyuyor');
-      status.textContent = (en ? 'focusing · ' : 'odakta ') + word;
+      nextStatus = (en ? 'focusing · ' : 'odakta ') + word;
     }
+    if (status.textContent !== nextStatus) status.textContent = nextStatus;
   }
 }
 function beginFocusCat() {
@@ -9769,8 +10258,9 @@ function beginFocusPlay() {
   const animate = (selector, values, property, k = 1.5) => {
     catPlayAnimations.push($(selector, wrap).animate(amplify(values, k).map((value, i) => ({
       [property]: value, offset: offsets[i]
-    })), { duration: 3200, iterations: 4, easing: 'ease-in-out', composite: 'add' }));
-  };
+        })), { duration: 3200, iterations: 9, easing: 'ease-in-out', composite: 'add' }));
+};
+  /* Yumak sahnesi ~29 saniye sürer (3200 ms x 9 tur); ardından kedi uykuya döner. */
   animate('.yarn-toy', motions.toy, 'translate', 1.55);
   animate('.yarn-ball', motions.roll, 'rotate', 1.4);
   animate('.paw.right', motions.right, 'translate', 1.55);
@@ -9781,7 +10271,7 @@ function beginFocusPlay() {
   /* Yumak her zıplamada hafifçe ezilip gerilir. */
   catPlayAnimations.push($('.yarn-ball', wrap).animate(['1', '1.09', '.94', '1.06', '1', '1.1', '1'].map((scaleValue, i) => ({
     scale: scaleValue, offset: offsets[i]
-  })), { duration: 3200, iterations: 4, easing: 'ease-in-out', composite: 'add' }));
+  })), { duration: 3200, iterations: 9, easing: 'ease-in-out', composite: 'add' }));
   const playRows = [
     ['Bir dokunuş… yumak usulca yuvarlandı.', 'Pat! Biraz sola, biraz sağa. Sen çalışmaya devam et.'],
     ['Bir pati sağa, bir pati sola. Sen çalış, ben bunu hallederim.', 'Kaçıyor! Ama benden kaçamaz.'],
@@ -9799,7 +10289,7 @@ function beginFocusPlay() {
       ? `Today I’m playing with the ${yarnName} yarn. You focus, I’ll have fun.`
       : `Bugün ${yarnName} yumakla oynuyorum. Sen odaklan, ben eğleneyim.`)
     : pick(playLines), { duration: 4500 });
-  catAfter('play', 12800, () => {
+  catAfter('play', 30000, () => {
     if (!timer || !timer.running || timer.phase !== 'focus' || currentCatState() !== 'play') return;
     hideBubble();
     setCatState('sleep', { force: true });
@@ -9828,7 +10318,13 @@ function maybeWakeAndRead() {
       if (!timer || !timer.running || timer.phase !== 'focus') return;
       if (currentCatState() !== 'read') return;
       startHighlighting();
-      showBubble('bunu not alacağım.', { title: S.cat.name + ' not alıyor', duration: 4800 });
+      /* Not cümlesi de okunan kitabın dünyasından gelsin. */
+      const noteLine = bookWorldKey() === 'halloween'
+        ? 'bu satırı kanla işaretledim.'
+        : bookWorldKey() === 'noel'
+          ? 'bu satırın altını sıcak çikolatayla çizdim.'
+          : 'bunu not alacağım.';
+      showBubble(noteLine, { title: S.cat.name + ' not alıyor', duration: 4800 });
       catMeow(.55);
       catAfter('greet', 4800, () => {
         if (!timer || !timer.running || timer.phase !== 'focus') return;
@@ -9844,10 +10340,13 @@ function maybeWakeAndRead() {
       clearHighlight();
       if (Math.random() < .5) {
         setCatState('happy', { force: true });
-        showBubble(pick([
-          'bunu not aldım.', 'miyav! altını çizdim.', 'sayfa kenarına yazdım.',
-          ...catContextLines()
-        ]), { duration: 3800 });
+        const world = bookWorldKey();
+        const doneLines = world === 'halloween'
+          ? ['bu bölümü fener ışığında okudum.', 'sayfada ince bir gölge kaldı…', 'hırr… kitap bana bakıyor gibiydi.']
+          : world === 'noel'
+            ? ['bu bölüm içimi ısıttı.', 'kar tanesi kadar hafif bir cümle.', 'sayfa kenarına sıcak çikolata lekesi bıraktım.']
+            : ['bunu not aldım.', 'miyav! altını çizdim.', 'sayfa kenarına yazdım.'];
+        showBubble(pick([...doneLines, ...catContextLines()]), { duration: 3800 });
         catAfter('read', 3000, () => {
           if (!timer || !timer.running || timer.phase !== 'focus') return;
           setCatState('sleep');
@@ -10327,12 +10826,50 @@ const THEME_NOTIFY_ICONS = (() => {
     <ellipse cx="32" cy="23" rx="18.6" ry="4" fill="#4a2f61"/>
     <ellipse cx="32" cy="22.2" rx="18.6" ry="4" fill="#5b3b75"/>
   </svg>`;
-  return { noel: uri(noel), halloween: uri(halloween) };
+  /* Bildirim simgesi 48 px'e küçülüyor: eski çizimdeki mini kar taneleri,
+     yarasalar ve puantiyeler o boyutta çamur gibi görünüyordu. Yeni
+     çizimler tek bir ortalanmış kedi başı ve temanın şapkasından oluşuyor. */
+  const cleanNoel = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+    <defs>
+      <linearGradient id="nb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#123a2c"/><stop offset="1" stop-color="#06180f"/></linearGradient>
+      <radialGradient id="ng" cx=".5" cy=".62" r=".5"><stop offset="0" stop-color="#f8f2e4" stop-opacity=".22"/><stop offset="1" stop-color="#f8f2e4" stop-opacity="0"/></radialGradient>
+    </defs>
+    <rect width="64" height="64" rx="15" fill="url(#nb)"/>
+    <circle cx="32" cy="40" r="24" fill="url(#ng)"/>
+    <path d="M18 36 16 20l11 7h10l11-7-2 16c2 3 3 6 3 9 0 9-8 14-16 14s-16-5-16-14c0-3 1-6 3-9z" fill="#f7f1e4"/>
+    <circle cx="26.5" cy="40" r="2.9" fill="#26332c"/>
+    <circle cx="37.5" cy="40" r="2.9" fill="#26332c"/>
+    <path d="M30.4 45h3.2L32 48z" fill="#d7657a"/>
+    <path d="M18 28 32 10l14 18z" fill="#cf4a4a"/>
+    <circle cx="32" cy="9.6" r="4.6" fill="#faf5ea"/>
+    <rect x="13.5" y="23" width="37" height="7.5" rx="3.75" fill="#faf5ea"/>
+  </svg>`;
+  const cleanHalloween = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+    <defs>
+      <linearGradient id="hb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3d2350"/><stop offset="1" stop-color="#150d1f"/></linearGradient>
+      <radialGradient id="hg" cx=".5" cy=".62" r=".5"><stop offset="0" stop-color="#7ce68a" stop-opacity=".26"/><stop offset="1" stop-color="#7ce68a" stop-opacity="0"/></radialGradient>
+    </defs>
+    <rect width="64" height="64" rx="15" fill="url(#hb)"/>
+    <circle cx="32" cy="42" r="22" fill="url(#hg)"/>
+    <path d="M50 12a6.2 6.2 0 1 0 0 12.4 7.8 7.8 0 0 1 0-12.4z" fill="#f2e6c4" opacity=".82"/>
+    <path d="M18 36 16 20l11 7h10l11-7-2 16c2 3 3 6 3 9 0 9-8 14-16 14s-16-5-16-14c0-3 1-6 3-9z" fill="#100b17"/>
+    <ellipse cx="26.5" cy="40" rx="3.4" ry="2.8" fill="#f5a33c"/>
+    <ellipse cx="37.5" cy="40" rx="3.4" ry="2.8" fill="#f5a33c"/>
+    <path d="M26.5 37.7v4.6M37.5 37.7v4.6" stroke="#20121f" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M30.4 45h3.2L32 48z" fill="#f5a33c"/>
+    <path d="M32 4 46 22H18z" fill="#4a2b62"/>
+    <ellipse cx="32" cy="22" rx="19" ry="3.6" fill="#5c3a78"/>
+    <rect x="21" y="16.6" width="22" height="4" rx="2" fill="#d8b45e"/>
+  </svg>`;
+  return { noel: uri(cleanNoel), halloween: uri(cleanHalloween) };
 })();
 const notifyIcon = () => THEME_NOTIFY_ICONS[document.documentElement.dataset.theme] || $('#appleIcon').href || NOTIFY_ICON_SVG;
+/* Durum çubuğu rozeti renkli simgeyle değil, tek renkli pati silüetiyle çizilir;
+   Android rozeti kendi maskesine soktuğu için renkli kedi lekeye dönüşüyordu. */
+const NOTIFY_BADGE = "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><path d="M16 34 14 14l12 8h12l12-8-2 20c1 3 2 6 2 9 0 10-9 15-18 15s-18-5-18-15c0-3 1-6 2-9z" fill="#fff"/></svg>`);
 async function notifyUser(title, body) {
   if (!S.notify || !('Notification' in window) || Notification.permission !== 'granted') return;
-  const opts = { body, icon: notifyIcon(), badge: notifyIcon(), tag: 'vespir-timer', renotify: true, data: { url: location.href } };
+  const opts = { body, icon: notifyIcon(), badge: NOTIFY_BADGE, tag: 'vespir-timer', renotify: true, data: { url: location.href } };
   try {
     if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
       const reg = await navigator.serviceWorker.getRegistration();
@@ -10369,7 +10906,7 @@ async function testNotification() {
   try {
     if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) {
       const reg = await navigator.serviceWorker.getRegistration();
-      if (reg && reg.active) await reg.showNotification(title, { body, icon: notifyIcon(), badge: notifyIcon(), tag: 'vespir-test' });
+      if (reg && reg.active) await reg.showNotification(title, { body, icon: notifyIcon(), badge: NOTIFY_BADGE, tag: 'vespir-test' });
       else new Notification(title, { body, icon: notifyIcon() });
     } else {
       new Notification(title, { body, icon: notifyIcon() });
@@ -10773,7 +11310,7 @@ function canSendCatMessage(now = Date.now()) {
 }
 async function sendCatMessage(body) {
   const title = S.cat.name;
-  const opts = { body, icon: notifyIcon(), badge: notifyIcon(), tag: 'vespir-hello', data: { url: location.origin + location.pathname } };
+  const opts = { body, icon: notifyIcon(), badge: NOTIFY_BADGE, tag: 'vespir-hello', data: { url: location.origin + location.pathname } };
   try {
     if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
       const reg = await navigator.serviceWorker.getRegistration();
@@ -10858,7 +11395,6 @@ function ensureGeoAskStyle() {
 async function explainLocationAsk() {
   if (locationExplained) return true;
   if (geoAskSnoozed()) return false;
-  if (document.body.classList.contains('widget-open')) return false;
   try {
     if (navigator.permissions && navigator.permissions.query) {
       const st = await navigator.permissions.query({ name: 'geolocation' });
@@ -11031,6 +11567,7 @@ async function writeMessagePrefs() {
       name: S.cat.name,
       url: location.origin + location.pathname,
       icon: notifyIcon(),
+      badge: NOTIFY_BADGE,
       lines: catAwayNoteLines(),
       weatherLines: w ? weatherLines(false) : [],
       weatherAt: w ? w.at : 0,
@@ -11827,14 +12364,17 @@ function syncTimerChrome(before = null, scrollY = null) {
 }
 function popDigit(el) {
   if (!el) return;
+  /* Sekme arkada/ekran kapalıyken boş yere animasyon kuyruğu üretmeyelim. */
+  if (document.hidden) return;
   /* Saniye her değiştiğinde tam sayfa yerleşimi hesaplanmasın:
-     aynı pop animasyonu Web Animations ile yeniden başlatılır. */
+     aynı pop animasyonu Web Animations ile yeniden başlatılır.
+     Yalnızca transform (translate3d) kullanılır: metin yeniden çizilmez. */
   if (typeof el.animate === 'function') {
     if (el._tickAnim) { try { el._tickAnim.cancel(); } catch (e) {} }
     el._tickAnim = el.animate([
-      { transform: 'translateY(0) scale(1)' },
-      { transform: 'translateY(-4px) scale(1.075)', offset: .38 },
-      { transform: 'translateY(0) scale(1)' }
+      { transform: 'translate3d(0, 0, 0) scale(1)' },
+      { transform: 'translate3d(0, -3px, 0) scale(1.04)', offset: .38 },
+      { transform: 'translate3d(0, 0, 0) scale(1)' }
     ], { duration: 380, easing: 'cubic-bezier(.18, 1.3, .42, 1)' });
   } else {
     el.classList.remove('tick');
@@ -11961,7 +12501,8 @@ function updateGoalUI() {
   if (left) left.textContent = min >= goal ? t('Hedef tamam!') : fmtDuration(goal - min) + (en ? ' left' : ' kaldı');
   const sessions = $('#goalSessions');
   if (sessions) sessions.textContent = S.stats.sessions + (en ? ' sessions' : ' seans');
-  $$('#goalPresets [data-goal]').forEach((b) => b.classList.toggle('active', Number(b.dataset.goal) === goal));
+  const target = $('#goalTarget');
+  if (target) target.textContent = (en ? 'Goal: ' : 'Hedef: ') + fmtDuration(goal);
 }
 function persistTimer(intentional = false) {
   if (!intentional) {
@@ -12037,8 +12578,7 @@ function pauseTimer() {
 function toggleTimer() {
   stopAutoStart();
   if (timer.running) pauseTimer();
-  else if (timer.phase === 'focus' && !hasInstalledPwa()) openFocusInvite('app');
-  else if (timer.phase === 'focus' && shouldOfferWidget()) openFocusInvite('widget');
+  else if (timer.phase === 'focus' && !hasInstalledPwa()) openFocusInvite();
   else startTimer();
 }
 function resetTimer() {
@@ -12294,13 +12834,6 @@ let pwaInstalled = false;
 try { pwaInstalled = localStorage.getItem('vespir.pwaInstalled') === '1'; } catch (e) {}
 let focusSceneScrollY = 0;
 let focusInviteCleanup = 0;
-let focusInviteStep = 'app';
-function widgetWasAsked() {
-  try { return localStorage.getItem('vespir.widgetAsked') === '1'; } catch (e) { return false; }
-}
-function markWidgetAsked() {
-  try { localStorage.setItem('vespir.widgetAsked', '1'); } catch (e) {}
-}
 function hasInstalledPwa() {
   if (isStandalone()) return true;
   /* Tarayıcı hâlâ kurulum penceresi sunabiliyorsa uygulama kurulu değildir;
@@ -12341,9 +12874,7 @@ function syncFocusInviteCopy() {
   const en = S.lang === 'en';
   const name = $('#focusInviteName');
   if (name) name.textContent = S.cat.name;
-  const wname = $('#focusWidgetName');
-  if (wname) wname.textContent = S.cat.name;
-  /* İki adımın bütün metni, davet açıldığı anda seçili dile göre yazılır. */
+  /* Davetin bütün metni, açıldığı anda seçili dile göre yazılır. */
   const kind = $('#focusInviteKind');
   if (kind) kind.textContent = en ? 'your focus friend' : 'odak arkadaşın';
   const appTitle = $('#focusInviteTitle');
@@ -12369,55 +12900,22 @@ function syncFocusInviteCopy() {
   if (status) status.textContent = en
     ? 'Choose “Okay, let’s do it” to see install options. Choose “Not now” to focus without installing.'
     : '“Tamam, yapalım” ile kurulum seçeneklerini gör. “Hayır, şimdi değil” ile kurmadan odaklan.';
-  const wkind = $('#focusWidgetKind');
-  if (wkind) wkind.textContent = en ? 'home-screen card' : 'ana ekran kartı';
-  const wtitle = $('#focusWidgetTitle');
-  if (wtitle) wtitle.textContent = en ? 'Add a home-screen card too?' : 'Bir de ana ekran kartı ekleyelim mi?';
-  const wdesc = $('#focusWidgetDescription');
-  if (wdesc) wdesc.textContent = en
-    ? 'Vespır is with you now. If you like, add a small Vespır card to your home screen that matches your theme; see your day at a glance before you start focusing.'
-    : 'Vespır artık yanında. Dilersen ana ekranına temana uyan küçük bir Vespır kartı da ekleyebilirsin; odaklanmaya başlamadan önce bir bakışta gününü görürsün.';
-  const wBenefits = $$('#focusStepWidget .focus-invite-benefits li');
-  const wLines = en
-    ? ['Your focus minutes and goal for today at a glance.',
-       'The remaining time counts down live while you focus.',
-       'Vespır messages like “I miss you, come back” rotate on the card.',
-       'Your theme, cat and language carry over to the card automatically.']
-    : ['Bugünkü odak dakikaların ve hedefin tek bakışta.',
-       'Odak sürerken kalan süre canlı sayılır.',
-       'Kartta “Seni özledim, gel” gibi Vespır mesajları döner.',
-       'Seçtiğin tema, kedi ve dil karta otomatik taşınır.'];
-  wBenefits.forEach((li, i) => { if (wLines[i]) li.textContent = wLines[i]; });
-  const widget = $('#focusWidgetBtn');
-  if (widget) widget.textContent = en ? 'Add the widget' : 'Widget’ı ekle';
-  const wskip = $('#focusWidgetSkipBtn');
-  if (wskip) wskip.textContent = en ? 'Not now, focus' : 'Şimdi değil, odaklan';
-  const wstatus = $('#focusWidgetStatus');
-  if (wstatus) wstatus.textContent = en
-    ? 'The widget page opens in a new tab; tap “Add to Home Screen” in your browser menu.'
-    : 'Widget sayfası yeni sekmede açılır; tarayıcı menüsünden “Ana ekrana ekle”ye dokunman yeterli.';
 }
-function setFocusInviteStep(step) {
-  const next = step === 'widget' && isPhoneDevice() ? 'widget' : 'app';
+function prepareFocusInvite() {
   const appStep = $('#focusStepApp');
-  const widgetStep = $('#focusStepWidget');
   const panel = $('#focusInvite .focus-invite-panel');
-  if (!appStep || !widgetStep || !panel) return;
-  focusInviteStep = next;
-  appStep.hidden = next === 'widget';
-  widgetStep.hidden = next !== 'widget';
+  if (!appStep || !panel) return;
+  appStep.hidden = false;
   syncFocusInviteCopy();
-  const shown = next === 'widget' ? widgetStep : appStep;
-  shown.classList.remove('enter');
-  void shown.offsetWidth;
-  shown.classList.add('enter');
-  panel.setAttribute('aria-labelledby', next === 'widget' ? 'focusWidgetTitle' : 'focusInviteTitle');
-  panel.setAttribute('aria-describedby', next === 'widget' ? 'focusWidgetDescription' : 'focusInviteDescription');
-  if (next === 'widget') markWidgetAsked();
-  const target = next === 'widget' ? $('#focusWidgetBtn') : $('#focusInstallBtn');
+  appStep.classList.remove('enter');
+  void appStep.offsetWidth;
+  appStep.classList.add('enter');
+  panel.setAttribute('aria-labelledby', 'focusInviteTitle');
+  panel.setAttribute('aria-describedby', 'focusInviteDescription');
+  const target = $('#focusInstallBtn');
   if (target) target.focus({ preventScroll: true });
 }
-function openFocusInvite(step = 'app') {
+function openFocusInvite() {
   if (rewardActive) return;
   const invite = $('#focusInvite');
   if (invite.classList.contains('open')) return;
@@ -12428,7 +12926,6 @@ function openFocusInvite(step = 'app') {
   $('#focusInviteCat').innerHTML = catMarkup('wave', false);
   updateCatVisuals();
   $('#focusInstallBtn').disabled = false;
-  $('#focusWidgetBtn').disabled = false;
   invite.inert = false;
   invite.setAttribute('aria-hidden', 'false');
   document.body.classList.add('install-invite-open');
@@ -12437,12 +12934,11 @@ function openFocusInvite(step = 'app') {
   $('#catStage').inert = true;
   $('.topbar').inert = true;
   invite.classList.add('open');
-  setFocusInviteStep(step === 'widget' && hasInstalledPwa() && shouldOfferWidget() ? 'widget' : 'app');
+  prepareFocusInvite();
 }
 function closeFocusInvite(restoreFocus = true) {
   const invite = $('#focusInvite');
   invite.classList.remove('open');
-  focusInviteStep = 'app';
   clearTimeout(focusInviteCleanup);
   focusInviteCleanup = setTimeout(() => { $('#focusInviteCat').replaceChildren(); }, 500);
   invite.inert = true;
@@ -12455,27 +12951,6 @@ function closeFocusInvite(restoreFocus = true) {
   if (restoreFocus) $('#startBtn').focus({ preventScroll: true });
 }
 function skipFocusInstall() {
-  /* İlk soru reddedilse bile telefonda widget sorusu bir kez gösterilir. */
-  if (focusInviteStep === 'app' && shouldOfferWidget()) {
-    setFocusInviteStep('widget');
-    return;
-  }
-  startTimer();
-}
-function startFocusWithWidget() {
-  markWidgetAsked();
-  let opened = null;
-  try {
-    opened = window.open('./widget.html', '_blank');
-    if (opened) { try { opened.opener = null; } catch (e) {} }
-  } catch (e) { opened = null; }
-  if (!opened) {
-    const status = $('#focusWidgetStatus');
-    if (status) status.textContent = S.lang === 'en'
-      ? 'The widget page couldn’t open in a new tab. Open it from Settings → Cat, then use the widget card to add it to your home screen.'
-      : 'Widget sayfası yeni sekmede açılamadı. Ayarlar → Kedi bölümündeki widget kartından açıp ana ekranına ekleyebilirsin.';
-    return;
-  }
   startTimer();
 }
 async function installForFocus() {
@@ -12488,11 +12963,9 @@ async function installForFocus() {
   btn.disabled = false;
   btn.textContent = S.lang === 'en' ? 'Okay, let’s do it' : 'Tamam, yapalım';
   if (hasInstalledPwa() || outcome === 'accepted' || outcome === 'installed') {
-    if (shouldOfferWidget()) setFocusInviteStep('widget');
-    else startTimer();
+    startTimer();
   } else if (outcome === 'dismissed') {
-    if (shouldOfferWidget()) setFocusInviteStep('widget');
-    else status.textContent = S.lang === 'en'
+    status.textContent = S.lang === 'en'
       ? 'You closed the install prompt. You can try again or focus without installing now.'
       : 'Kurulumu kapattın. İstersen tekrar deneyebilir ya da şimdi kurulumsuz odaklanabilirsin.';
   } else {
@@ -12504,17 +12977,6 @@ function isStandalone() {
 }
 function isIOSDevice() {
   return /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-}
-/* Widget sorusu yalnızca telefonlarda sorulur; masaüstünde doğrudan odak başlar. */
-function isPhoneDevice() {
-  const ua = navigator.userAgent || '';
-  if (/iPhone|iPod|Windows Phone/i.test(ua)) return true;
-  if (/Android/i.test(ua) && /Mobile/i.test(ua)) return true;
-  if (navigator.maxTouchPoints > 1 && Math.min(screen.width, screen.height) <= 540) return true;
-  return false;
-}
-function shouldOfferWidget() {
-  return isPhoneDevice() && !widgetWasAsked();
 }
 function installHint() {
   if (S.lang === 'en') {
@@ -12562,47 +13024,6 @@ function updatePwaUI() {
     detail.textContent = 'Her tarayıcıda çalışır: menüden “Uygulamayı yükle” ya da “Ana ekrana ekle”yi seç.';
   }
 }
-/* Ayarlardaki widget kartı: kedi yüzü, dile göre örnek mesaj ve ipucu. */
-function updateWidgetCard() {
-  /* Widget kartı yalnızca telefonlarda görünür. */
-  const wcard = document.querySelector('.widget-card');
-  if (wcard) {
-    const label = wcard.previousElementSibling;
-    const show = isPhoneDevice();
-    wcard.hidden = !show;
-    if (label && label.classList.contains('field-label')) label.hidden = !show;
-  }
-  const cat = $('#widgetPreviewCat');
-  if (cat && !cat.dataset.built) { cat.innerHTML = brandFaceSVG(); cat.dataset.built = '1'; }
-  const msg = $('#widgetPreviewMsg');
-  if (msg) msg.textContent = S.lang === 'en' ? 'I miss you, come back' : 'seni özledim, gel';
-  const hint = $('#widgetHint');
-  if (hint) hint.textContent = S.lang === 'en'
-    ? 'Tip: open the widget page and choose “Add to Home Screen” from your browser menu. In the installed app, long-press the icon and use the “Widget” shortcut.'
-    : 'İpucu: Widget sayfasını açıp tarayıcı menüsünden “Ana ekrana ekle”yi seç. Kurulu uygulamada simgeye uzun basıp “Widget” kısayolunu kullanabilirsin.';
-  const openBtn = $('#widgetOpenBtn');
-  if (openBtn) openBtn.textContent = S.lang === 'en' ? 'Open widget' : "Widget'ı aç";
-  const addBtn = $('#widgetInstallBtn');
-  if (addBtn) addBtn.textContent = S.lang === 'en' ? 'Add to Home Screen' : 'Ana ekrana ekle';
-  const note = $('#widgetCopyNote');
-  if (note) note.textContent = S.lang === 'en'
-    ? 'Your theme, cat and language carry over to the widget. It shows today’s focus minutes and goal while idle, and the remaining time while you focus.'
-    : "Seçtiğin tema, kedi ve dil widget'a taşınır. Boştayken bugünkü odak dakikalarını ve hedefini, odak sürerken kalan süreyi gösterir.";
-  const title = $('#widgetCopyTitle');
-  if (title) title.textContent = S.lang === 'en' ? 'A themed Vespır card' : 'Temaya uyumlu Vespır kartı';
-}
-function openWidget() {
-  try { saveNow(); } catch (e) {}
-  try { location.href = './widget.html'; } catch (e) {}
-}
-async function installWidget() {
-  const outcome = await promptInstall();
-  if (outcome === 'unavailable') {
-    toast(S.lang === 'en'
-      ? 'Open widget.html, then use “Add to Home Screen” in your browser menu.'
-      : 'Widget sayfasını aç ve tarayıcı menüsünden “Ana ekrana ekle”yi seç.');
-  }
-}
 async function promptInstall() {
   if (hasInstalledPwa()) { toast('Vespır zaten kurulu.'); return 'installed'; }
   if (!deferredPrompt && window.__vespirInstall) deferredPrompt = window.__vespirInstall;
@@ -12638,9 +13059,8 @@ function setupPWA() {
   const onStandaloneChange = () => {
     if (!isStandalone()) return;
     rememberPwaInstalled();
-    if ($('#focusInvite').classList.contains('open') && focusInviteStep === 'app') {
-      if (shouldOfferWidget()) setFocusInviteStep('widget');
-      else if (!timer.running) startTimer();
+    if ($('#focusInvite').classList.contains('open')) {
+      if (!timer.running) startTimer();
       else closeFocusInvite();
     }
     updatePwaUI();
@@ -12660,23 +13080,52 @@ function setupPWA() {
     deferredPrompt = null;
     window.__vespirInstall = null;
     updatePwaUI();
-    if ($('#focusInvite').classList.contains('open') && focusInviteStep === 'app') {
-      if (shouldOfferWidget()) setFocusInviteStep('widget');
-      else if (!timer.running) startTimer();
+    if ($('#focusInvite').classList.contains('open')) {
+      if (!timer.running) startTimer();
       else closeFocusInvite();
     }
     toast('Vespır artık uygulama olarak kurulu.');
   });
   if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-    navigator.serviceWorker.register('./sw.js').then((reg) => {
+    /* İlk kurulumda da controllerchange tetiklenir; yalnızca sayfa bir worker
+       tarafından yönetiliyorken (yani gerçek bir güncellemede) yeniden yükle. */
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloadingForUpdate = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      swRegistered = true;
+      primeShellCache();
+      updatePwaUI();
+      if (!hadController || reloadingForUpdate) return;
+      reloadingForUpdate = true;
+      /* Odak sürerken sayfayı altından çekmeyelim: güncelleme bir sonraki
+         açılışta uygulanır. Aksi hâlde yeni HTML hemen devreye girer. */
+      try {
+        if (document.hidden || !timer.running) location.reload();
+        else toast('Vespır güncellendi. Bir sonraki açılışta yeni sürüm hazır.');
+      } catch (e) {}
+    });
+    const checkUpdate = (reg) => { try { reg.update(); } catch (e) {} };
+    navigator.serviceWorker.register('./sw.js', { scope: './', updateViaCache: 'none' }).then((reg) => {
       swRegistered = true;
       updatePwaUI();
       syncMessageSchedule();
       primeShellCache(reg);
       navigator.serviceWorker.ready.then(primeShellCache).catch(() => {});
       if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+      /* Yeni worker kurulunca beklemeden devral: eski önbellekte takılı kalma. */
+      reg.addEventListener('updatefound', () => {
+        const fresh = reg.installing;
+        if (!fresh) return;
+        fresh.addEventListener('statechange', () => {
+          if (fresh.state === 'installed' && navigator.serviceWorker.controller) {
+            fresh.postMessage({ type: 'SKIP_WAITING' });
+          }
+        });
+      });
+      setTimeout(() => checkUpdate(reg), 4000);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) checkUpdate(reg); });
+      window.addEventListener('online', () => checkUpdate(reg));
     }).catch(() => { swRegistered = false; });
-    navigator.serviceWorker.addEventListener('controllerchange', () => { swRegistered = true; primeShellCache(); updatePwaUI(); });
   }
   /* Durum sekmeye dönünce tazelenir: teklif sonradan gelse de kart çalışır. */
   window.addEventListener('focus', updatePwaUI);
@@ -12991,8 +13440,8 @@ function buildThemeGrid() {
     }
   });
 }
-/* Cadılar Bayramı kilidi kaldırıldı: korku sahnesi tema seçiliyken CSS ile
-   her zaman görünür; tarih kontrolü, kilit yenileme ve açılma bildirimi yok. */
+/* Cadılar Bayramı sahnesi tema seçiliyken CSS ile her zaman görünür;
+   tarih kontrolü veya açılma bildirimi yoktur. */
 function buildSoundOptionsFor(kind, boxId) {
   const box = document.getElementById(boxId);
   if (!box) return;
@@ -13116,6 +13565,9 @@ function syncSettingsUI() {
 function buildSettingsUI() {
   if (settingsBuilt) return;
   settingsBuilt = true;
+  /* Bütün listeler tek karede kurulunca panel açılışı tek bir uzun kareye
+     takılıyordu. Görünen sekmenin iskeleti hemen kurulur; geri kalan bölümler
+     süzülme sırasında kare kare eklenir. Hiçbir bölüm kaybolmaz. */
   ensurePreviewCat();
   buildGenders();
   buildBreeds();
@@ -13123,16 +13575,27 @@ function buildSettingsUI() {
   buildSwatchRow('bellySwatches', BELLY_SWATCHES, 'belly');
   buildSwatchRow('eyeSwatches', EYE_SWATCHES, 'eyes');
   buildSwatchRow('collarSwatches', COLLAR_SWATCHES, 'collar');
-  buildAccessories();
-  buildOutfits();
-  buildModes();
-  buildThemeGrid();
-  buildSoundOptionsFor('start', 'startSoundOptions');
-  buildSoundOptionsFor('end', 'endSoundOptions');
-  buildWavesUI();
   syncSettingsUI();
-  updateWidgetCard();
-  applyLanguageDom($('#settings'));
+  const steps = [
+    () => buildAccessories(),
+    () => buildOutfits(),
+    () => { buildModes(); buildThemeGrid(); },
+    () => { buildSoundOptionsFor('start', 'startSoundOptions'); buildSoundOptionsFor('end', 'endSoundOptions'); },
+    () => buildWavesUI(),
+    () => { syncSettingsUI(); applyLanguageDom($('#settings')); }
+  ];
+  /* Sekme arkada/ekran kapalıyken kare beklenmez: parçalar hemen kurulur,
+     yoksa panel eksik içerikle kalır. Görünürken iş karelere bölünür. */
+  const runAll = () => steps.forEach((fn) => { try { fn(); } catch (e) {} });
+  if (document.hidden) { runAll(); return; }
+  let step = 0;
+  const next = () => {
+    if (step >= steps.length) return;
+    try { steps[step](); } catch (e) {}
+    step += 1;
+    if (step < steps.length) setTimeout(next, 0);
+  };
+  setTimeout(next, 0);
 }
 /* ============================================================
    OLAYLAR — tek yerden, sıfır çakışma
@@ -13515,8 +13978,6 @@ async function resetEverything() {
 function bindStaticEvents() {
   $('#focusInstallBtn').addEventListener('click', installForFocus);
   $('#focusSkipInstallBtn').addEventListener('click', skipFocusInstall);
-  $('#focusWidgetBtn').addEventListener('click', startFocusWithWidget);
-  $('#focusWidgetSkipBtn').addEventListener('click', skipFocusInstall);
   /* intro */
   const introStart = $('#introStart');
   if (introStart) introStart.addEventListener('click', () => finishIntro(false));
@@ -13543,12 +14004,6 @@ function bindStaticEvents() {
     const btn = e.target.closest('[data-lang]');
     if (btn) setLanguage(btn.dataset.lang);
   });
-  const widgetOpenBtn = $('#widgetOpenBtn');
-  if (widgetOpenBtn) widgetOpenBtn.addEventListener('click', openWidget);
-  const widgetInstallBtn = $('#widgetInstallBtn');
-  if (widgetInstallBtn) widgetInstallBtn.addEventListener('click', installWidget);
-
-
   /* timer */
   const startBtn = $('#startBtn');
   if (startBtn) startBtn.addEventListener('click', toggleTimer);
@@ -13680,14 +14135,58 @@ function bindStaticEvents() {
   if (autoToggle) autoToggle.addEventListener('change', () => { S.autoStart = autoToggle.checked; if (!S.autoStart && timer.phase === 'break') stopAutoStart(); save(); });
   const autoFocusToggle = $('#autoFocusToggle');
   if (autoFocusToggle) autoFocusToggle.addEventListener('change', () => { S.autoFocus = autoFocusToggle.checked; if (!S.autoFocus && timer.phase === 'focus') stopAutoStart(); save(); });
-  const goalPresets = $('#goalPresets');
-  if (goalPresets) goalPresets.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-goal]');
-    if (!btn) return;
-    S.dailyGoal = clamp(Number(btn.dataset.goal) || 120, 15, 600);
+  /* Günlük hedef: hazır süreler kaldırıldı. "Düzenle" saat + dakika
+     seçicisini açar; hedefi kullanıcı kendi kurar. */
+  const goalPicker = $('#goalPicker');
+  const goalEditBtn = $('#goalEditBtn');
+  const goalHourOut = $('#goalHourOut');
+  const goalMinOut = $('#goalMinOut');
+  const goalSaveBtn = $('#goalSaveBtn');
+  const goalDraft = { h: Math.floor((S.dailyGoal || 120) / 60), m: (S.dailyGoal || 120) % 60 };
+  const paintGoalDraft = () => {
+    goalDraft.h = clamp(goalDraft.h, 0, 12);
+    goalDraft.m = clamp(goalDraft.m, 0, 59);
+    if (goalHourOut) goalHourOut.textContent = String(goalDraft.h);
+    if (goalMinOut) goalMinOut.textContent = pad2(goalDraft.m);
+    if (goalSaveBtn) goalSaveBtn.disabled = goalDraft.h * 60 + goalDraft.m < 15;
+  };
+  const openGoalPicker = () => {
+    if (!goalPicker) return;
+    goalDraft.h = Math.floor((S.dailyGoal || 120) / 60);
+    goalDraft.m = (S.dailyGoal || 120) % 60;
+    paintGoalDraft();
+    goalPicker.hidden = false;
+    if (goalEditBtn) goalEditBtn.setAttribute('aria-expanded', 'true');
+  };
+  const closeGoalPicker = () => {
+    if (!goalPicker) return;
+    goalPicker.hidden = true;
+    if (goalEditBtn) goalEditBtn.setAttribute('aria-expanded', 'false');
+  };
+  if (goalEditBtn) goalEditBtn.addEventListener('click', () => {
+    if (goalPicker && goalPicker.hidden) openGoalPicker();
+    else closeGoalPicker();
+  });
+  const goalCancelBtn = $('#goalCancelBtn');
+  if (goalCancelBtn) goalCancelBtn.addEventListener('click', closeGoalPicker);
+  if (goalPicker) goalPicker.addEventListener('click', (e) => {
+    const step = e.target.closest('[data-goal-step]');
+    if (!step) return;
+    const dir = Number(step.dataset.dir) || 0;
+    if (step.dataset.goalStep === 'hour') goalDraft.h += dir;
+    else goalDraft.m += dir;
+    paintGoalDraft();
+  });
+  if (goalSaveBtn) goalSaveBtn.addEventListener('click', () => {
+    const total = goalDraft.h * 60 + goalDraft.m;
+    S.dailyGoal = clamp(total < 15 ? 15 : total, 15, 720);
     updateGoalUI();
     save();
+    closeGoalPicker();
+    toast(S.lang === 'en' ? 'Daily goal updated.' : 'Günlük hedef güncellendi.');
   });
+  /* PWA onarımı: bozuk bir kurulumdan sonra kalan servis kaydını ve
+     önbellekleri temizler; uygulama temiz bir kabukla yeniden açılır. */
   const hourlyToggle = $('#hourlyToggle');
   if (hourlyToggle) hourlyToggle.addEventListener('change', () => {
     S.hourlyChime = hourlyToggle.checked;
@@ -13790,8 +14289,6 @@ function bindStaticEvents() {
       else if (e.key === 'Tab') trapPanelFocus(intro.querySelector('.intro-card') || intro, e);
       return;
     }
-    const widgetModal = $('#widgetView');
-    if (widgetModal && widgetModal.classList.contains('open')) return;
     const focusInvite = $('#focusInvite');
     if (focusInvite.classList.contains('open')) {
       if (e.key === 'Escape') { e.preventDefault(); skipFocusInstall(); }
@@ -14006,7 +14503,7 @@ async function boot() {
   syncSettingsUI();
   /* Ayar panelinin ilk boyanması burada, sayfa hâlâ açılırken yapılır.
      Sonradan kullanıcının gözü önünde bir kare donmasın. */
-  /* Açılış süzülmesi (≈1,15 sn) bitmeden ağır, görünmeyen işler (ayar paneli boyaması, PWA, hava, kilit yenileme)
+  /* Açılış süzülmesi (≈1,15 sn) bitmeden ağır, görünmeyen işler (ayar paneli boyaması, PWA, hava)
      yapılmaz: animasyonun ilk karelerinde ana iş parçacığı boş kalır. Sonra boş zamanda çalışır. */
   const lateBoot = () => { warmSettingsPanel(); setupPWA(); bootWeather(); };
   setTimeout(() => {
@@ -14261,221 +14758,6 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
   } catch (err) {
     setStatus(en() ? 'Couldn’t load the sign-in service. Check your internet connection and reload the page.' : 'Giriş servisi yüklenemedi. İnternet bağlantını kontrol edip sayfayı yenile.', 'err');
   }
-})();
-</script>
-<script>
-/* Vespır widget köprüsü: yalnızca Capacitor ile paketlenmiş yerel uygulamada çalışır.
-   Tarayıcıda/PWA'da hiçbir şey yapmaz. Ana ekran widget'ları için küçük bir özeti
-   yerel taraftaki paylaşılan depoya yazar (Android: SharedPreferences, iOS: App Group). */
-(function () {
-  var cap = window.Capacitor;
-  if (!cap || !cap.isNativePlatform || !cap.isNativePlatform()) return;
-  var plugin = (cap.Plugins && cap.Plugins.VespirWidget) ||
-    (typeof cap.registerPlugin === 'function' ? cap.registerPlugin('VespirWidget') : null);
-  if (!plugin) return;
-  var lastJson = '';
-  var timer = 0;
-  var sending = false, pending = false;
-  var paletteKey = '', palette = null;
-  var HEX = /^#[0-9a-f]{6}$/i;
-  var probe = null, px = null;
-  function hex2(n) { return ('0' + Math.max(0, Math.min(255, Math.round(n))).toString(16)).slice(-2); }
-  /* Herhangi bir CSS rengini (rgb, color-mix, color(srgb …)) #rrggbb'ye çevirir. */
-  function toHex(c) {
-    var m = /^rgba?\(\s*([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)/.exec(c);
-    if (m) return '#' + hex2(m[1]) + hex2(m[2]) + hex2(m[3]);
-    try {
-      if (!px) { var cv = document.createElement('canvas'); cv.width = cv.height = 1; px = cv.getContext('2d', { willReadFrequently: true }); }
-      px.clearRect(0, 0, 1, 1);
-      px.fillStyle = c;
-      px.fillRect(0, 0, 1, 1);
-      var d = px.getImageData(0, 0, 1, 1).data;
-      return '#' + hex2(d[0]) + hex2(d[1]) + hex2(d[2]);
-    } catch (e) { return null; }
-  }
-  function css(name, fallback) {
-    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    if (HEX.test(v)) return v;
-    try {
-      if (!probe) {
-        probe = document.createElement('i');
-        probe.style.cssText = 'position:absolute;width:0;height:0;visibility:hidden;pointer-events:none';
-        document.body.appendChild(probe);
-      }
-      probe.style.color = 'var(' + name + ')';
-      var h = toHex(getComputedStyle(probe).color);
-      if (h && HEX.test(h)) return h;
-    } catch (e) {}
-    return fallback;
-  }
-  function currentPalette() {
-    var key = document.documentElement.dataset.theme + '|' + document.documentElement.dataset.mode;
-    if (palette && key === paletteKey) return palette;
-    paletteKey = key;
-    palette = {
-      bg0: css('--bg-0', '#050e16'), bg1: css('--bg-1', '#0b2b3d'), bg2: css('--bg-2', '#0e3a2c'),
-      ink: css('--ink', '#f2f9ff'), ink2: css('--ink-2', '#b9cfdd'),
-      accent: css('--accent', '#ff7a80'), accent2: css('--accent-2', '#6fd39a'), accent3: css('--accent-3', '#ffd166'),
-      onAccent: css('--on-accent', '#1a090b')
-    };
-    return palette;
-  }
-  function snapshot() {
-    var st = S.stats && S.stats.day === todayKey() ? S.stats : { sec: 0, sessions: 0 };
-    var t = S.timer && S.timer.running && Number(S.timer.endAt) > Date.now()
-      ? { phase: S.timer.phase === 'break' ? 'break' : 'focus', endAt: Math.round(S.timer.endAt), total: Math.round(S.timer.total) }
-      : null;
-    var cat = S.cat || {};
-    return {
-      v: 1,
-      name: String(cat.name || 'Vespır').slice(0, 20),
-      lang: S.lang === 'en' ? 'en' : 'tr',
-      streakCount: (S.streak && S.streak.count) | 0,
-      streakLast: (S.streak && S.streak.last) || '',
-      minutes: Math.floor(Math.max(0, st.sec) / 60),
-      sessions: st.sessions | 0,
-      goal: Math.max(15, S.dailyGoal | 0 || 120),
-      day: todayKey(),
-      timer: t,
-      colors: currentPalette(),
-      cat: {
-        fur: HEX.test(cat.fur) ? cat.fur : '#a59482', belly: HEX.test(cat.belly) ? cat.belly : '#f3ebe0',
-        eyes: HEX.test(cat.eyes) ? cat.eyes : '#9cc45c', patch: HEX.test(cat.patch) ? cat.patch : '#6f6153'
-      }
-    };
-  }
-  async function send() {
-    timer = 0;
-    if (sending) { pending = true; return; }
-    sending = true;
-    try {
-      var json = JSON.stringify(snapshot());
-      if (json !== lastJson) {
-        await plugin.update({ json: json });
-        lastJson = json;
-      }
-    } catch (e) {
-      /* Başarısız özet gönderilmiş sayılmaz; sonraki değişimde yeniden denenir. */
-    } finally {
-      sending = false;
-      if (pending) { pending = false; clearTimeout(timer); timer = setTimeout(send, 0); }
-    }
-  }
-  window.VespirWidgetBridge = {
-    push: function () { if (!timer) timer = setTimeout(send, 500); },
-    pushNow: function () { clearTimeout(timer); send(); }
-  };
-  document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') window.VespirWidgetBridge.pushNow();
-  });
-  timer = setTimeout(send, 1500);
-})();
-</script>
-<style>
-#widgetView{position:fixed;inset:0;z-index:2147483000;display:none;background:#050e16}
-#widgetView.open{display:block}
-#widgetView iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent}
-#widgetViewClose{position:absolute;z-index:2;top:max(12px,env(safe-area-inset-top));right:12px;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.28);background:rgba(20,24,30,.55);color:#fff;display:grid;place-items:center;cursor:pointer;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
-#widgetViewClose svg{width:20px;height:20px}
-</style>
-<div id="widgetView" role="dialog" aria-modal="true" aria-label="Widget" aria-hidden="true">
-  <button id="widgetViewClose" type="button" aria-label="Widget'ı kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
-  <iframe id="widgetFrame" title="Vespır Widget"></iframe>
-</div>
-<script>
-(function () {
-  var view = document.getElementById('widgetView');
-  var frame = document.getElementById('widgetFrame');
-  var btn = document.getElementById('widgetBtn');
-  var closeBtn = document.getElementById('widgetViewClose');
-  if (!view || !frame || !btn || !closeBtn) return;
-  /* Widget yalnızca telefonlara özel: masaüstünde giriş düğmesi hiç gösterilmez. */
-  if (typeof isPhoneDevice === 'function' && !isPhoneDevice()) {
-    btn.hidden = true;
-    btn.setAttribute('aria-hidden', 'true');
-    btn.tabIndex = -1;
-    return;
-  }
-  var previousFocus = null;
-  var inertSaved = [];
-  var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-  function frameFocusables() {
-    try {
-      var doc = frame.contentDocument;
-      if (!doc) return [];
-      return Array.from(doc.querySelectorAll(FOCUSABLE)).filter(function (el) { return el.offsetParent !== null || el === doc.activeElement; });
-    } catch (e) { return []; }
-  }
-  function focusFrameEdge(last) {
-    var list = frameFocusables();
-    var target = last ? list[list.length - 1] : list[0];
-    try { if (target) { target.focus({ preventScroll: true }); return; } } catch (e) {}
-    try { frame.focus({ preventScroll: true }); } catch (e) {}
-  }
-  function setBackgroundInert(on) {
-    if (on) {
-      inertSaved = [];
-      Array.from(document.body.children).forEach(function (el) {
-        if (el === view || el.tagName === 'SCRIPT' || el.tagName === 'STYLE' || el.tagName === 'LINK') return;
-        inertSaved.push([el, el.inert]);
-        el.inert = true;
-      });
-    } else {
-      inertSaved.forEach(function (pair) { pair[0].inert = pair[1]; });
-      inertSaved = [];
-    }
-  }
-  function open() {
-    if (view.classList.contains('open')) return;
-    previousFocus = document.activeElement;
-    saveNow();
-    frame.src = new URL('widget.html?preview=1', location.href).href;
-    view.classList.add('open');
-    view.setAttribute('aria-hidden', 'false');
-    view.setAttribute('aria-label', S.lang === 'en' ? 'Widget preview' : 'Widget önizlemesi');
-    closeBtn.setAttribute('aria-label', S.lang === 'en' ? 'Close widget' : 'Widget’ı kapat');
-    document.body.classList.add('widget-open');
-    setBackgroundInert(true);
-    syncSceneEffects();
-    closeBtn.focus({ preventScroll: true });
-  }
-  function close() {
-    if (!view.classList.contains('open')) return;
-    view.classList.remove('open');
-    view.setAttribute('aria-hidden', 'true');
-    frame.src = 'about:blank';
-    document.body.classList.remove('widget-open');
-    setBackgroundInert(false);
-    syncSceneEffects();
-    if (previousFocus && previousFocus.isConnected && previousFocus.focus) { try { previousFocus.focus({ preventScroll: true }); } catch (e) {} }
-    previousFocus = null;
-  }
-  view.addEventListener('keydown', function (e) {
-    if (!view.classList.contains('open') || e.key !== 'Tab') return;
-    e.preventDefault();
-    e.stopPropagation();
-    focusFrameEdge(e.shiftKey);
-  });
-  frame.addEventListener('load', function () {
-    try {
-      if (!view.classList.contains('open')) return;
-      var doc = frame.contentDocument;
-      if (!doc) return;
-      doc.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') { e.preventDefault(); close(); return; }
-        if (e.key !== 'Tab') return;
-        var list = frameFocusables();
-        if (!list.length) { e.preventDefault(); closeBtn.focus({ preventScroll: true }); return; }
-        var first = list[0], last = list[list.length - 1], active = doc.activeElement;
-        if (e.shiftKey && active === first) { e.preventDefault(); closeBtn.focus({ preventScroll: true }); }
-        else if (!e.shiftKey && active === last) { e.preventDefault(); closeBtn.focus({ preventScroll: true }); }
-      });
-      doc.querySelectorAll('#openApp, #backApp').forEach(function (link) { link.addEventListener('click', function (e) { e.preventDefault(); close(); }); });
-    } catch (e) {}
-  });
-  btn.addEventListener('click', open);
-  closeBtn.addEventListener('click', close);
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && view.classList.contains('open')) { e.preventDefault(); close(); } });
 })();
 </script>
 </body>

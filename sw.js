@@ -10,8 +10,8 @@
    sayfanın en son açıldığı andaki eski veriye bağımlı değildir. Bunun için tercih kaydında
    yalnızca 0,1° (~10 km) yuvarlanmış yaklaşık koordinat tutulur. */
 
-const APP_CACHE = 'vespir-app-v5';
-const SHELL_PATHS = ['index.html', 'widget.html'];
+const APP_CACHE = 'vespir-app-v8';
+const SHELL_PATHS = ['index.html'];
 
 async function fetchWithDeadline(input, options = {}, delay = 5000) {
   const controller = new AbortController();
@@ -42,8 +42,12 @@ self.addEventListener('activate', (e) => e.waitUntil((async () => {
   await self.clients.claim();
   try {
     const cache = await caches.open(APP_CACHE);
-    const ready = await Promise.all(SHELL_PATHS.map((path) => cache.match(new URL(path, self.registration.scope).href)));
-    if (!ready.every(Boolean)) return;
+    const shellUrls = [
+      new URL('index.html', self.registration.scope).href,
+      new URL('./', self.registration.scope).href
+    ];
+    const ready = await Promise.all(shellUrls.map((url) => cache.match(url)));
+    if (!ready.some(Boolean)) return;
     const keys = await caches.keys();
     await Promise.all(keys
       .filter((k) => k.startsWith('vespir-app-') && k !== APP_CACHE)
@@ -115,8 +119,13 @@ self.addEventListener('fetch', (e) => {
   e.respondWith((async () => {
     let networkResponse;
     try {
-      const res = await fetchWithDeadline(req);
-      if (res && res.ok) e.waitUntil(putShell(url, res.clone()).catch(() => {}));
+      /* cache: 'reload' — tarayıcının HTTP önbelleğindeki eski HTML yerine
+         sunucudaki güncel dosya alınır. Böylece güncelleme yayınlandığında
+         kurulu uygulama bir sonraki açılışta yeni sürümü görür.
+         (waitUntil, respondWith içinde await'ten sonra çağrılamaz; bu yüzden
+         kabuk önbelleğe yazımı doğrudan beklenir.) */
+      const res = await fetchWithDeadline(req, { cache: 'reload' });
+      if (res && res.ok) { try { await putShell(url, res.clone()); } catch (err) {} }
       if (res && res.status < 500) return res;
       networkResponse = res;
     } catch (err) {}
@@ -367,7 +376,7 @@ async function maybeWeatherAlert(prefs, now, hour) {
   await self.registration.showNotification(prefs.name || 'Vespır', {
     body: pickLine((alerts[condition] || WEATHER_ALERTS[condition])),
     icon: prefs.icon || undefined,
-    badge: prefs.icon || undefined,
+    badge: prefs.badge || prefs.icon || undefined,
     tag: UMBRELLA_TAG,
     data: { url: safeAppUrl(prefs.url || self.registration.scope) }
   });
@@ -395,7 +404,7 @@ async function maybeHello(prefs, now, hour) {
   await self.registration.showNotification(prefs.name || 'Vespır', {
     body: pickLine(pool),
     icon: prefs.icon || undefined,
-    badge: prefs.icon || undefined,
+    badge: prefs.badge || prefs.icon || undefined,
     tag: HELLO_TAG,
     data: { url: safeAppUrl(prefs.url || self.registration.scope) }
   });
