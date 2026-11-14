@@ -7,159 +7,30 @@
 <meta name="theme-color" content="#050e16" id="metaTheme">
 <meta name="description" content="Vespır: 3B kedili, Liquid Glass tasarımlı bir odak arkadaşı. Kedi uyur, kitap okur, miyavlar; sen odaklanırsın.">
 <title>Vespır - En İyi Dostun</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23fdf3f7'/%3E%3Cpath d='M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z' fill='%23c96a8c'/%3E%3Ccircle cx='25' cy='36' r='2.6' fill='%232b2230'/%3E%3Ccircle cx='39' cy='36' r='2.6' fill='%232b2230'/%3E%3Cpath d='M30 42h4l-2 3z' fill='%232b2230'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="./icon-192.png">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="apple-touch-icon" id="appleIcon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23fdf3f7'/%3E%3Cpath d='M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z' fill='%23c96a8c'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" id="appleIcon" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Vespır">
-<script>
-  /* Kurulum teklifi sayfa hazır olmadan da gelebilir: erkenden yakala ki
+<script>  /* Kurulum teklifi sayfa hazır olmadan da gelebilir: erkenden yakala ki
      "Ana ekrana ekle" her zaman tarayıcının kendi kurulum penceresini açsın. */
   window.__vespirInstall = null;
   window.addEventListener('beforeinstallprompt', function (e) {
     e.preventDefault();
     window.__vespirInstall = e;
-  });
-</script>
-<script>
-  /* PWA — manifest ve simgeler bu dosyanın içinde üretilir; yan dosya gerekmez.
-     Site https üzerinden açıldığında tarayıcı gerçek bir uygulama kurar ve
-     ana ekrandaki simge tarayıcı çubuğu olmadan, doğrudan ana ekranı açar. */
-  (function () {
-    if (!/^https?:$/.test(location.protocol)) return;
-    function icon(size, maskable) {
-      var c = document.createElement('canvas');
-      c.width = c.height = size;
-      var x = c.getContext('2d');
-      if (!x) return '';
-      x.scale(size / 512, size / 512);
-      var bg = x.createLinearGradient(30, 10, 500, 510);
-      bg.addColorStop(0, '#fff0f7');
-      bg.addColorStop(.5, '#ffd3e6');
-      bg.addColorStop(1, '#e2d6ff');
-      /* Görev çubuğu, masaüstü kısayolu ve mobil ana ekran için yuvarlak simge:
-         köşeler saydam kalır, böylece hiçbir yerde kare görünmez. */
-      x.save();
-      x.beginPath();
-      x.arc(256, 256, 247, 0, Math.PI * 2);
-      x.closePath();
-      x.clip();
-      x.fillStyle = bg;
-      x.fillRect(0, 0, 512, 512);
-      var glow = x.createRadialGradient(170, 90, 10, 200, 160, 400);
-      glow.addColorStop(0, 'rgba(255,255,255,.95)');
-      glow.addColorStop(.45, 'rgba(255,255,255,.34)');
-      glow.addColorStop(1, 'rgba(255,255,255,0)');
-      x.fillStyle = glow;
-      x.fillRect(0, 0, 512, 512);
-      var k = maskable ? .76 : .9;
-      x.translate(256, 270);
-      x.scale(k, k);
-      x.translate(-256, -270);
-      x.save();
-      x.filter = 'blur(16px)';
-      x.fillStyle = 'rgba(160, 60, 105, .3)';
-      x.beginPath(); x.ellipse(256, 426, 122, 24, 0, 0, Math.PI * 2); x.fill();
-      x.restore();
-      var head = new Path2D();
-      head.moveTo(256, 406);
-      head.bezierCurveTo(166, 406, 108, 360, 108, 288);
-      head.bezierCurveTo(108, 252, 116, 222, 127, 200);
-      head.lineTo(107, 140);
-      head.bezierCurveTo(101, 120, 117, 107, 136, 117);
-      head.lineTo(191, 148);
-      head.bezierCurveTo(211, 140, 233, 136, 256, 136);
-      head.bezierCurveTo(279, 136, 301, 140, 321, 148);
-      head.lineTo(376, 117);
-      head.bezierCurveTo(395, 107, 411, 120, 405, 140);
-      head.lineTo(385, 200);
-      head.bezierCurveTo(396, 222, 404, 252, 404, 288);
-      head.bezierCurveTo(404, 360, 346, 406, 256, 406);
-      head.closePath();
-      var hg = x.createLinearGradient(150, 140, 380, 410);
-      hg.addColorStop(0, '#dd88a8');
-      hg.addColorStop(.55, '#c96a8c');
-      hg.addColorStop(1, '#ae5276');
-      x.fillStyle = hg;
-      x.fill(head);
-      x.fillStyle = '#f3a7ba';
-      x.beginPath();
-      x.moveTo(142, 188); x.lineTo(129, 143);
-      x.quadraticCurveTo(126, 132, 138, 140); x.lineTo(180, 168); x.closePath(); x.fill();
-      x.beginPath();
-      x.moveTo(370, 188); x.lineTo(383, 143);
-      x.quadraticCurveTo(386, 132, 374, 140); x.lineTo(332, 168); x.closePath(); x.fill();
-      x.save();
-      x.globalAlpha = .2;
-      x.fillStyle = '#fff';
-      x.beginPath(); x.ellipse(206, 186, 46, 24, -.5, 0, Math.PI * 2); x.fill();
-      x.restore();
-      x.fillStyle = 'rgba(255, 143, 180, .5)';
-      x.beginPath(); x.ellipse(166, 318, 30, 18, 0, 0, Math.PI * 2); x.fill();
-      x.beginPath(); x.ellipse(346, 318, 30, 18, 0, 0, Math.PI * 2); x.fill();
-      x.fillStyle = '#2b2230';
-      x.beginPath(); x.ellipse(203, 282, 19, 23, 0, 0, Math.PI * 2); x.fill();
-      x.beginPath(); x.ellipse(309, 282, 19, 23, 0, 0, Math.PI * 2); x.fill();
-      x.fillStyle = 'rgba(255,255,255,.92)';
-      x.beginPath(); x.arc(197, 273, 6.2, 0, Math.PI * 2); x.fill();
-      x.beginPath(); x.arc(303, 273, 6.2, 0, Math.PI * 2); x.fill();
-      x.fillStyle = '#2b2230';
-      x.beginPath(); x.moveTo(243, 318); x.lineTo(269, 318); x.lineTo(256, 332); x.closePath(); x.fill();
-      x.strokeStyle = 'rgba(43,34,48,.75)';
-      x.lineWidth = 5; x.lineCap = 'round';
-      x.beginPath(); x.moveTo(256, 332); x.quadraticCurveTo(244, 348, 233, 340); x.stroke();
-      x.beginPath(); x.moveTo(256, 332); x.quadraticCurveTo(268, 348, 279, 340); x.stroke();
-      x.strokeStyle = 'rgba(43,34,48,.28)';
-      x.lineWidth = 4.5;
-      for (var w = 0; w < 3; w++) {
-        var dy = (w - 1) * 15;
-        x.beginPath(); x.moveTo(226, 330 + dy * .35); x.lineTo(166, 316 + dy); x.stroke();
-        x.beginPath(); x.moveTo(286, 330 + dy * .35); x.lineTo(346, 316 + dy); x.stroke();
-      }
-      /* Cam kenar: yuvarlak simgeye ince bir ışık halkası. */
-      x.strokeStyle = 'rgba(255,255,255,.55)';
-      x.lineWidth = 6;
-      x.beginPath();
-      x.arc(256, 256, 244, 0, Math.PI * 2);
-      x.stroke();
-      x.restore();
-      return c.toDataURL('image/png');
-    }
-    try {
-      var base = location.origin + location.pathname;
-      var scope = base.slice(0, base.lastIndexOf('/') + 1);
-      var savedLang = 'tr';
-      try { savedLang = (JSON.parse(localStorage.getItem('vespir.v1') || '{}') || {}).lang === 'en' ? 'en' : 'tr'; } catch (e0) {}
-      var en = savedLang === 'en';
-      /* Manifest artık manifest.webmanifest dosyasından geliyor; burada yalnızca
-         iOS'un ana ekran simgesi üretilir. Üç büyük simgeyi her açılışta yeniden
-         çizmek de gereksiz bir başlangıç maliyetiydi. */
-      var i180 = icon(180, true);
-      /* Gerçek manifest dosyası <head> içinde bağlı. Blob manifest ve data:
-         simgeler Android'de WebAPK kurulumunu engelleyip uygulamayı kısayola
-         düşürüyordu; kısayolun silinmesi de telefonda tuhaflığa yol açıyordu. */
-      if (!document.querySelector('link[rel="manifest"][href*="manifest.webmanifest"]')) {
-        var link = document.createElement('link');
-        link.rel = 'manifest';
-        link.href = 'manifest.webmanifest';
-        document.head.appendChild(link);
-      }
-      var apple = document.getElementById('appleIcon');
-      if (apple) apple.href = i180;
-      document.documentElement.dataset.pwa = 'ready';
-    } catch (e) {}
-  })();
-</script>
-<script>
-  (function () {
+  });</script>
+<script>  (function () {
     /* Cihaz gücü: düşük bellekli telefonlarda ağır arka plan süslemeleri
        kapanır (CSS tarafında html[data-lowfx="1"]). Ana animasyonlar kalır. */
     try {
       var dm = navigator.deviceMemory || 8;
       var coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;
-      document.documentElement.dataset.lowfx = (coarse && dm <= 4) ? '1' : '0';
+      var cores = navigator.hardwareConcurrency || 8, forced = '';
+      try { forced = localStorage.getItem('vespir.lowfx') || ''; } catch (eF) {}
+      document.documentElement.dataset.lowfx = (forced === '1' || (coarse && (dm <= 4 || cores <= 4))) ? '1' : '0';
     } catch (eL) {}
     try {
       var raw = localStorage.getItem('vespir.v1');
@@ -178,8 +49,7 @@
         if (sc >= .8 && sc <= 1.2) html.style.setProperty('--cat-scale', sc);
       }
     } catch (e) {}
-  })();
-</script>
+  })();</script>
 <style>
 /* ============ TOKENS & THEMES ============ */
 *, *::before, *::after { box-sizing: border-box; }
@@ -218,7 +88,6 @@
     --fur-deep: #8a5526;
   }
 }
-
 html[data-theme="sakura"][data-mode="light"] {
   --bg-0: #fdf3f7; --bg-1: #ffd4e6; --bg-2: #e2d6ff; --bg-3: #ffe9d6; --bg-4: #d9edff;
   --ink: #43283d; --ink-2: #78556e; --ink-3: #a98b9f;
@@ -700,7 +569,6 @@ html[data-theme="halloween"][data-mode="dark"] {
   --island: rgba(9, 4, 7, .72);
   --on-accent: #fff2f0;
 }
-
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; color-scheme: light; scroll-behavior: smooth; overflow: hidden; overscroll-behavior: none; }
 html[data-mode="dark"] { color-scheme: dark; }
 html, body { height: 100%; }
@@ -734,7 +602,6 @@ a { color: inherit; }
      genişletilince “Vespır”ın r’si tam boyanıyor. */
   padding-right: .09em; margin-right: -.09em;
 }
-
 /* ============ AMBIENT WORLD ============ */
 .ambient { position: fixed; inset: -12vh -12vw; z-index: 0; pointer-events: none; overflow: hidden; contain: layout paint style; }
 .ambient::before {
@@ -853,7 +720,6 @@ kbd {
   border: 1px solid var(--line); border-bottom-color: var(--line-2);
   border-radius: 7px; box-shadow: 0 1px 0 rgba(255,255,255,.25) inset;
 }
-
 /* ============ TOP BAR ============ */
 .topbar {
   position: fixed; inset: 0 0 auto 0; z-index: 60;
@@ -913,7 +779,6 @@ kbd {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .34), 0 14px 32px -24px var(--shadow);
 }
 @keyframes iconSpin { 60% { transform: rotate(200deg) scale(.82); } 100% { transform: rotate(360deg); } }
-
 /* ============ LAYOUT ============ */
 main.app {
   position: relative; z-index: 10;
@@ -1113,7 +978,6 @@ html[data-theme="halloween"] .timer-card::after {
 .quick-group b { min-width: 25px; text-align: center; font-family: var(--display); font-size: 15px; font-weight: 680; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .quick-group small { font-size: 8px; color: var(--ink-3); margin-left: -2px; }
 .quick-div { width: 1px; height: 17px; background: var(--line-2); }
-
 .ring-wrap {
   position: relative; width: min(342px, 80vw); aspect-ratio: 1;
   margin: 8px auto 4px; touch-action: pan-y;
@@ -1380,7 +1244,6 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
 .perch-name span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .perch-time { flex: none; }
 .cat-stage[data-phase="focus"] .cat-name-pill { opacity: 0; transform: translate(-50%, 10px); }
-
 /* speech bubble */
 .cat-bubble {
   position: absolute; z-index: 20; left: 4px; bottom: 354px;
@@ -1425,7 +1288,6 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
 .bubble-words span.pop { animation: wordPop .5s var(--spring); }
 @keyframes wordPop { 0% { opacity: 0; transform: translateY(6px); } 100% { transform: none; } }
 .cat-bubble[data-mode="words"] .bubble-head span:first-child { color: var(--accent); }
-
 /* gerçek kitap okuma baloncuğu */
 .cat-bubble[data-mode="read"] .bubble-text { display: none; }
 .cat-bubble[data-mode="read"] .bubble-words { display: block; }
@@ -1443,7 +1305,6 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
 .cat-stage[data-phase="focus"] .bubble-words span { font-size: 11.5px; }
 .cat-stage[data-phase="focus"] .bubble-text { font-size: 11.5px; }
 .cat-stage[data-phase="focus"] .cat-bubble[data-mode="read"] { width: 236px; }
-
 /* ============ THE CAT ============ */
 .cat-wrap {
   position: relative; width: 280px; height: 340px;
@@ -1502,7 +1363,6 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
   transition: transform .5s var(--soft);
 }
 .cat-tilt > * { transform-style: preserve-3d; }
-
 /* tail */
 .tail {
   /* Kuyruk gövdenin arkasından çıkar: tabanı gövdenin altına girer, ucu
@@ -1549,7 +1409,6 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
 .cat3d[data-breed="tuxedo"] .tail { background: linear-gradient(90deg, #0a090d, #232027 46%, #4a4553 62%, #151318); }
 .cat3d[data-breed="rus"] .tail { background: linear-gradient(90deg, #65727f, #93a1ae 42%, #c7d1d9 58%, #748290); }
 .cat3d[data-breed="persian"] .tail { border-radius: 60% 60% 44% 44% / 38% 38% 62% 62%; }
-
 /* body */
 .body {
   position: absolute; left: 50%; top: 134px; width: 148px; height: 168px;
@@ -1589,7 +1448,6 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
 .cat3d[data-breed="rus"] .body-pattern,
 .cat3d[data-breed="angora"] .body-pattern,
 .cat3d[data-breed="persian"] .body-pattern { display: none; }
-
 .belly {
   position: absolute; left: 50%; bottom: 20px; width: 92px; height: 102px;
   transform: translateX(-50%); border-radius: 50% 50% 44% 44% / 48% 48% 56% 56%;
@@ -1610,7 +1468,6 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
 .paw.right { right: 37px; transform: translateZ(32px) rotate(4deg); }
 .paw i { position: absolute; bottom: 7px; width: 1px; height: 6px; background: var(--paw-line, color-mix(in srgb, var(--fur) 45%, transparent)); border-radius: 2px; transition: background .35s ease; }
 .paw i:nth-child(1) { left: 13px; } .paw i:nth-child(2) { left: 21px; } .paw i:nth-child(3) { left: 29px; }
-
 /* collar + tag */
 .collar {
   position: absolute; left: 50%; top: 156px; width: 156px; height: 17px;
@@ -1665,7 +1522,6 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
 .cat3d[data-acc~="tie"] .cat-tag,
 .cat3d[data-acc~="bowtie"] .cat-tag,
 .cat3d[data-acc~="scarf"] .cat-tag { opacity: 0; }
-
 /* head */
 .head {
   position: absolute; left: 41px; top: 28px; width: 178px; height: 152px; z-index: 6;
@@ -1845,7 +1701,6 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
 .whiskers i { animation: whiskerBreeze 5.5s ease-in-out infinite; }
 .whiskers i:nth-child(2) { animation-delay: -.8s; }
 @keyframes whiskerBreeze { 50% { translate: 1px -1px; } }
-
 /* accessories */
 .acc { display: none; pointer-events: none; }
 .cat3d[data-acc~="bow"] .acc-bow { display: block; }
@@ -1894,7 +1749,6 @@ body.is-sizing .cat-mount { transition-duration: .1s, .1s; }
 }
 html[data-theme="noel"] .cat3d[data-acc~="santa"] .acc-crown,
 html[data-theme="noel"] .cat3d[data-acc~="santa"] .acc-headphones { display: none; }
-
 /* ---------- kıyafet dolabı ---------- */
 .outfit {
   /* Beden 148×168 ve tam olarak gövdenin üstünde durur: omuzda tüy şeridi,
@@ -1969,7 +1823,6 @@ html[data-theme="noel"] .cat3d[data-acc~="santa"] .acc-headphones { display: non
 }
 .of-badge { left: 50%; top: 42px; width: 32px; height: 32px; z-index: 4; transform: translateX(-50%); }
 .of-extra, .of-extra2 { z-index: 1; }
-
 /* ---------- kıyafetin kediye oturuşu ----------
    Baş 178 px genişliğinde ve gövdenin üst 46 px'ini örtüyor. Bu yüzden yaka,
    düğme ve kravat gibi detaylar başın altından başlamalı; yoksa kumaşın
@@ -2021,7 +1874,6 @@ html[data-theme="noel"] .cat3d[data-acc~="santa"] .acc-headphones { display: non
 .outfit[data-kind="overalls"]::before, .outfit[data-kind="overalls"]::after { display: none; }
 /* Kaburgaları gölge katmanı örtmesin. */
 .outfit[data-kind="skeleton"] .of-body::before { display: none; }
-
 /* takım elbise: lacivert ceket, açık yaka, beyaz gömlek, kravat */
 .outfit[data-kind="suit"] .of-body {
   --of-pattern: repeating-linear-gradient(90deg, transparent 0 25px, rgba(255, 255, 255, .05) 25px 26px);
@@ -2869,7 +2721,6 @@ html[data-theme="noel"] .cat3d[data-acc~="santa"] .acc-headphones { display: non
   content: ""; position: absolute; right: 7px; top: 7px; width: 6px; height: 6px; border-radius: 50%;
   background: var(--accent); box-shadow: 0 0 6px var(--accent);
 }
-
 .cat3d[data-breed="bombay"] { --fur-dark: #1b171d; --fur-deep: #0d0b0f; --fur-light: #5a535f; }
 .cat3d[data-breed="rus"] { --fur-dark: #6f7d8d; --fur-deep: #596473; --fur-light: #cbd6df; }
 .cat3d[data-breed="van"] { --fur-dark: #e9e9ef; --fur-deep: #d8d8e0; --fur-light: #ffffff; }
@@ -3039,7 +2890,6 @@ html[data-theme="noel"] .cat3d[data-acc~="santa"] .acc-headphones { display: non
   clip-path: polygon(50% 0, 61% 35%, 98% 36%, 68% 58%, 79% 94%, 50% 72%, 21% 94%, 32% 58%, 2% 36%, 39% 35%);
   filter: drop-shadow(0 3px 5px rgba(110,70,0,.35));
 }
-
 /* ---------- temalı özel aksesuarlar ---------- */
 /* Geyik boynuzları başın iki yanından dışarı taşar; Noel şapkası ortada
    kalsa bile görünür kalır. Burun, kedinin kendi burnunun üstüne oturur. */
@@ -3126,7 +2976,6 @@ html[data-theme="halloween"] .acc-nose {
   border-radius: 0 0 3px 3px;
 }
 .cat3d[data-acc~="pumpkin"] .acc-pumpkin { display: block; }
-
 /* Noel'de aksesuarların neredeyse tamamı kırmızı–yeşil–altın paletine döner. */
 html[data-theme="noel"] .acc-bow i {
   background:
@@ -3180,7 +3029,6 @@ html[data-theme="noel"] .acc-bowtie::after {
 html[data-theme="noel"] .acc-bowtie i { background: #f4d06a; box-shadow: inset 0 1px 0 rgba(255,255,255,.5); }
 html[data-theme="noel"] .acc-star { background: linear-gradient(150deg, #fffbe0, #ffd45e 52%, #d99e22); }
 .cat3d[data-acc~="santa"] .acc-witchhat { display: none; }
-
 /* Cadılar Bayramı'nda aynı parçalar soluk mor–turuncu–kemik paletine döner. */
 html[data-theme="halloween"] .acc-bow i {
   background:
@@ -3227,7 +3075,6 @@ html[data-theme="halloween"] .acc-bowtie::after {
 html[data-theme="halloween"] .acc-bowtie i { background: #d0b27a; }
 html[data-theme="halloween"] .acc-star { background: linear-gradient(150deg, #ffe1b0, #d78a34 55%, #8f5418); }
 html[data-theme="halloween"] .acc-santa { filter: grayscale(.55) saturate(.6) brightness(1.06) drop-shadow(0 7px 9px rgba(30, 14, 40, .3)); }
-
 /* book */
 .book {
   position: absolute; left: 50%; top: 172px; width: 184px; height: 104px; z-index: 7;
@@ -3410,7 +3257,6 @@ html[data-theme="halloween"] .book-ribbon { background: linear-gradient(180deg, 
 .zzz i:nth-child(2) { left: 21px; top: 25px; font-size: 18px; animation-delay: .55s; opacity: .7; }
 .zzz i:nth-child(3) { left: 44px; top: 0; font-size: 24px; animation-delay: 1.1s; }
 @keyframes zzzFloat { 0%, 100% { transform: translateY(0); opacity: .25; } 50% { transform: translateY(-8px); opacity: .95; } }
-
 /* states */
 /* Durumlar arasında süre değiştirmek animasyonun fazını sıçratıyordu;
    salınım hep aynı ritimde kalır, uyku pozunu gövde ve baş taşır. */
@@ -3454,7 +3300,6 @@ html[data-theme="halloween"] .book-ribbon { background: linear-gradient(180deg, 
 @keyframes pokeBounce { 40% { transform: translateX(-50%) translateY(-8px) scale(1.02, .98); } }
 .cat3d[data-breed="siyam"] { --fur-point: var(--patch); }
 .cat3d.collar-off .collar, .cat3d.collar-off .cat-tag { visibility: hidden; }
-
 .yarn-toy {
   position: absolute; left: calc(50% - 23px); bottom: -5px;
   width: 46px; height: 46px; z-index: 12; pointer-events: none;
@@ -3504,7 +3349,6 @@ html[data-theme="halloween"] .cat-wrap[data-state="play"] .yarn-toy { animation:
   0%, 100% { transform: translateZ(70px) rotate(-4deg); }
   50% { transform: translateZ(70px) rotate(5deg) translateY(-1px); }
 }
-
 /* ============ ODAK ÖDÜLÜ: 3D mama kabı ============ */
 /* Yalnızca ödül anında görünür. Kase kedinin önünde durur; gölge, çanak,
    mama ve balık parçaları ayrı katmanlar olduğu için yeme sırasında mama
@@ -3611,13 +3455,53 @@ html[data-theme="halloween"] .cat-wrap[data-state="play"] .yarn-toy { animation:
   0% { opacity: 1; transform: translate3d(-50%, 0, 96px) scale(1); }
   100% { opacity: 0; transform: translate3d(-50%, 16px, 96px) scale(.68); }
 }
-/* Yeme: baş kaseye doğru hafifçe eğilir ve neşeyle sallanır; mutlu gözler kalır. */
+/* Yeme: gerçek bir kedi gibi. Baş kaseye iner, lokmayı alır, başı kaldırıp çiğner (çene açılıp kapanır,
+   yanaklar kabarır, kafa hafifçe yana yatar), sonra tekrar iner. Üçüncü lokmadan sonra dilini yalar.
+   Yalnızca transform ve opacity oynar; süre 3 sn, üç lokma .bite-1/2/3 zamanlarıyla eşleşir. */
 .cat-wrap.is-reward[data-state="happy"] .cat3d { animation: none; }
-.cat-wrap.is-feeding .head { animation: catEat .62s ease-in-out infinite; transform-origin: 50% 88%; }
+.cat-wrap.is-feeding .head { animation: catEat 3s ease-in-out both; transform-origin: 50% 88%; }
 @keyframes catEat {
-  0%, 100% { transform: translateZ(26px) translateY(2px) rotateX(5deg); }
-  44% { transform: translateZ(26px) translateY(10px) rotateX(16deg); }
-  62% { transform: translateZ(26px) translateY(7px) rotateX(12deg); }
+  0% { transform: translateZ(26px) translateY(2px) rotateX(5deg); }
+  10% { transform: translateZ(28px) translateY(9px) rotateX(12deg); }
+  20% { transform: translateZ(30px) translateY(16px) rotateX(22deg) rotateZ(-2deg); }
+  28% { transform: translateZ(27px) translateY(5px) rotateX(8deg) rotateZ(3deg); }
+  36% { transform: translateZ(27px) translateY(4px) rotateX(7deg) rotateZ(-3deg); }
+  42% { transform: translateZ(28px) translateY(10px) rotateX(14deg); }
+  50% { transform: translateZ(30px) translateY(16px) rotateX(22deg) rotateZ(2deg); }
+  58% { transform: translateZ(27px) translateY(5px) rotateX(8deg) rotateZ(-3deg); }
+  66% { transform: translateZ(27px) translateY(4px) rotateX(7deg) rotateZ(3deg); }
+  72% { transform: translateZ(28px) translateY(11px) rotateX(15deg); }
+  78% { transform: translateZ(30px) translateY(16px) rotateX(22deg) rotateZ(-2deg); }
+  86% { transform: translateZ(27px) translateY(3px) rotateX(5deg) rotateZ(2deg); }
+  94% { transform: translateZ(26px) translateY(1px) rotateX(3deg) rotateZ(0deg); }
+  100% { transform: translateZ(26px) translateY(2px) rotateX(5deg); }
+}
+.jaw {
+  position: absolute; left: 50%; top: 16px; width: 13px; height: 10px; z-index: 2;
+  margin-left: -6.5px; border-radius: 1px 1px 50% 50%; opacity: 0; transform: scaleY(0); transform-origin: 50% 0;
+  background: radial-gradient(ellipse at 50% 100%, #f08a9a 0 42%, transparent 46%), #5b2733;
+}
+.lick {
+  position: absolute; left: 50%; top: 22px; width: 8px; height: 11px; z-index: 3;
+  margin-left: -4px; border-radius: 2px 2px 50% 50%; opacity: 0; transform: scaleY(0); transform-origin: 50% 0;
+  background: linear-gradient(180deg, #f59aac, #e8708a);
+}
+.cat-wrap.is-feeding .jaw { opacity: 1; animation: catChew .3s ease-in-out infinite; }
+.cat-wrap.is-feeding .mouth { animation: catMouthMove .3s ease-in-out infinite; }
+.cat-wrap.is-feeding .lick { animation: catLick 3s ease-in-out both; }
+.cat-wrap.is-feeding .cheek { animation: catCheek .3s ease-in-out infinite; }
+@keyframes catChew { 0%, 100% { transform: scaleY(.1); } 50% { transform: scaleY(1); } }
+@keyframes catMouthMove {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(2px); }
+}
+@keyframes catCheek { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.14, 1.06); } }
+@keyframes catLick {
+  0%, 84% { opacity: 0; transform: scaleY(0); }
+  88% { opacity: 1; transform: scaleY(1); }
+  91% { opacity: 1; transform: scaleY(.45); }
+  94% { opacity: 1; transform: scaleY(1); }
+  98%, 100% { opacity: 0; transform: scaleY(0); }
 }
 .cat-wrap.is-feeding .cheek { opacity: .95; }
 .cat-wrap.is-feeding .tail { rotate: 30deg; }
@@ -3634,7 +3518,6 @@ html[data-theme="halloween"] .cat-wrap[data-state="play"] .yarn-toy { animation:
 }
 .cat-bubble[data-mode="reward"] .bubble-head .dots { display: none; }
 .cat-bubble[data-mode="reward"] .bubble-text { font-size: 13px; font-weight: 650; line-height: 1.45; }
-
 /* ============ KAR: kafada birikim, silkeleme, kar tanesi yakalama ============ */
 .head-snow {
   /* Kar, başın üstünde havada duran bir bulut değil; tepenin kavisine oturan
@@ -3779,7 +3662,6 @@ html[data-theme="halloween"] .cat-wrap[data-state="play"] .yarn-toy { animation:
   66% { translate: 2px -2px; rotate: 2deg; }
   84% { translate: -1px 0; rotate: -1deg; }
 }
-
 /* ============ NOEL ÖDÜLÜ: elde sıcak çikolata ============ */
 .reward-cocoa {
   position: absolute; left: calc(50% + 48px); bottom: 112px; width: 76px; height: 86px;
@@ -3879,7 +3761,6 @@ html[data-theme="halloween"] .cat-wrap[data-state="play"] .yarn-toy { animation:
   0% { opacity: 1; transform: translate3d(-50%, 0, 96px) scale(1) rotate(0deg); }
   100% { opacity: 0; transform: translate3d(-50%, 22px, 96px) scale(.6) rotate(18deg); }
 }
-
 /* ============ CADILAR BAYRAMI ÖDÜLÜ: şeker kazanı ============ */
 .reward-cauldron {
   position: absolute; left: 50%; bottom: -2px; width: 138px; height: 96px;
@@ -3979,7 +3860,6 @@ html[data-theme="halloween"] .cat-wrap[data-state="play"] .yarn-toy { animation:
 }
 .cat-wrap[data-reward="cauldron"].is-stirring .cheek { opacity: .95; }
 .cat-wrap.is-closing .reward-cauldron { animation: bowlAway .5s ease-in both; }
-
 #startBtn:disabled { opacity: .58; cursor: default; }
 @media (max-width: 900px) {
   /* Mobilde kedi başının sağındaki dar alan: yazı üç satıra bölünmesin. */
@@ -3992,13 +3872,11 @@ html[data-theme="halloween"] .cat-wrap[data-state="play"] .yarn-toy { animation:
   .cat-bubble[data-mode="reward"] .bubble-head { font-size: 6.6px; letter-spacing: .1em; gap: 3px; }
   .cat-bubble[data-mode="reward"] .bubble-text { font-size: 11.5px; line-height: 1.4; }
 }
-
 /* heart pop (DOM, cheap) */
 .heart-pop { position: fixed; z-index: 160; width: 10px; height: 10px; pointer-events: none; color: var(--accent); background: currentColor; transform: rotate(45deg); border-radius: 2px; animation: heartRise 1.25s var(--soft) forwards; }
 .heart-pop::before, .heart-pop::after { content: ""; position: absolute; width: 100%; height: 100%; border-radius: 50%; background: currentColor; }
 .heart-pop::before { top: -50%; left: 0; } .heart-pop::after { left: -50%; top: 0; }
 @keyframes heartRise { 0% { opacity: 0; transform: translate(0, 0) rotate(45deg) scale(.4); } 16% { opacity: .9; } 100% { opacity: 0; transform: translate(var(--hx, 0), -74px) rotate(65deg) scale(1.1); } }
-
 /* ============ INTRO ============ */
 .intro {
   position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 18px;
@@ -4071,7 +3949,6 @@ html[data-theme="halloween"] .cat-wrap[data-state="play"] .yarn-toy { animation:
 .intro-close { position: absolute; top: 16px; right: 16px; z-index: 5; width: 38px; height: 38px; color: var(--ink-2); border-radius: 50%; display: grid; place-items: center; background: var(--pill-bg); border: 1px solid var(--line); }
 .intro-close svg, .settings-close svg { width: 14px; height: 14px; }
 .intro-close:hover { color: var(--ink); background: var(--glass-3); }
-
 /* ============ CELEBRATION + TOASTS ============ */
 .celebrate {
   position: fixed; z-index: 150; left: 50%; top: 76px;
@@ -4288,7 +4165,6 @@ input[type="range"]::-moz-range-progress { height: 7px; border-radius: 99px; bac
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 17px; height: 17px; margin-top: -6px; border-radius: 50%; background: radial-gradient(circle at 34% 28%, #fff, color-mix(in srgb, var(--accent) 68%, #fff) 50%, var(--accent)); border: 1px solid rgba(255,255,255,.72); box-shadow: 0 2px 8px -2px var(--shadow), 0 0 0 4px var(--accent-soft); }
 input[type="range"]::-moz-range-thumb { width: 15px; height: 15px; border-radius: 50%; background: #fff; border: 4px solid var(--accent); }
 .range-row input[type="range"] { flex: 1; }
-
 /* preview & theme */
 .preview-panel { position: relative; border-radius: 24px; border: 1px solid var(--line); background: radial-gradient(70% 80% at 50% 84%, var(--accent-soft), transparent 70%), color-mix(in srgb, var(--glass) 45%, transparent); overflow: hidden; padding: 6px 12px 10px; }
 .preview-stage { position: relative; height: 192px; overflow: hidden; }
@@ -4336,9 +4212,7 @@ input[type="range"]::-moz-range-thumb { width: 15px; height: 15px; border-radius
 .theme-check { width: 17px; height: 17px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: #fff; opacity: 0; transform: scale(.5); transition: .3s var(--spring); flex: none; }
 .theme-check svg { width: 10px; height: 10px; }
 .theme-card.active .theme-check { opacity: 1; transform: none; }
-
 .aesthetic-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 8px; padding: 3px 7px; border-radius: 99px; background: var(--glass); border: 1px solid var(--line); color: var(--ink-3); letter-spacing: .04em; }
-
 /* dials */
 .duration-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
 .duration-card { position: relative; border-radius: 22px; border: 1px solid var(--line); background: color-mix(in srgb, var(--glass) 45%, transparent); padding: 12px 12px 11px; overflow: hidden; transition: border-color .3s, box-shadow .3s; }
@@ -4420,7 +4294,6 @@ html[data-mode="dark"] .notify-status.warn b { color: #ffc07a; }
 .notify-state.on { color: var(--accent); }
 .notify-state.on i { background: var(--accent); box-shadow: 0 0 7px var(--accent); }
 .notify-state.off i { background: var(--danger); }
-
 /* sounds */
 .sound-slot { border-radius: 20px; border: 1px solid var(--line); background: color-mix(in srgb, var(--glass) 44%, transparent); padding: 13px 13px 11px; margin-top: 9px; }
 .sound-slot-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -4469,7 +4342,6 @@ html[data-mode="dark"] .notify-status.warn b { color: #ffc07a; }
 .link-danger { font-size: 10px; font-weight: 600; color: var(--danger); opacity: .85; transition: .2s; }
 .link-danger:hover { opacity: 1; text-decoration: underline; }
 .link-danger.armed, .mini-btn.armed { color: #fff; background: var(--danger); border-color: transparent; padding: 5px 10px; border-radius: 8px; text-decoration: none; opacity: 1; }
-
 /* ============ VESPIR NEDIR ============ */
 .about-cta {
   flex: none; margin: 0 20px 0; padding: 11px 14px;
@@ -4505,7 +4377,6 @@ html[data-mode="dark"] .notify-status.warn b { color: #ffc07a; }
 /* Hakkımızda sekmesi: hikâye, iletişim ve gizlilik kartları panelin içinde. */
 .about-stack { display: flex; flex-direction: column; gap: 9px; }
 .about-pane .about-cta { margin: 0; }
-
 .about { position: fixed; inset: 0; z-index: 230; display: grid; place-items: center; padding: 16px; visibility: hidden; pointer-events: none; }
 .about.open { visibility: visible; pointer-events: auto; }
 .about-backdrop {
@@ -4546,7 +4417,6 @@ html[data-mode="dark"] .notify-status.warn b { color: #ffc07a; }
   margin: 30px 0 10px; font-size: 10.5px; font-weight: 800; letter-spacing: .15em;
   color: var(--accent); line-height: 1.5;
 }
-
 /* ============ İLETİŞİM SAYFASI ============ */
 .contact-card { width: min(560px, calc(100vw - 24px)); }
 .contact-lead { margin: 0 0 15px; font-size: 12.5px; line-height: 1.62; color: var(--ink-3); }
@@ -4631,7 +4501,6 @@ body.about-open .cat-halo,
 body.about-open .card-aurora,
 body.about-open .card-sheen,
 body.about-open .brand-mark::after { animation-play-state: paused !important; }
-
 /* ============ HESAP / GOOGLE GİRİŞİ ============ */
 .account-card { width: min(468px, calc(100vw - 24px)); }
 .account-body { padding: 4px 26px 28px; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
@@ -4688,7 +4557,6 @@ body.account-open .cat-halo,
 body.account-open .card-aurora,
 body.account-open .card-sheen,
 body.account-open .brand-mark::after { animation-play-state: paused !important; }
-
 /* ============ GİZLİLİK VE GÜVENLİK ============ */
 .privacy-card { width: min(640px, calc(100vw - 24px)); }
 .privacy-lead { margin: 0 0 18px; font-size: 14px; line-height: 1.8; color: var(--ink-2); }
@@ -4744,7 +4612,6 @@ body.privacy-open .cat-halo,
 body.privacy-open .card-aurora,
 body.privacy-open .card-sheen,
 body.privacy-open .brand-mark::after { animation-play-state: paused !important; }
-
 /* Telefonda sayfalar ve giriş formu: klavye açılınca taşmasın, kenarlar güvenli olsun. */
 @media (max-width: 620px) {
   .about { padding: 10px; }
@@ -4769,7 +4636,6 @@ body.privacy-open .brand-mark::after { animation-play-state: paused !important; 
   .account-avatar svg { width: 25px; height: 25px; }
 }
 .danger-btn { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 24%, transparent); background: var(--danger-soft); }
-
 /* tema geçişi: tam ekran tek örtü, yalnızca opacity animasyonu (kompozitör işi).
    Katman ekran kadar kalır, hiç büyütülmez: dev GPU dokusu oluşmaz, her ortamda çizilir.
    Dokunuş noktasından yayılan radyal degrade, daire hissi verir. */
@@ -4789,7 +4655,6 @@ body.privacy-open .brand-mark::after { animation-play-state: paused !important; 
 html.no-trans *:not(#catStage):not(#catStage *),
 html.no-trans *:not(#catStage):not(#catStage *)::before,
 html.no-trans *:not(#catStage):not(#catStage *)::after { transition: none !important; }
-
 /* ============ RESPONSIVE ============ */
 @media (max-width: 1180px) {
   .cat-stage { left: 8px; }
@@ -5011,9 +4876,7 @@ html.no-trans *:not(#catStage):not(#catStage *)::after { transition: none !impor
   .under-hint { display: none; }
   .cat-mount { --fit-scale: .9; }
 }
-
 .sound-option.locked { opacity: .45; }
-
 /* Aydınlık modda metin ve cam yüzeyleri daha okunur */
 html[data-mode="light"][data-theme] {
   --ink-2: color-mix(in srgb, var(--ink) 84%, #fff);
@@ -5033,10 +4896,8 @@ html[data-mode="light"] .mini-btn.accent {
   border-color: var(--accent);
   border-color: color-mix(in srgb, var(--accent) 36%, transparent);
 }
-
 /* Çarpı ve temizleme düğmeleri imleçte yer değiştirmez */
 .settings-close:hover, .intro-close:hover, .mini-btn.clear-x:hover { transform: none !important; }
-
 /* Mobilde ağır gölge ve süs animasyonlarını sadeleştir */
 @media (max-width: 900px) {
   .acc { filter: none !important; }
@@ -5047,8 +4908,6 @@ html[data-mode="light"] .mini-btn.accent {
   body.sheet-open #catMount .cat-wrap,
   body.sheet-open .cat-halo { animation-play-state: paused; }
 }
-
-
 /* Alt ipucu kartın dışında yaşar; sığmayacağı yerde hiç görünmez. */
 @media (max-width: 900px), (min-width: 901px) and (max-height: 840px) {
   .under-hint { display: none; }
@@ -5060,7 +4919,6 @@ html[data-mode="light"] .mini-btn.accent {
   .stats-strip { display: none; }
   .controls { margin-top: 4px; }
 }
-
 /* ============================================================
    DİKEY MOBİL: TAM GENİŞLİK KOMPOZİSYON
    Vespır üstte ortada selamlar; sayaç kartı altta tam genişlikte
@@ -5077,7 +4935,6 @@ html[data-mode="light"] .mini-btn.accent {
     --m-card-top: calc(var(--m-cat-top) + 4px + var(--m-feet));
   }
   body { position: relative; overflow-x: hidden; overflow-y: auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; }
-
   main.app,
   main.app[data-phase="focus"] {
     display: flex;
@@ -5104,7 +4961,6 @@ html[data-mode="light"] .mini-btn.accent {
     box-shadow: 0 34px 80px -48px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .42);
   }
   .timer-card .controls { margin-top: 6px; }
-
   /* Kedi: kartın üstünde, patileri tam kartın üst kenarında; balon sağındaki boşluğa açılır. */
   .cat-stage,
   .cat-stage[data-phase="focus"] {
@@ -5126,7 +4982,6 @@ html[data-mode="light"] .mini-btn.accent {
     transform-origin: 50% 0;
   }
   .cat-name-pill, .cat-perch { display: none; }
-
   .cat-bubble,
   .cat-stage[data-phase="focus"] .cat-bubble,
   .cat-stage .cat-bubble[data-mode="reward"] {
@@ -5151,19 +5006,16 @@ html[data-mode="light"] .mini-btn.accent {
   .cat-bubble[data-mode="read"] .bubble-words { margin-top: 2px; }
   .cat-bubble[data-mode="read"] .bubble-words span { font-size: 9.5px; line-height: 1.34; }
   .cat-bubble[data-mode="read"] .bubble-words span + span { margin-top: 2px; }
-
   .ring-wrap { width: min(300px, 100%); margin: 8px auto 2px; }
   .phase-word { font-size: 9px; }
   .time, .time.long { font-size: clamp(44px, 14.6vw, 58px); }
   .ring-sub { font-size: 11px; }
   .cat-note { max-width: 100%; }
-
   .quick-tune { flex-direction: row; gap: 10px; padding: 7px 9px; }
   .quick-div { display: block; }
   .quick-group { display: flex; align-items: center; gap: 5px; width: auto; }
   .quick-group > span { margin-right: 1px; }
   .quick-group small { margin-left: -2px; }
-
   .controls { gap: 8px; margin-top: 10px; }
   .btn.primary {
     flex: 1 1 auto; min-width: 0;
@@ -5175,27 +5027,22 @@ html[data-mode="light"] .mini-btn.accent {
   .btn.primary:disabled .btn-ico { display: none; }
   .btn.primary:disabled { padding: 0 10px; }
   .under-hint { display: none; }
-
   /* Dar üst çubukta ses düğmesi de sığar: dört eylem tek satırda kalır. */
   #soundBtn { display: grid; }
 }
-
 @media (max-width: 620px) and (orientation: portrait) {
   html { --side-cat: .42; }
 }
-
 @media (max-width: 480px) and (orientation: portrait) {
   html { --side-cat: .40; }
   .time, .time.long { font-size: clamp(42px, 14.2vw, 54px); }
   .ring-wrap { width: min(286px, 100%); }
 }
-
 @media (max-width: 430px) and (orientation: portrait) {
   html { --side-cat: .38; }
   .timer-card { padding: 15px 13px 11px; border-radius: 30px; }
   .ring-wrap { width: min(278px, 100%); }
 }
-
 @media (max-width: 360px) and (orientation: portrait) {
   html { --side-cat: .34; --m-cat-top: calc(64px + env(safe-area-inset-top, 0px)); }
   .cat-stage, .cat-stage[data-phase="focus"] { height: 152px; }
@@ -5216,7 +5063,6 @@ html[data-mode="light"] .mini-btn.accent {
   .quick-group b { font-size: 14px; }
   .bubble-text { font-size: 11px; }
 }
-
 /* Kısa telefonlarda üst alan toparlanır: kart yine tam genişlikte kalır. */
 @media (max-width: 768px) and (orientation: portrait) and (max-height: 740px) {
   html { --side-cat: .33; --m-cat-top: calc(58px + env(safe-area-inset-top, 0px)); }
@@ -5545,7 +5391,6 @@ body.install-invite-open #catStage { visibility: hidden; }
   #catStage.focus-active #catBubble { bottom: 150px; }
   main.app.focus-active .ring-wrap { width: min(200px, 100%); }
 }
-
 /* ============ CADILAR BAYRAMI ATMOSFERİ ============ */
 .halloween-scene { position: fixed; inset: 0; z-index: 1; pointer-events: none; display: none; overflow: hidden; }
 html[data-theme="halloween"] .halloween-scene { display: block; }
@@ -5876,7 +5721,6 @@ html[data-lowfx="1"] .cat-halo,
 html[data-lowfx="1"] .brand-mark::after { animation: none !important; }
 /* Sayaç rakamları yalnızca kompozitörde oynasın: alt katman yeniden çizilmesin. */
 .time { contain: layout paint; }
-
 /* ============ CADILAR ÖDÜLÜ: GERÇEK KAZAN ============ */
 /* Eski kazan mor bir kâse gibi duruyordu; tabak sanılması normaldi. Artık dökme
    demir gövde, kalın ağız kenarı, yan kulplar, üç ayak ve parlak yeşil iksir var. */
@@ -5922,7 +5766,6 @@ html[data-lowfx="1"] .brand-mark::after { animation: none !important; }
     inset 0 -6px 10px rgba(10, 60, 30, .5),
     0 0 22px rgba(120, 240, 140, .65);
 }
-
 /* ============ KIYAFET OTURUŞU ============ */
 /* Fırfırlı elbise: gövde kumaşın tamamını kaplar, etek belden başlayıp yere iner. */
 .outfit[data-kind="dress"] .of-body {
@@ -5989,7 +5832,6 @@ html[data-theme="halloween"] .preview-panel {
 }
 @keyframes hwGhostReduced { 0%, 100% { opacity: .08; } 50% { opacity: .26; } }
 @keyframes hwHandReduced { 0%, 100% { opacity: .3; } 50% { opacity: .62; } }
-
 /* ============ TARAYICI UYUMLULUK YEDEKLERİ ============ */
 @supports not (color: color-mix(in srgb, red, blue)) {
   :root { --fur-light: #eebb89; --fur-dark: #b37843; --fur-deep: #916036; }
@@ -5999,7 +5841,6 @@ html[data-theme="halloween"] .preview-panel {
   .input, .session-name-input { font-size: 16px; }
   .session-name-input { letter-spacing: .08em; }
 }
-
 /* Üstteki "ODAK" etiketi ile ritim topları dar ekranda üst üste binmesin: biri sığmazsa alta iner. */
 .timer-card .timer-head { flex-wrap: wrap; row-gap: 6px; }
 .timer-card .timer-head .phase-pill { flex: 0 0 auto; white-space: nowrap; max-width: 100%; }
@@ -6042,7 +5883,6 @@ html[data-theme="halloween"] .preview-panel {
     border: 0; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line);
   }
 }
-
 /* Konuşma balonu her temada görünür; Noel ve Cadılar Bayramı kendi dokusunu verir. */
 html[data-theme="noel"] .cat-bubble {
   border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
@@ -6054,7 +5894,6 @@ html[data-theme="halloween"] .cat-bubble {
   box-shadow: 0 24px 50px -28px var(--shadow), inset 0 1px 0 rgba(255,255,255,.16),
     0 0 26px -8px color-mix(in srgb, var(--accent) 55%, transparent);
 }
-
 /* ============ CADILAR BAYRAMI — DAHA KORKUNÇ ============ */
 /* Sayaç kartının üst kenarından sızan kan. */
 .hw-blood {
@@ -6120,12 +5959,14 @@ html[data-theme="halloween"] .halloween-scene::after {
   63% { opacity: .2; }
   66%, 94% { opacity: 0; }
 }
-
 @media (prefers-reduced-motion: reduce) {
   html[data-theme="halloween"] .hw-vignette { animation: none; opacity: .95; }
   html[data-theme="halloween"] .ring-progress { animation: none; }
   html[data-theme="halloween"] .halloween-scene::after { animation: none; opacity: .35; }
 }
+html[data-hidden="1"] *,
+html[data-hidden="1"] *::before,
+html[data-hidden="1"] *::after { animation-play-state: paused !important; }
 </style>
 </head>
 <body>
@@ -6306,7 +6147,6 @@ html[data-theme="halloween"] .halloween-scene::after {
   </div>
 </div>
 <div class="focus-veil" aria-hidden="true"></div>
-
 <header class="topbar">
   <button class="brand glass-mini" id="brandBtn" type="button" aria-label="Vespır ayarlarını aç">
     <span class="brand-mark" aria-hidden="true"><span class="brand-face" id="brandFace"></span></span>
@@ -6327,7 +6167,6 @@ html[data-theme="halloween"] .halloween-scene::after {
     </button>
   </div>
 </header>
-
 <main class="app">
   <div class="stage-col">
     <section class="timer-card glass" id="timerCard" aria-label="Vespır odak zamanlayıcısı">
@@ -6377,7 +6216,6 @@ html[data-theme="halloween"] .halloween-scene::after {
           <button class="quick-step" id="breakPlus" type="button" aria-label="Mola süresini artır">+</button>
         </div>
       </div>
-
       <div class="ring-wrap" id="ringWrap">
         <svg class="ring" viewBox="0 0 320 320" aria-hidden="true">
           <defs>
@@ -6400,7 +6238,6 @@ html[data-theme="halloween"] .halloween-scene::after {
           <div class="cat-note" id="catNote"><i aria-hidden="true"></i><span id="catNoteText">Vespır başlamaya hazır</span></div>
         </div>
       </div>
-
       <div class="controls">
         <button class="btn ghost" id="resetBtn" type="button" aria-label="Zamanlayıcıyı sıfırla" title="Sıfırla">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 11a7.7 7.7 0 1 1 2.2 6.1"/><path d="M4 5v6h6"/></svg>
@@ -6413,7 +6250,6 @@ html[data-theme="halloween"] .halloween-scene::after {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5.5 14.5 12 5 18.5Z"/><path d="M19 5v14"/></svg>
         </button>
       </div>
-
       <div class="stats-strip" aria-label="Bugünün özeti">
         <div class="stat"><b id="statMin">0</b><small>dk odak</small></div>
         <div class="stat-div"></div>
@@ -6426,8 +6262,6 @@ html[data-theme="halloween"] .halloween-scene::after {
     <div class="under-hint"><span><kbd>Boşluk</kbd> başlat / duraklat</span><i></i><span>Kısa bir mola, sonra yeni odak.</span></div>
   </div>
 </main>
-
-
 <div class="cat-stage" id="catStage" aria-label="Vespır, senin odak arkadaşın">
   <div class="cat-flip" id="catFlip">
     <div class="cat-perch" id="catPerch" aria-hidden="true">
@@ -6443,19 +6277,16 @@ html[data-theme="halloween"] .halloween-scene::after {
     <div class="cat-name-pill" id="catNamePill"><i aria-hidden="true"></i><b id="stageName">Vespır</b><small id="stageMeta">Tekir · meraklı</small></div>
   </div>
 </div>
-
 <div class="theme-ripple" id="themeRipple" aria-hidden="true"></div>
 <div class="toast-stack" id="toastStack" aria-live="polite"></div>
 <canvas id="fxCanvas" aria-hidden="true"></canvas>
 <canvas id="snowCanvas" aria-hidden="true"></canvas>
-
 <div class="celebrate glass-strong" id="celebrate" aria-live="polite">
   <span class="celebrate-ico" aria-hidden="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
   </span>
   <div class="celebrate-copy"><small id="celebrateEyebrow">odak tamam</small><b id="celebrateTitle">Harikasın!</b><span id="celebrateSub">Vespır seninle gurur duyuyor.</span></div>
 </div>
-
 <div class="focus-invite" id="focusInvite" aria-hidden="true" inert>
   <section class="focus-invite-panel" role="dialog" aria-modal="true" aria-labelledby="focusInviteTitle" aria-describedby="focusInviteDescription">
     <div class="focus-invite-cat" aria-hidden="true"><div class="focus-invite-cat-scale" id="focusInviteCat"></div></div>
@@ -6478,7 +6309,6 @@ html[data-theme="halloween"] .halloween-scene::after {
     </div>
   </section>
 </div>
-
 <div class="intro" id="intro" aria-hidden="true" inert>
   <div class="intro-card glass-strong" role="dialog" aria-modal="true" aria-labelledby="introTitle">
     <button class="intro-close" id="introClose" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
@@ -6499,7 +6329,6 @@ html[data-theme="halloween"] .halloween-scene::after {
     </div>
   </div>
 </div>
-
 <aside class="settings" id="settings" aria-hidden="true" inert>
   <div class="settings-backdrop" id="settingsBackdrop" data-close-settings></div>
   <div class="settings-panel glass-strong" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
@@ -6520,7 +6349,6 @@ html[data-theme="halloween"] .halloween-scene::after {
       <button class="tab-btn" type="button" data-tab="about" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 11.2V16"/><circle cx="12" cy="8.4" r=".9" fill="currentColor" stroke="none"/></svg>Hakkımızda</button>
     </nav>
     <div class="settings-scroll" id="settingsScroll">
-
       <section class="pane active" data-pane="cat">
         <div class="preview-panel">
           <div class="preview-shine" aria-hidden="true"></div>
@@ -6528,48 +6356,37 @@ html[data-theme="halloween"] .halloween-scene::after {
           <div class="preview-caption"><b id="previewName">Vespır</b><span id="previewMeta">Tekir · Dişi · Zil</span></div>
           <div class="preview-actions"><button class="btn ghost surprise" id="randomCatBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Sürpriz görünüm</button></div>
         </div>
-
         <label class="field-label" for="catNameInput">Adı <small>tasmada da görünür</small></label>
         <input class="input" id="catNameInput" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Vespır">
-
         <div class="field-label">Cinsiyet</div>
         <div class="seg" id="genderGroup"></div>
-
         <div class="field-label">Boyut <small>sahnede kapladığı alan</small></div>
         <div class="range-row cat-size-row">
           <label for="catScaleRange">Kedi boyu</label>
           <input id="catScaleRange" type="range" min="80" max="120" step="5" value="100" aria-label="Kedi boyu yüzdesi">
           <output id="catScaleVal" for="catScaleRange">100%</output>
         </div>
-
         <div class="field-label">Cinsi</div>
         <div class="breed-grid" id="breedGroup"></div>
         <p class="note">Tekir, Sarman, Üç Renkli ve Smokin birer tüy desenidir; diğerleri kedi ırkıdır. Her görünüm, ırkın gerçek tüy ve göz rengine göre hazırlandı.</p>
-
         <div class="field-label">Tüy rengi</div>
         <div class="swatches" id="furSwatches"></div>
-
         <div class="field-label">Göbek ve patiler</div>
         <div class="swatches" id="bellySwatches"></div>
-
         <div class="field-label">Göz rengi</div>
         <div class="swatches" id="eyeSwatches"></div>
-
         <div class="field-label">Tasma</div>
         <label class="toggle-row" style="padding-top:0">
           <span><b>Tasma takılı</b><small>İsmini ve zilini taşısın.</small></span>
           <span class="switch"><input type="checkbox" id="collarToggle"><i></i></span>
         </label>
         <div class="swatches" id="collarSwatches"></div>
-
         <div class="field-label">Kıyafet <small>dolabından bir parça</small></div>
         <div class="outfit-grid" id="outfitGroup"></div>
         <p class="note">Tek seferde bir kıyafet giyer; aksesuarlarla birlikte takılabilir. Kıyafet seçimi de bu tarayıcıda saklanır.</p>
-
         <div class="field-label">Aksesuarlar <small>birden fazla seçebilirsin</small></div>
         <div class="chips" id="accessoryGroup"></div>
         <p class="note">Noel şapkası, geyik boynuzu, cadı şapkası ve balkabağı burada her zaman seçilebilir. Tema değişse de kıyafet ve aksesuarların korunur.</p>
-
         <div class="field-label">Uygulama <small>Vespır'ı cebine al</small></div>
         <div class="pwa-card">
           <div class="pwa-copy">
@@ -6578,9 +6395,7 @@ html[data-theme="halloween"] .halloween-scene::after {
           </div>
           <button class="mini-btn accent" id="installBtn2" type="button">Ana ekrana ekle</button>
         </div>
-
       </section>
-
       <section class="pane" data-pane="look">
         <div class="field-label">Dil <small>language</small></div>
         <div class="seg lang-seg" id="langGroup" aria-label="Uygulama dili">
@@ -6588,14 +6403,11 @@ html[data-theme="halloween"] .halloween-scene::after {
           <button type="button" data-lang="en"><span>English</span><small>EN</small></button>
         </div>
         <p class="note">Dil değişince arayüz ve bildirimler aynı dili konuşur.</p>
-
         <div class="field-label">Görünüm <small>veya üstteki güneşe dokun</small></div>
         <div class="seg" id="modeGroup"></div>
-
         <div class="field-label">Temalar <small>her biri ayrı bir dünya</small></div>
         <div class="theme-grid" id="themeGrid"></div>
         <p class="note">Tema değişince Vespır'ın dünyası yumuşak bir ışık dalgasıyla yenilenir. Kedi renkleri ayrı kalır.</p>
-
         <div class="field-label">Kısayollar <small>hızlı kontrol</small></div>
         <div class="set-card shortcut-card">
           <div class="shortcut-row"><span>Başlat / duraklat</span><kbd>Boşluk</kbd></div>
@@ -6607,7 +6419,6 @@ html[data-theme="halloween"] .halloween-scene::after {
           </label>
         </div>
       </section>
-
       <section class="pane" data-pane="time">
         <div class="field-label">Günlük hedef <small>kendine nazik bir hedef</small></div>
         <div class="goal-card">
@@ -6637,7 +6448,6 @@ html[data-theme="halloween"] .halloween-scene::after {
             </div>
           </div>
         </div>
-
         <div class="field-label">Akış <small>kendi ritmini kur</small></div>
         <div class="set-card">
           <label class="toggle-row">
@@ -6653,7 +6463,6 @@ html[data-theme="halloween"] .halloween-scene::after {
             <span class="switch"><input type="checkbox" id="hourlyToggle"><i></i></span>
           </label>
         </div>
-
         <div class="field-label">Bildirimler <small>başka sekmedeyken de haber ver</small></div>
         <div class="set-card">
           <label class="toggle-row">
@@ -6663,7 +6472,6 @@ html[data-theme="halloween"] .halloween-scene::after {
           <div class="notify-status" id="notifyStatus">Durum kontrol ediliyor…</div>
           <button class="mini-btn" id="notifyTestBtn" type="button" style="margin-top:9px">Test bildirimi gönder</button>
         </div>
-
         <div class="field-label">Vespır'dan mesajlar <small>ara sıra tatlı bir not</small></div>
         <div class="set-card">
           <label class="toggle-row">
@@ -6673,11 +6481,9 @@ html[data-theme="halloween"] .halloween-scene::after {
           <div class="notify-status" id="msgStatus"></div>
         </div>
       </section>
-
       <section class="pane" data-pane="sound">
         <div class="field-label">Genel ses <small>cihaz sesinin üzerine eklenir</small></div>
         <div class="range-row"><label for="volRange">Ses düzeyi</label><input id="volRange" type="range" min="0" max="100" step="1" value="70"><output id="volVal">70%</output></div>
-
         <div class="field-label">Başlangıç sesi</div>
         <div class="sound-slot">
           <div class="sound-slot-head">
@@ -6693,7 +6499,6 @@ html[data-theme="halloween"] .halloween-scene::after {
           </div>
           <input type="file" id="startFileInput" accept="audio/*" hidden>
         </div>
-
         <div class="sound-slot">
           <div class="sound-slot-head">
             <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7Z"/></svg>Seans biterken</b>
@@ -6708,7 +6513,6 @@ html[data-theme="halloween"] .halloween-scene::after {
           </div>
           <input type="file" id="endFileInput" accept="audio/*" hidden>
         </div>
-
         <label class="hourly-row">
           <span><b>Saatlik zil sesi</b><small>Odak sürdükçe her saatte bir çalar.</small></span>
           <span class="switch"><input type="checkbox" id="hourlyToggleSound"><i></i></span>
@@ -6718,12 +6522,9 @@ html[data-theme="halloween"] .halloween-scene::after {
           <button class="chip" id="meowBtn" type="button">Vespır'ı miyavlat</button>
           <button class="chip" id="chimeBtn" type="button">Saatlik zili dinle</button>
         </div>
-
         <p class="note" style="margin-top:12px">Özel sesler cihazda sıkıştırılarak saklanır: en fazla 30 saniye, birkaç yüz kilobayt. Cihazından ayrılmaz.</p>
-
         <p class="note">Sesler tarayıcında üretilir; hiçbir müzik indirilmez. Kendi ses dosyanı seçebilirsin.</p>
       </section>
-
       <section class="pane about-pane" data-pane="about">
         <div class="field-label">Hakkımızda <small>Vespır'ın hikâyesi ve sözleşmeler</small></div>
         <div class="about-stack">
@@ -6745,7 +6546,6 @@ html[data-theme="halloween"] .halloween-scene::after {
         </div>
         <p class="note">Odak ayarların ve istatistiklerin bu tarayıcıda saklanır. İsteğe bağlı hesap girişi Google/Firebase tarafından sağlanır; veri kullanımı ve izinler gizlilik metninde açıklanır.</p>
       </section>
-
     </div>
     <footer class="settings-foot">
       <button class="link-danger" id="resetAllBtn" type="button">Her şeyi sıfırla</button>
@@ -6753,7 +6553,6 @@ html[data-theme="halloween"] .halloween-scene::after {
     </footer>
   </div>
 </aside>
-
 <div class="about" id="about" aria-hidden="true" inert>
   <div class="about-backdrop" id="aboutBackdrop" data-close-about></div>
   <article class="about-card" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
@@ -6771,7 +6570,6 @@ html[data-theme="halloween"] .halloween-scene::after {
     </div>
   </article>
 </div>
-
 <div class="about contact" id="contact" aria-hidden="true" inert>
   <div class="about-backdrop" id="contactBackdrop" data-close-contact></div>
   <article class="about-card contact-card" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
@@ -6784,13 +6582,11 @@ html[data-theme="halloween"] .halloween-scene::after {
     </header>
     <div class="about-scroll" id="contactScroll">
       <p class="contact-lead">Bir fikrin, bir hatan ya da iş birliği teklifin mi var? Hepsine aynı kapıdan ulaşabilirsin.</p>
-
       <a class="contact-instagram" href="https://www.instagram.com/vespir.tr/" target="_blank" rel="noopener noreferrer" aria-label="Vespır Instagram sayfasını yeni sekmede aç">
         <span class="contact-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.1" cy="6.9" r="1.1" fill="currentColor" stroke="none"/></svg></span>
         <span class="contact-meta"><small>Instagram</small><b>@vespir.tr</b></span>
         <span class="contact-go">Sayfaya git <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg></span>
       </a>
-
       <div class="contact-mail">
         <span class="contact-mail-copy"><small>E-posta</small><b>vespirfocuslabs@gmail.com</b></span>
         <button class="contact-copy-btn" id="copyMail" type="button" aria-label="E-posta adresini panoya kopyala">
@@ -6799,7 +6595,6 @@ html[data-theme="halloween"] .halloween-scene::after {
           <span id="copyMailText">Kopyala</span>
         </button>
       </div>
-
       <div class="contact-list">
         <div class="contact-item">
           <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5 13.4 9l4.6 1.4-4.6 1.4L12 16.4l-1.4-4.6L6 10.4 10.6 9Z"/><path d="M18.5 4v3M20 5.5h-3"/></svg>Dilek ve öneriler</b>
@@ -6822,7 +6617,6 @@ html[data-theme="halloween"] .halloween-scene::after {
     </div>
   </article>
 </div>
-
 <div class="about account" id="account" aria-hidden="true" inert>
   <div class="about-backdrop" id="accountBackdrop" data-close-account></div>
   <article class="about-card account-card" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
@@ -6853,7 +6647,6 @@ html[data-theme="halloween"] .halloween-scene::after {
     </div>
   </article>
 </div>
-
 <div class="about privacy" id="privacy" aria-hidden="true" inert>
   <div class="about-backdrop" id="privacyBackdrop" data-close-privacy></div>
   <article class="about-card privacy-card" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
@@ -6866,13 +6659,11 @@ html[data-theme="halloween"] .halloween-scene::after {
     </header>
     <div class="about-scroll" id="privacyScroll">
       <p class="privacy-lead">Bu metin, <b>Vespır</b> kullanılırken hangi verilerin cihazında saklandığını, isteğe bağlı hesap girişinin nasıl çalıştığını ve güvenlik tercihlerini açıklar. Yerel odak verileri ile Google/Firebase tarafından işlenen hesap verileri birbirinden ayrıdır.</p>
-      <p class="legal-note"><b>Son güncelleme: <time datetime="2026-11-09">9 Kasım 2026</time>.</b> Hesap açmadan odaklanabilirsin. Giriş yapmak, ayarlarını veya istatistiklerini buluta yedeklemez.</p>
-
+      <p class="legal-note"><b>Son güncelleme: <time datetime="2026-11-14">14 Kasım 2026</time>.</b> Hesap açmadan odaklanabilirsin. Giriş yapmak, ayarlarını veya istatistiklerini buluta yedeklemez.</p>
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">1</span>Kapsam ve Uygulamanın Amacı</h3>
         <p>Vespır, odak ve mola sürelerini yönetmeye yardımcı olan bir tarayıcı uygulamasıdır. Bu açıklamalar uygulamanın mevcut özelliklerini kapsar. Google, Firebase, barındırma hizmeti ve dış bağlantıların kendi veri işleme kuralları ayrıca geçerlidir. Gizlilikle ilgili sorularını aşağıdaki Vespır iletişim kanallarına iletebilirsin.</p>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">2</span>Yerel Veriler ve Kullanım Amaçları</h3>
         <ul class="legal-list">
@@ -6883,14 +6674,12 @@ html[data-theme="halloween"] .halloween-scene::after {
         </ul>
         <p>Bu ayar ve istatistikler uygulama tarafından bir kullanıcı hesabına veya uzak veritabanına yüklenmez.</p>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">3</span>Tarayıcı Depolaması ve Ses Dosyaları</h3>
         <p>Ayarlar ve sayaç bilgileri tarayıcının yerel depolamasında (localStorage), seçtiğin özel sesler ise yerel dosya veritabanında (IndexedDB) tutulur. Ses dosyasının adı, türü ve içeriği, oturum başlangıcında veya sonunda çalınması için cihazında saklanır; uygulamada bu dosyaları sunucuya yükleyen bir özellik yoktur.</p>
         <p>Vespır mesajları açıksa, uygulama kapalıyken bildirim gösterebilmek için küçük bir tercih kaydı (kedi adı, mesaj metinleri ve son mesaj zamanı) tarayıcının önbellek deposunda (Cache Storage) tutulur. Konum izni verdiysen kayıtta yalnızca 0,1 dereceye yuvarlanmış (yaklaşık 10 km’lik) koordinat da bulunur; bu, güncel havaya göre uyarı gönderebilmek içindir. Kayıt cihazındaki önbellekte tutulur; içindeki yuvarlanmış yaklaşık koordinat, hava bilgisi almak için Open-Meteo’ya iletilir. Kayıt “Her şeyi sıfırla” ile temizlenir.</p>
         <p>Depolama tarayıcı profiline ve uygulamanın açıldığı adrese bağlıdır. Farklı bir tarayıcı, cihaz, site adresi veya gizli pencere aynı verilere erişmeyebilir. Tarayıcı temizliği ya da depolama kısıtları veri kaybına yol açabilir.</p>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">4</span>Google ile Oturum Açma</h3>
         <p>Google düğmesi bir hesap seçme penceresi açar. Kimlik doğrulama Google ve Firebase Authentication üzerinden gerçekleşir; Google şifren Vespır tarafından istenmez veya saklanmaz.</p>
@@ -6900,13 +6689,11 @@ html[data-theme="halloween"] .halloween-scene::after {
           <li><b>İsteğe bağlı kullanım:</b> Giriş yapmak zorunda değilsin; hesap açmadan tüm odak özelliklerini kullanabilirsin.</li>
         </ul>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">5</span>Oturumun Hatırlanması</h3>
         <p>Firebase, tarayıcı desteklediği ölçüde oturumun sonraki ziyaretlerde hatırlanması için yerel oturum bilgileri saklayabilir. Paylaşılan bir cihazda işin bittiğinde hesap ekranındaki “Çıkış yap” düğmesini kullan.</p>
         <p>Çıkış yapmak bu uygulamadaki Firebase oturumunu kapatır; Google hesabını tarayıcının diğer sekmelerinden çıkarmayabilir. Yerel odak ayarların ve istatistiklerin çıkış yaptığında korunur.</p>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">6</span>Vespır Mesajları, Bildirimler ve Hava Durumu</h3>
         <p>“Vespır mesaj göndersin” açıksa kedi, sayaç dururken ara sıra davet ve hatırlatma cümleleri yazar. Sen başka sekmedeyken bildirim iznin varsa özlem mesajı gönderilebilir; bu mesajlar en fazla üç saatte bir gelir, 23.00–05.00 arasında hiç gelmez ve odak sayacı çalışırken rahatsızlık verilmez. Hava uyarıları (şemsiye, mont, güneş gözlüğü gibi) günde en fazla bir kez gelir (23.00–05.00 arası hiç gelmez); bunun için konum izni gerekir ve konum yalnızca bu uyarılar ile hava cümleleri için kullanılır. Arka plan mesajları yalnızca bunu destekleyen tarayıcılarda (genellikle Chrome/Edge tabanlı, yüklü uygulama) çalışır; iPhone/Safari’de mesajlar uygulama açıkken görünür.</p>
@@ -6917,13 +6704,11 @@ html[data-theme="halloween"] .halloween-scene::after {
           <li><b>Kontrol sende:</b> Mesaj anahtarı Ayarlar → Zaman bölümünden kapatılabilir; bildirim ve konum izinlerini tarayıcı ayarlarından her zaman geri alabilirsin.</li>
         </ul>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">7</span>Ağ İstekleri ve Teknik Veriler</h3>
         <p>Web sürümü yüklenirken barındırma hizmetine, giriş bileşenleri yüklenirken Google’ın Firebase kaynaklarına ağ istekleri yapılır. Konum izni verilmişse hava mesajları için yaklaşık konumla Open-Meteo’ya istek yapılır. Bu nedenle hizmet sağlayıcılar IP adresi, tarayıcı bilgisi ve istek başlıkları gibi teknik verileri işleyebilir. Kimlik doğrulama ve hava durumu sorgusu internet bağlantısı gerektirir.</p>
         <p>Vespır’ın mevcut kodunda analitik SDK’sı, reklam izleme veya odak istatistiklerini sunucuya gönderme özelliği çalıştırılmaz. Bu durum, barındırma ve kimlik doğrulama hizmetlerinin kendi işletim ve güvenlik kayıtlarını tutmadığı anlamına gelmez.</p>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">8</span>İzinler ve Cihaz Özellikleri</h3>
         <ul class="legal-list">
@@ -6934,19 +6719,16 @@ html[data-theme="halloween"] .halloween-scene::after {
           <li><b>İstenmeyen izinler:</b> Mevcut uygulama kamera veya mikrofon erişimi talep etmez.</li>
         </ul>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">9</span>PWA, Çevrimdışı Kullanım ve Gömülü Sayfalar</h3>
         <p>PWA kurulumu uygulamaya ana ekrandan erişim sağlar; verileri hesabına yedeklemez. Uygulama ilk kez çevrimiçi açıldıktan sonra arayüz ve temel odak özellikleri tarayıcının önbelleğinde tutulur; bu sayede sayaç, kedi ve ayarlar internet olmadan da açılabilir. Hava durumu, Google ile giriş ve dış bağlantılar internet gerektirir. Tarayıcı depolamayı temizlerse veya site verilerini silerse önbellek kaldırılır ve uygulama yeniden bağlantı isteyebilir.</p>
         <p>Doğrudan HTML dosyasında Google girişi kullanılamaz. Giriş için HTTPS veya yerel geliştirme ortamı ve Firebase’de izinli bir alan adı gerekir. Gömülü sayfalarda tarayıcı depolaması ve açılır pencere kısıtları girişe veya kuruluma engel olabilir; uygulamayı ayrı sekmede açmak gerekebilir.</p>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">10</span>Saklama Süreleri ve Veri Kaybı</h3>
         <p>Yerel tercihler, bunları sıfırlayana veya tarayıcı site verilerini silene kadar tutulabilir. Günlük istatistikler yeni gün başladığında yenilenir. Hava durumu bilgisi yalnızca bellekte kısa süre tutulur; mesaj tercihleri önbellekte, sıfırlamaya veya tarayıcı temizliğine kadar kalır. Tarayıcının depolama yönetimi bu kayıtları daha erken temizleyebilir.</p>
         <p>Firebase hesap ve teknik kayıtlarının saklanması, sağlayıcının hizmet kurallarına ve proje yapılandırmasına bağlıdır; yerel verileri temizlemek bu kayıtları otomatik olarak silmez. Vespır yerel verilerin kalıcı saklanmasını veya kaybolan verilerin geri getirilebilmesini garanti etmez.</p>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">11</span>Sıfırlama, Çıkış ve Hesap Silme Ayrımı</h3>
         <ul class="legal-list">
@@ -6956,13 +6738,11 @@ html[data-theme="halloween"] .halloween-scene::after {
           <li><b>Hesap silme talebi:</b> Mevcut arayüzde hesap silme düğmesi bulunmaz. Hesap verileriyle ilgili silme veya bilgi talepleri için aşağıdaki e-posta adresine başvurabilirsin; hesap sahipliği doğrulaması gerekebilir.</li>
         </ul>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">12</span>Üçüncü Taraf Hizmetleri ve Dış Bağlantılar</h3>
         <p>Google/Firebase kimlik doğrulama, site barındırma hizmeti sayfanın sunulması amacıyla kullanılır. Konum izni verilmişse Open-Meteo, yuvarlanmış yaklaşık koordinatla güncel hava bilgisini sağlamak için kullanılır (uygulama açıkken hava cümleleri, mesajlar açıksa kapalıyken hava uyarısı için); bu isteğe hesap kimliği eklenmez ve konum başka hiçbir tarafla paylaşılmaz. Bu sağlayıcılar verileri kendi politikaları kapsamında ve farklı ülkelerdeki altyapılarında işleyebilir; tüm verilerin yalnızca cihazında veya belirli bir ülkede kaldığı yönünde bir garanti verilmez.</p>
         <p>İletişim ve sosyal medya bağlantılarını açtığında ilgili hizmetin kuralları geçerlidir. Destek için gönderdiğin mesajın içeriği ve iletişim bilgilerin, talebinin değerlendirilmesi amacıyla ilgili iletişim hizmeti üzerinden işlenir. Mesajına şifre veya oturum bilgisi ekleme.</p>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">13</span>Güvenlik Önlemleri ve Sınırları</h3>
         <ul class="legal-list">
@@ -6973,18 +6753,15 @@ html[data-theme="halloween"] .halloween-scene::after {
         </ul>
         <p>Hiçbir yazılım veya aktarım yöntemi yüzde yüz güvenlik garantisi sunmaz. Şüpheli bir işlem ya da güvenlik açığı fark edersen ayrıntıları gizlilik içinde e-posta kanalından bildir; şifrelerini veya oturum belirteçlerini paylaşma.</p>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">14</span>Tercihlerin ve Başvuru Yolları</h3>
         <p>Hesap girişini kullanmama, uygulamadaki tercihleri değiştirme, tarayıcı izinlerini geri alma ve yerel verileri temizleme seçeneklerin vardır. Google hesabından Vespır’a verdiğin erişimi Google hesap ayarlarından yönetebilirsin.</p>
         <p>Hesap verilerine erişim, düzeltme veya silme taleplerini e-posta yoluyla iletebilirsin. Talebin kapsamı ve uygulanacak süreç ilgili hizmete ve geçerli mevzuata göre değerlendirilir; bu metin bütün taleplerin anında veya koşulsuz tamamlanacağı vaadini içermez.</p>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">15</span>Metnin Güncellenmesi</h3>
         <p>Özellikler veya veri işleme süreçleri değiştiğinde bu açıklamalar güncellenebilir. Güncel sürüm ve son güncelleme tarihi bu sayfada gösterilir. Bu metin bilgilendirme amacı taşır; sayfanın açılması tek başına tüm veri işlemleri için ayrı bir onay verildiği anlamına gelmez.</p>
       </section>
-
       <section class="legal-sec">
         <h3 class="legal-head"><span class="legal-num">16</span>İletişim ve Güvenlik Bildirimleri</h3>
         <p>Gizlilik soruların, hesap taleplerin ve güvenlik bildirimlerin için e-posta kanalını kullanabilirsin. Sosyal medya hesabı genel iletişim içindir; hassas hesap bilgilerini herkese açık mesajlarda paylaşma.</p>
@@ -6996,9 +6773,7 @@ html[data-theme="halloween"] .halloween-scene::after {
     </div>
   </article>
 </div>
-
-<script>
-'use strict';
+<script>'use strict';
 /* ============================================================
    Vespır — tek dosya, sıfır bağımlılık
    ============================================================ */
@@ -7040,11 +6815,6 @@ function dayKeyOffset(n, at = Date.now()) {
   d.setDate(d.getDate() + n);
   return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
 }
-function effectiveStreak() {
-  const st = S.streak || { count: 0, last: '' };
-  if (st.last === todayKey() || st.last === dayKeyOffset(-1)) return Math.max(0, st.count | 0);
-  return 0;
-}
 function bumpStreak(at = Date.now()) {
   const st = S.streak && typeof S.streak === 'object' ? S.streak : { count: 0, last: '' };
   const today = todayKey(at);
@@ -7067,7 +6837,6 @@ const fmtDuration = (min) => {
   if (en) return m ? `${h} hr ${m} min` : `${h} hr`;
   return m ? `${h} sa ${m} dk` : `${h} saat`;
 };
-
 const THEMES = {
   sakura:   { label: 'Sakura',      tag: 'tatlı & kalpli',   particle: 'heart', metaLight: '#fdf3f7', metaDark: '#150c18' },
   midnight: { label: 'Gece Mavisi', tag: 'sakin & neon',     particle: 'star',  metaLight: '#eef5ff', metaDark: '#040a16' },
@@ -7302,7 +7071,6 @@ function updateBookIdentity() {
     set(right, '.book-copy', world.right);
   });
 }
-
 const DEFAULTS = () => ({
   v: 3,
   theme: 'noel',
@@ -7337,7 +7105,6 @@ const DEFAULTS = () => ({
   streak: { count: 0, last: '' },
   timer: null
 });
-
 function loadSettings() {
   const base = DEFAULTS();
   let saved = {};
@@ -7427,9 +7194,7 @@ function loadSettings() {
   s.cat.name = s.cat.name.trim().slice(0, 16) || 'Vespır';
   return s;
 }
-
 let S = loadSettings();
-
 /* ============================================================
    DİL — Türkçe varsayılan, İngilizce isteğe bağlı
    Statik metinler sözlükten, canlı metinler t() üzerinden çevrilir.
@@ -7491,7 +7256,6 @@ const EN = {
   'Önce beni tasarla': 'Customize me first',
   'Adımı, tüyümü, tasmamı ve cinsimi birlikte seçebiliriz. İlk selam, bir daha göstermem.': 'We can choose my name, fur, collar and breed together. First greeting only, I won’t show it again.',
   'Vespır’ı kurulum seçenekleriyle cebine al.': 'Put Vespır in your pocket with the install options.',
-
   /* ayarlar */
   "Vespır'ı şekillendir": 'Shape Vespır',
   'Ayarlar': 'Settings',
@@ -7603,7 +7367,6 @@ const EN = {
   'Odak ayarların ve istatistiklerin bu tarayıcıda saklanır. İsteğe bağlı hesap girişi Google/Firebase tarafından sağlanır; veri kullanımı ve izinler gizlilik metninde açıklanır.': 'Your focus settings and stats are stored in this browser. Optional account sign-in is provided by Google/Firebase; data use and permissions are explained in the privacy text.',
   'Her şeyi sıfırla': 'Reset everything',
   'Vespır · yerel · minik': 'Vespır · local · tiny',
-
   /* seçenek etiketleri */
   'Sakura': 'Sakura', 'Gece Mavisi': 'Midnight Blue', 'Orman': 'Forest', 'Gün Batımı': 'Sunset',
   'Lavanta': 'Lavender', 'Okyanus': 'Ocean', 'Şeftali': 'Peach', 'Nane': 'Mint', 'Kakao': 'Cocoa',
@@ -7641,7 +7404,6 @@ const EN = {
   'odak hazır': 'focus ready',
   'nefes zamanı': 'breathing time',
   'mola hazır': 'break ready',
-
   /* kedi baloncukları ve anlık notlar */
   'Kafamda kar birikmiş… bir silkeleyeyim!': 'There’s snow piled on my head… let me shake it off!',
   'Bak, kardan şapkam vardı. Temizlendi!': 'Look, I had a snow hat. All clean now!',
@@ -7706,7 +7468,6 @@ const EN = {
   'kaldığımız yerden devam. miyav.': 'continuing where we left off. meow.',
   'bunu senin için sakladım.': 'I saved this for you.',
   'Üşüyorum… daha kalın bir şey giydirir misin?': 'I’m cold… could you put something warmer on me?',
-
   /* kutlama ve bildirim başlıkları */
   'odak tamam': 'focus complete',
   'mola tamam': 'break complete',
@@ -7715,7 +7476,6 @@ const EN = {
   'Patiler havada!': 'Paws in the air!',
   'Nefes aldın!': 'You breathed!',
   'Yeni tura hazırız.': 'Ready for a new round.',
-
   /* kısa bildirimler */
   'Tarayıcı hafızası dolu; ayarların bir kısmı saklanamıyor.': 'Browser storage is full; some of your settings cannot be saved.',
   'Bu tarayıcı bildirimleri desteklemiyor.': 'This browser doesn’t support notifications.',
@@ -7746,7 +7506,6 @@ const EN = {
   'Bildirimler kapalı.': 'Notifications are off.',
   'Dosyadan açıldığı için bildirim izni verilemedi. Zil ve kedi baloncukları çalışmaya devam eder.': 'Notification permission could not be granted because the page is open from a file. The chime and cat bubbles keep working.',
   'Bildirim izni verilmedi. Tarayıcı ayarlarından izin verebilirsin.': 'Notification permission was not granted. You can allow it in your browser settings.',
-
   /* hakkında, iletişim, hesap ve gizlilik başlıkları */
   "Vespır'ın hikâyesi": 'Vespır’s story',
   "VESPIR'IN ARKASINDA KİM VAR?": 'WHO IS BEHIND VESPIR?',
@@ -7791,16 +7550,10 @@ const EN = {
   'Hedef saat': 'Goal hours',
   'Hedef dakika': 'Goal minutes'
 };
-const EN_LOWER = new Map(Object.keys(EN).map((k) => [k.toLocaleLowerCase('tr'), EN[k]]));
 function t(text) {
   if (text == null || S.lang !== 'en') return text;
   const str = String(text);
   return EN[str] || str;
-}
-function tLower(text) {
-  if (text == null || S.lang !== 'en') return text;
-  const str = String(text);
-  return EN_LOWER.get(str.toLocaleLowerCase('tr')) || EN[str] || str;
 }
 /* DOM çevirisi: her düğümün Türkçe aslı saklanır, dil değişince geri yüklenir.
    Yalnızca tam eşleşen metinler çevrilir; kullanıcı adları ve sayılar dokunulmaz. */
@@ -7869,7 +7622,7 @@ const EN_BLOCKS = [
   ['Hesap girişini kullanmama, uygulamadaki tercihleri değiştirme', 'You can choose not to sign in, change the app’s preferences, revoke browser permissions and clear local data. You can manage the access you granted to Vespır from your Google account settings.'],
   ['Hesap verilerine erişim, düzeltme veya silme taleplerini', 'You can send access, correction or deletion requests for account data by email. The scope of your request and the process depend on the relevant service and applicable law; this text does not promise that every request will be completed instantly or unconditionally.'],
   ['Özellikler veya veri işleme süreçleri değiştiğinde', 'These explanations may be updated when features or data-processing processes change. The current version and last update date are shown on this page. This text is for information; opening the page alone does not mean separate consent was given for all data processing.'],
-  ['Son güncelleme:', '<b>Last updated: <time datetime="2026-11-09">November 9, 2026</time>.</b> You can focus without creating an account. Signing in does not back up your settings or stats to the cloud.'],
+  ['Son güncelleme:', '<b>Last updated: <time datetime="2026-11-14">November 14, 2026</time>.</b> You can focus without creating an account. Signing in does not back up your settings or stats to the cloud.'],
   ['1Kapsam ve Uygulamanın Amacı', '1. Scope and Purpose of the App'],
   ['2Yerel Veriler ve Kullanım Amaçları', '2. Local Data and Its Purposes'],
   ['3Tarayıcı Depolaması ve Ses Dosyaları', '3. Browser Storage and Audio Files'],
@@ -8017,7 +7770,6 @@ function setLanguage(lang, opts = {}) {
   try { writeMessagePrefs(); } catch (e) {}
   if (!opts.quiet) toast(next === 'en' ? 'Language switched to English.' : 'Dil Türkçeye döndü.');
 }
-
 const html = document.documentElement;
 let saveTimer = 0;
 let storageWarned = false;
@@ -8124,7 +7876,6 @@ function resolveMode() {
   if (S.mode === 'auto') return (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
   return S.mode;
 }
-
 /* ---------- theme ---------- */
 function schemeIconSVG() {
   return resolveMode() === 'dark'
@@ -8232,7 +7983,6 @@ function scheduleAtmosphere() {
   clearTimeout(atmosphereTimer);
   atmosphereTimer = setTimeout(applyAtmosphere, 30);
 }
-
 /* ---------- ambient particles ---------- */
 let particleShape = null, particleCount = -1;
 let particleKeyStyle = null;
@@ -8300,7 +8050,6 @@ function buildParticles(force = false) {
   particleKeyStyle.textContent = keyCss.join('');
   box.appendChild(frag);
 }
-
 /* ---------- noel: fizikli kar + sayaç üstünde birikim ---------- */
 const snow = {
   canvas: null, ctx: null, w: 0, h: 0, dpr: 1,
@@ -8877,7 +8626,6 @@ function syncSnow() {
     }
   }
 }
-
 /* ---------- kafada kar birikimi ---------- */
 let headSnowLevel = 0;
 let headSnowTimer = 0;
@@ -8994,7 +8742,6 @@ function cleanHeadSnow(opts = {}) {
   cleanHeadSnow.timer = setTimeout(() => wrap.classList.remove('is-cleaning-snow'), 1750);
   return true;
 }
-
 /* ---------- odakta kar tanesi yakalama ---------- */
 let focusCatchTimer = 0;
 function stopFocusCatch() {
@@ -9036,7 +8783,6 @@ function playSnowCatch() {
   });
   return true;
 }
-
 /* ---------- toast ---------- */
 function toast(message, ms = 3800) {
   const stack = $('#toastStack');
@@ -9051,7 +8797,6 @@ function toast(message, ms = 3800) {
   while (stack.children.length > 3) stack.firstElementChild.remove();
   setTimeout(() => el.remove(), ms + 500);
 }
-
 /* ---------- confetti & hearts ---------- */
 const fx = { canvas: null, ctx: null, parts: [], raf: 0, dpr: 1, last: 0 };
 function initFx() {
@@ -9210,7 +8955,7 @@ function catMarkup(state = 'idle', interactive = false) {
             <div class="forehead"></div>
             <div class="eye left"><span class="iris"><span class="pupil"></span><span class="shine"></span></span><span class="lid"></span><span class="shut"></span><span class="lash"></span></div>
             <div class="eye right"><span class="iris"><span class="pupil"></span><span class="shine"></span></span><span class="lid"></span><span class="shut"></span><span class="lash"></span></div>
-            <div class="muzzle"><span class="nose"></span><span class="mouth"></span></div>
+            <div class="muzzle"><span class="nose"></span><span class="mouth"></span><span class="jaw"></span><span class="lick"></span></div>
             <div class="cheek left"></div>
             <div class="cheek right"></div>
             <div class="whiskers left"><i></i><i></i><i></i></div>
@@ -9318,7 +9063,6 @@ function catMarkup(state = 'idle', interactive = false) {
 function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
 }
-
 function renderCats() {
   clearCatPlay();
   const mount = $('#catMount');
@@ -9510,7 +9254,6 @@ function updateStageMeta() {
       : `${t(BREEDS[S.cat.breed].label)} · ${moodLabel(currentCatState())}`;
   }
 }
-
 let blinkTimer = 0;
 function scheduleBlink() {
   clearTimeout(blinkTimer);
@@ -9532,7 +9275,6 @@ function scheduleBlink() {
     scheduleBlink();
   }, rand(2900, 6600));
 }
-
 /* eye / head follow — fare olan her cihazda çalışır, ~30 fps ile hafif kalır */
 let lookRaf = 0, lookLast = 0, lookTimer = 0;
 let lookX = window.innerWidth / 2, lookY = window.innerHeight / 2;
@@ -9615,7 +9357,6 @@ window.addEventListener('pointermove', (e) => {
 }, { passive: true });
 window.addEventListener('resize', () => { lookRect = null; }, { passive: true });
 window.addEventListener('scroll', () => { lookRect = null; }, { passive: true });
-
 /* ---------- bubble ---------- */
 let bubbleTimer = 0, typedTimer = 0, wordTimer = 0, caretTimer = 0, bubbleEpoch = 0;
 const bubble = () => $('#catBubble');
@@ -9730,7 +9471,6 @@ function showReadingBubble(duration = 14000) {
     b.classList.add('show');
   });
 }
-
 /* ============================================================
    ODAK ÖDÜLÜ — 5 saniyelik mama sahnesi
    0.00–0.50  kase yukarıdan süzülür
@@ -9900,7 +9640,6 @@ function catRhythmProfile() {
 function msToNextMinute() {
   return Math.max(1200, 60000 - (Date.now() % 60000) + 90);
 }
-
 /* ---------- kedi davranışı: animasyon durum makinesi ----------
    Her durum değişikliği tek kapıdan (setCatState) geçer. Gecikmeli işler
    bir "nesil" (epoch) damgası taşır: faz değişince eski işler kendiliğinden
@@ -10516,7 +10255,6 @@ function bindCatEvents() {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); petVespir(e); }
   });
 }
-
 /* ============================================================
    UZAKLAŞMA — 5 dakika sonra yalnızlık, dönüşte sıcak karşılama
    ============================================================ */
@@ -10528,7 +10266,6 @@ let awayBlurred = false;
 let lonelyActive = false;
 let missedYou = false;
 let lonelyReturnTimer = 0;
-
 function canBeLonely() {
   return !!(timer && timer.running && timer.phase === 'focus');
 }
@@ -10629,7 +10366,6 @@ document.addEventListener('visibilitychange', () => {
   awayBlurred = false;
   backFromAway();
 });
-
 /* ---------- intro ---------- */
 let introTyping = 0;
 const introLine = () => `Miyav! Ben ${S.cat.name}. Sen odaklanırken yukarıda uyurum, arada uyanıp kitap okur ve miyavlarım. Hazırsan patileri ısıtalım.`;
@@ -10718,7 +10454,6 @@ function maybeIntro() {
     }, 1100);
   }
 }
-
 /* ---------- celebration & notification ---------- */
 let celebrateTimer = 0;
 function showCelebrate(eyebrow, title, sub) {
@@ -10789,84 +10524,11 @@ function buzz(pattern) {
   if (!S.haptic || !navigator.vibrate) return;
   try { navigator.vibrate(pattern); } catch (e) {}
 }
-const NOTIFY_ICON_SVG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23fdf3f7'/%3E%3Cpath d='M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z' fill='%23c96a8c'/%3E%3Ccircle cx='25' cy='36' r='2.6' fill='%232b2230'/%3E%3Ccircle cx='39' cy='36' r='2.6' fill='%232b2230'/%3E%3Cpath d='M30 42h4l-2 3z' fill='%232b2230'/%3E%3C/svg%3E";
-/* Bildirim simgesi seçili temaya uysun: Noel'de çam yeşili zemin + noel şapkalı kedi,
-   Cadılar Bayramı'nda mor gece + cadı şapkalı kara kedi (ay ve yarasa eşliğinde). */
-const THEME_NOTIFY_ICONS = (() => {
-  const uri = (svg) => 'data:image/svg+xml,' + encodeURIComponent(svg.replace(/\s{2,}/g, ' ').trim());
-  const noel = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-    <defs><linearGradient id="nbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0e3529"/><stop offset="1" stop-color="#061d17"/></linearGradient></defs>
-    <rect width="64" height="64" rx="14" fill="url(#nbg)"/>
-    <circle cx="11" cy="45" r="1.7" fill="#e6f4ea" opacity=".6"/><circle cx="54" cy="36" r="1.4" fill="#e6f4ea" opacity=".5"/>
-    <circle cx="48" cy="53" r="1.9" fill="#e6f4ea" opacity=".45"/><circle cx="14" cy="31" r="1.2" fill="#e6f4ea" opacity=".4"/>
-    <path d="M16 30 14 15l12 8h12l12-8-2 15c2 4 3 8 3 12 0 11-9 16-19 16s-19-5-19-16c0-4 1-8 3-12z" fill="#f8f2e4"/>
-    <circle cx="25" cy="40" r="2.4" fill="#25322b"/><circle cx="39" cy="40" r="2.4" fill="#25322b"/>
-    <path d="M30.7 45h2.6L32 47.5z" fill="#d7657a"/>
-    <path d="M18 26 32 6l14 20z" fill="#cf4a4a"/>
-    <circle cx="32" cy="6.4" r="5" fill="#f8f2e4"/>
-    <rect x="12.5" y="22" width="39" height="8" rx="4" fill="#f8f2e4"/>
-    <path d="M22 30h20" stroke="#e6ddc9" stroke-width="1" opacity=".55"/>
-  </svg>`;
-  const halloween = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-    <defs>
-      <linearGradient id="hbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b2a4d"/><stop offset="1" stop-color="#1c1327"/></linearGradient>
-      <mask id="hm"><rect width="64" height="64" fill="#fff"/><circle cx="17" cy="8" r="6.4" fill="#000"/></mask>
-    </defs>
-    <rect width="64" height="64" rx="14" fill="url(#hbg)"/>
-    <circle cx="12.5" cy="11" r="7.6" fill="#f0e4c6" opacity=".6" mask="url(#hm)"/>
-    <circle cx="9" cy="20" r="1.2" fill="#e3d5f0" opacity=".5"/><circle cx="53" cy="12" r="1.5" fill="#e3d5f0" opacity=".45"/>
-    <circle cx="55" cy="24" r="1.1" fill="#e3d5f0" opacity=".4"/><circle cx="49" cy="55" r="1.5" fill="#e3d5f0" opacity=".4"/>
-    <path d="M6 34c1.8-3.4 3.6-3.4 5.4 0 1.8-3.4 3.6-3.4 5.4 0-1.8 2.8-3.6 2.8-5.4.3-1.8 2.5-3.6 2.5-5.4-.3z" fill="#cbb7de" opacity=".6"/>
-    <path d="M16 30 14 15l12 8h12l12-8-2 15c2 4 3 8 3 12 0 11-9 16-19 16s-19-5-19-16c0-4 1-8 3-12z" fill="#120c19"/>
-    <circle cx="25" cy="40" r="2.7" fill="#f0a24a"/><circle cx="39" cy="40" r="2.7" fill="#f0a24a"/>
-    <circle cx="25" cy="40" r=".9" fill="#2a1620"/><circle cx="39" cy="40" r=".9" fill="#2a1620"/>
-    <path d="M30.6 45h2.8L32 47.7z" fill="#f0a24a"/>
-    <path d="M32 4 45 22H19z" fill="#5b3b75"/>
-    <path d="M22.6 17.4h18.8v2.8H22.6z" fill="#c8a757"/>
-    <ellipse cx="32" cy="23" rx="18.6" ry="4" fill="#4a2f61"/>
-    <ellipse cx="32" cy="22.2" rx="18.6" ry="4" fill="#5b3b75"/>
-  </svg>`;
-  /* Bildirim simgesi 48 px'e küçülüyor: eski çizimdeki mini kar taneleri,
-     yarasalar ve puantiyeler o boyutta çamur gibi görünüyordu. Yeni
-     çizimler tek bir ortalanmış kedi başı ve temanın şapkasından oluşuyor. */
-  const cleanNoel = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-    <defs>
-      <linearGradient id="nb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#123a2c"/><stop offset="1" stop-color="#06180f"/></linearGradient>
-      <radialGradient id="ng" cx=".5" cy=".62" r=".5"><stop offset="0" stop-color="#f8f2e4" stop-opacity=".22"/><stop offset="1" stop-color="#f8f2e4" stop-opacity="0"/></radialGradient>
-    </defs>
-    <rect width="64" height="64" rx="15" fill="url(#nb)"/>
-    <circle cx="32" cy="40" r="24" fill="url(#ng)"/>
-    <path d="M18 36 16 20l11 7h10l11-7-2 16c2 3 3 6 3 9 0 9-8 14-16 14s-16-5-16-14c0-3 1-6 3-9z" fill="#f7f1e4"/>
-    <circle cx="26.5" cy="40" r="2.9" fill="#26332c"/>
-    <circle cx="37.5" cy="40" r="2.9" fill="#26332c"/>
-    <path d="M30.4 45h3.2L32 48z" fill="#d7657a"/>
-    <path d="M18 28 32 10l14 18z" fill="#cf4a4a"/>
-    <circle cx="32" cy="9.6" r="4.6" fill="#faf5ea"/>
-    <rect x="13.5" y="23" width="37" height="7.5" rx="3.75" fill="#faf5ea"/>
-  </svg>`;
-  const cleanHalloween = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-    <defs>
-      <linearGradient id="hb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3d2350"/><stop offset="1" stop-color="#150d1f"/></linearGradient>
-      <radialGradient id="hg" cx=".5" cy=".62" r=".5"><stop offset="0" stop-color="#7ce68a" stop-opacity=".26"/><stop offset="1" stop-color="#7ce68a" stop-opacity="0"/></radialGradient>
-    </defs>
-    <rect width="64" height="64" rx="15" fill="url(#hb)"/>
-    <circle cx="32" cy="42" r="22" fill="url(#hg)"/>
-    <path d="M50 12a6.2 6.2 0 1 0 0 12.4 7.8 7.8 0 0 1 0-12.4z" fill="#f2e6c4" opacity=".82"/>
-    <path d="M18 36 16 20l11 7h10l11-7-2 16c2 3 3 6 3 9 0 9-8 14-16 14s-16-5-16-14c0-3 1-6 3-9z" fill="#100b17"/>
-    <ellipse cx="26.5" cy="40" rx="3.4" ry="2.8" fill="#f5a33c"/>
-    <ellipse cx="37.5" cy="40" rx="3.4" ry="2.8" fill="#f5a33c"/>
-    <path d="M26.5 37.7v4.6M37.5 37.7v4.6" stroke="#20121f" stroke-width="1.5" stroke-linecap="round"/>
-    <path d="M30.4 45h3.2L32 48z" fill="#f5a33c"/>
-    <path d="M32 4 46 22H18z" fill="#4a2b62"/>
-    <ellipse cx="32" cy="22" rx="19" ry="3.6" fill="#5c3a78"/>
-    <rect x="21" y="16.6" width="22" height="4" rx="2" fill="#d8b45e"/>
-  </svg>`;
-  return { noel: uri(cleanNoel), halloween: uri(cleanHalloween) };
-})();
-const notifyIcon = () => THEME_NOTIFY_ICONS[document.documentElement.dataset.theme] || $('#appleIcon').href || NOTIFY_ICON_SVG;
-/* Durum çubuğu rozeti renkli simgeyle değil, tek renkli pati silüetiyle çizilir;
-   Android rozeti kendi maskesine soktuğu için renkli kedi lekeye dönüşüyordu. */
-const NOTIFY_BADGE = "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><path d="M16 34 14 14l12 8h12l12-8-2 20c1 3 2 6 2 9 0 10-9 15-18 15s-18-5-18-15c0-3 1-6 2-9z" fill="#fff"/></svg>`);
+/* Bildirim görselleri sade PNG'dir: tek zemin, tek kedi başı, temanın şapkası.
+   Android SVG bildirim simgesini göstermediği için PNG kullanılır; rozet tek renkli silüettir. */
+const THEME_NOTIFY_ICONS = { noel: 'data:image/png;base64,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', halloween: 'data:image/png;base64,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' };
+const notifyIcon = () => THEME_NOTIFY_ICONS[document.documentElement.dataset.theme] || new URL('./icon-192.png', location.href).href;
+const NOTIFY_BADGE = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAIYklEQVR42u1dW4id1RX+1j8n1sRLmtRLrBeCxgRvaLxFShsQQZCiKNiHQmkfGqh9HHwpiH0RRESDIKj0ofrgS1NFhGJKa1DRKlOsQXDw2ok6WmtmNJmEIerM/38+nLXMcnPmzDn/2Wf+ff75FxzOfZ2117due+/17wM01FBDDTXUUEMNNdRQQw011FBDDTXUUEMNNdRQQw31QCTHVuOYSUpKAmVJCVR3gzMhSP6O5B2rwRu8kZG8ieQ9JIVkVpZnNoA8Zu1HATxK8hGSG0QkJ9mqofJbIlIAyEj+AcBzAE4WEQ6ox4E9YCfJRbbpPZI/09cHsoyEFP/dOEhuJfmCjrUg+XsDpxJ31PttKtACj9Pd7v3WCCt/zD3+Nck5Hd8xvb81BQA2OcEW1TJI8l8ktyVZMfRm9S19vJHkX5xx+TH+tLK855LRCSSnVaA88IY5krtGKUEHifZGkgc6KN7oQm+MVQmbkXzNCckOj/9KcpO5a6re4Kx+DcndTn4fXs3IZkiu98ZYZRj6WwelW6Ky1z4k+fMUvcEMSR9vJznh5M+DMdnzD0iuqRoAs5iHO1gKl7Cg3STXppKgvQwkx0nOLzMWM6gXY4SfWLHr8DLvtwAUehsH8ArJa0Rk0VtfBYl2TGU4l+SzAHYDWAcgV5m70VwwH6oUgKkefysDsAjgSgAvkRwXkUJEipX0BlU8ddL4CwATAG5R2QigW3ik3n+UAgAmzGd98DNvWAtgN8nnSG5WSxx6uaoz2pzkqSQfA7AHwFnO6nv9/emU1oO2u6TVKxUuzs6QvL2fBK0h5Hu3PsrLn5B8q0t52Y1M5l9VnsfcgM50k7F+BhNWTo+TPNWXq6q4MX3e1UMsrutnW+FsXN//o/vNBfZP1U/COgCwnuTBkgCE5eq7NrhlfntDcGst8/kLSL7YpbzsR9ac5BUxAJBYIADYD+ByjaVlhVrUOJwDuA/APQDOAHAtgIsAXAzgQs0fPw6+O6vV2DSAtwG8A+B1LRB+A+B+AD90v1E25wmAIwC2iMgMSdEV0coAyLSKeR7ADQMCAE3Qlsw/BHA6gJNK8sq1WjnfPY8h2zSAi0RkflAAYiSQTAX7JKiMBuFH5bnZKY7OaKSD8dB9xix1TJVfuOcxqr6DMZQfCwAEdXEMMmX1ozhZQmExN0xM2Z84Y8lTAWB2CHk+iwDkMOYVX8YK4VlEq/g4llAjQAdSsbDQA7hKADiYEgA+Li64JFpH8tVZjIIjKgBH9FZnEp1HzCbjAVaGicghl5zq6AEWXgsA/0/JA/ymxEyNAfAV0NGkAHCJ9/OaewAAHBKRI977UwJgqsaWX/hJWKxdvNhbgQdRf5qJOd+JDcDUKpiM/TdFAHwpWncADsdk1ooMwPSAwNoqqJV8WQQwY/GUYBKGFD1gFsChkpWQX/ls6b245Fc2ccbimfkkHKvSi+UBogKdAGBNSUVlAI4B2KuDPAfATWjvfhUljCU2T/OgtekVyMc3ve8osdlte7P/ILkl4LtFX2efe7jD4GljesyPORUArPvg+SV6RJfriHiV5Ik2MLvp8xP1/V75DoOnB+tj11opKSl/k+urLPoY1CLJHcpjTcDbml936OfyiniGIOxUHkldrHdzSeuf6DazdABP9MB/GDw7haG7YoWhLFICBoCr+6wO7HOT6spLyWIdbZM98B8Gz050TUqLcSbEpatgGcL0tU1DWZECACbEuX3Ogu1zl+iq4lKDKfT9S3rgPwyenfifCWCdiLDSROxaE9eRnCpZLo5SErYC41jl14cFAGws2Zw7SmVo2Jy7o/JKyAGwgeQXJZtzR2UiFgJwVQwAZFAANA5u1KXo9SjXmjIKSxHhksQOEfm3Xm2TVw3AKWh3JJ89wMCW+l5ZfsPiSbQ7I7aLyKQ1J1dSBVkVICJHMXingPUT5TpAa8gdRMbYPM365wH8L8ZcIFZ3dI44G/IxOpiHydMA+FJD28Ab8zFnwpOrYCJmoeZ9EfkqRgkas4Z9I0ZeGRHaH0t/MWfCEwC+UXeve2/oy8msBenlSSIiBwC8GYBSJ7Lk/QWAV2ONM1YIsiT3dCzLSJCsgvqniBy2q+1TAcAs4Vl9XMeD++xqmz0xc10UADQMjYnIOwD+ri8v1qz6yXS2v1eXYPJkAAjoYQzv2qwqARAAfxKRrwBECT/RS0atiwlgH4DrMfh1uSnV/p8CuAzt1nTGAiC2B9h1s3cG1UMdws9dIjIHIIul/OgA6DEwYyKyH8BDav35CCvfjrDZB+BJO+ApdmaPWyy3E5QA+AGA/6B9xsMohiK7yHsewBVoX5oqg6x8rkgSVvcUETkG4JcAvsbx1sVRs/4MwC4RmdLQE32COZT9TBeK3gTwWwUgHyEQFjT03Csie+yUrdGbux/fAL/TNTaVOU9oJekbvX9CZR/tg8gdCPe6TfA8QcUXTvlP6eGtyR4y2y8I1r64a4mzRKum3HnmfVZM1OoPKRwIt5KcTSgkLTjPHLcJZS3/DcT15VxAcl+ghJUGwvcDTfpD+Gr9VyzBmfzjzhtWAogi+I0Fkg+SPLkWCbefNSPX1LVZ//5kPrDOxUhg2ImMYc55iuTVnQxj1VDgDVtJPkDysw4JckFvliyLJRRduN7QhQ5th0dI/pnkdV6GKkOOpOANOnPO9fmPANwI4DZdUT2ty1JBL2M5CuA1AM8A2CsiH7nfxTBmtyMFQABE5he7tOVxO4Cduqa0FcB5aF+NGR5l+bWu23wO4AMA7wJ4BcDrIvJp4HWsWvHJARAs5pl15h3e34DvH9xqzVKzaB8pPxcq18BF+7qApBoGki63HBiiVpv3+L0xtwBYxFy/X1UAdAGl00Lidwe3pqzwhhpqqKGE6FtOynfqVkWP2wAAAABJRU5ErkJggg==';
 async function notifyUser(title, body) {
   if (!S.notify || !('Notification' in window) || Notification.permission !== 'granted') return;
   const opts = { body, icon: notifyIcon(), badge: NOTIFY_BADGE, tag: 'vespir-timer', renotify: true, data: { url: location.href } };
@@ -10917,7 +10579,6 @@ async function testNotification() {
   }
   updateNotifyStatus();
 }
-
 /* ---------- Vespır'dan mesajlar: davet, özlem ve hava durumu ----------
    Mesajlar yalnızca sayaç dururken gelir; odak sırasında kimse rahatsız edilmez.
    Konum sadece hava için okunur ve 0,1°'ye yuvarlanır; mesajlar açıksa yalnızca cihazdaki tercih kaydına (arka plan hava uyarısı için) yazılır. */
@@ -10937,7 +10598,6 @@ let msgHiddenAt = 0;
 let lastInviteAt = 0;
 let lastWeatherLineAt = 0;
 let weatherGeo = null; /* yaklaşık (0,1°) koordinat; yalnızca SW'nin hava uyarısı sorgusu için tercih kaydına yazılır */
-
 function quietHours(now = new Date()) {
   const h = now.getHours();
   return h >= 23 || h < 5;
@@ -11635,7 +11295,6 @@ let AC = null;
 let masterGain = null;
 let noiseCache = null;
 let soundPersistReady = false;
-
 function audioCtx() {
   if (!AC) {
     const Ctx = window.AudioContext || window.webkitAudioContext;
@@ -11795,7 +11454,6 @@ function synthMeowFallback(level = 1) {
   const t = ctx.currentTime + .02;
   const dur = .62 + Math.random() * .14;
   const f0 = 560 + Math.random() * 130;
-
   const saw = ctx.createOscillator();
   const tri = ctx.createOscillator();
   saw.type = 'sawtooth';
@@ -11807,7 +11465,6 @@ function synthMeowFallback(level = 1) {
     o.frequency.linearRampToValueAtTime(f0 * 1.04, t + .3);
     o.frequency.exponentialRampToValueAtTime(f0 * .66, t + dur);
   });
-
   const vib = ctx.createOscillator();
   const vibGain = ctx.createGain();
   vib.frequency.value = 6 + Math.random() * 1.5;
@@ -11815,7 +11472,6 @@ function synthMeowFallback(level = 1) {
   vibGain.gain.linearRampToValueAtTime(8, t + .18);
   vibGain.gain.linearRampToValueAtTime(3, t + dur);
   vib.connect(vibGain); vibGain.connect(saw.frequency); vibGain.connect(tri.frequency);
-
   const source = ctx.createGain();
   source.gain.value = .4;
   saw.connect(source); tri.connect(source);
@@ -11825,14 +11481,12 @@ function synthMeowFallback(level = 1) {
   const soft = ctx.createBiquadFilter();
   soft.type = 'lowpass'; soft.frequency.value = 6800; soft.Q.value = .4;
   air.connect(soft);
-
   const master = ctx.createGain();
   master.gain.setValueAtTime(.0001, t);
   master.gain.linearRampToValueAtTime(.3, t + .045);
   master.gain.setValueAtTime(.27, t + .38);
   master.gain.exponentialRampToValueAtTime(.0001, t + dur);
   master.connect(out);
-
   const formant = (start, mid, end, q, gain) => {
     const f = ctx.createBiquadFilter();
     f.type = 'bandpass'; f.Q.value = q;
@@ -11845,7 +11499,6 @@ function synthMeowFallback(level = 1) {
   formant(500, 940, 460, 3.2, .5);
   formant(2500, 1700, 1150, 4.8, .24);
   formant(4200, 3400, 3000, 7, .07);
-
   if (!meowNoise) {
     const len = Math.floor(ctx.sampleRate * .45);
     meowNoise = ctx.createBuffer(1, len, ctx.sampleRate);
@@ -11861,7 +11514,6 @@ function synthMeowFallback(level = 1) {
   ng.gain.linearRampToValueAtTime(.02, t + .06);
   ng.gain.exponentialRampToValueAtTime(.0001, t + .42);
   noise.connect(nf); nf.connect(ng); ng.connect(master);
-
   saw.start(t); saw.stop(t + dur + .05);
   tri.start(t); tri.stop(t + dur + .05);
   vib.start(t); vib.stop(t + dur + .05);
@@ -12020,7 +11672,6 @@ function buildWaveBars() {
     el.appendChild(frag);
   });
 }
-
 /* ---------- özel ses: dosya, IndexedDB, temizlik ---------- */
 const soundEpoch = { start: 0, end: 0 };
 const soundWrites = { start: Promise.resolve(), end: Promise.resolve() };
@@ -13137,7 +12788,6 @@ function setupPWA() {
    ============================================================ */
 const catSwatchRows = [];
 let settingsBuilt = false;
-
 function syncSegments() {
   $$('#genderGroup [data-gender]').forEach((b) => b.classList.toggle('active', b.dataset.gender === S.cat.gender));
   $$('#modeGroup [data-mode]').forEach((b) => b.classList.toggle('active', b.dataset.mode === S.mode));
@@ -13741,7 +13391,6 @@ function closeAbout() {
     try { aboutLastFocus.focus({ preventScroll: true }); } catch (e) {}
   }
 }
-
 /* “İletişim”: Instagram sayfası, e-posta kopyalama ve geri bildirim başlıkları. */
 let contactLastFocus = null;
 let copyMailTimer = 0;
@@ -13823,7 +13472,6 @@ function copyMailAddress() {
     navigator.clipboard.writeText(CONTACT_MAIL).then(ok, legacy);
   } else legacy();
 }
-
 /* Hesap doğrulaması aşağıdaki Firebase modülünde çalışır. */
 let accountLastFocus = null;
 function openAccount() {
@@ -13855,7 +13503,6 @@ function closeAccount() {
     try { accountLastFocus.focus({ preventScroll: true }); } catch (e) {}
   }
 }
-
 /* “Gizlilik ve Güvenlik”: yerel mimariyi anlatan politika sayfası. */
 let privacyLastFocus = null;
 function openPrivacy() {
@@ -13985,7 +13632,6 @@ function bindStaticEvents() {
   if (introCustomize) introCustomize.addEventListener('click', () => finishIntro(true));
   const introClose = $('#introClose');
   if (introClose) introClose.addEventListener('click', () => finishIntro(false));
-
   /* top bar */
   const brand = $('#brandBtn');
   if (brand) brand.addEventListener('click', () => openSettings('cat'));
@@ -14019,7 +13665,6 @@ function bindStaticEvents() {
   if (breakMinus) breakMinus.addEventListener('click', () => setBreakMinutes(S.breakMin - 1));
   const breakPlus = $('#breakPlus');
   if (breakPlus) breakPlus.addEventListener('click', () => setBreakMinutes(S.breakMin + 1));
-
   /* settings shell */
   const close = $('#settingsClose');
   if (close) close.addEventListener('click', closeSettings);
@@ -14065,7 +13710,6 @@ function bindStaticEvents() {
     const btn = e.target.closest('.tab-btn');
     if (btn) setSettingsTab(btn.dataset.tab);
   });
-
   /* cat */
   const nameInput = $('#catNameInput');
   if (nameInput) {
@@ -14112,14 +13756,12 @@ function bindStaticEvents() {
   });
   const randomBtn = $('#randomCatBtn');
   if (randomBtn) randomBtn.addEventListener('click', randomizeCat);
-
   /* haptic */
   const hapticToggle = $('#hapticToggle');
   if (hapticToggle) hapticToggle.addEventListener('change', () => {
     S.haptic = hapticToggle.checked;
     save();
   });
-
   /* time */
   const sessionInput = $('#sessionNameInput');
   if (sessionInput) {
@@ -14221,7 +13863,6 @@ function bindStaticEvents() {
     updateMsgStatus();
     syncMessageSchedule();
   });
-
   /* sound */
   const volRange = $('#volRange');
   if (volRange) {
@@ -14274,7 +13915,6 @@ function bindStaticEvents() {
   if (chimeBtn) chimeBtn.addEventListener('click', () => synthBell(clamp(S.chimeVolume, .2, 1)));
   const resetAllBtn = $('#resetAllBtn');
   if (resetAllBtn) armDanger(resetAllBtn, 'Her şey silinsin mi?', resetEverything);
-
   /* keyboard */
   document.addEventListener('keydown', (e) => {
     if (e.defaultPrevented) return;
@@ -14360,7 +14000,6 @@ function bindStaticEvents() {
       resetTimer();
     }
   });
-
   /* page lifecycle */
   window.addEventListener('beforeunload', () => { if (timer.running) persistTimer(); else if (saveTimer) saveNow(); });
   window.addEventListener('pagehide', () => { if (timer.running) persistTimer(); else if (saveTimer) saveNow(); });
@@ -14382,7 +14021,6 @@ function bindStaticEvents() {
     } catch (e) {}
   }
 }
-
 /* ============================================================
    AÇILIŞ
    ============================================================ */
@@ -14459,15 +14097,40 @@ window.addEventListener('error', (e) => {
     document.documentElement.dataset.vespirErrors = list.slice(-4).join('|');
   } catch (err) {}
 });
+/* Kasma koruması: sekme gizliyken CSS animasyonları durur; ölçülen kare hızı art arda
+   iki pencerede düşükse ağır süslemeler (lowfx) kendiliğinden kapanır ve hatırlanır.
+   Ana animasyonlar kalır. Elle sıfırlamak için adrese ?lowfx=0 eklenir. */
+(function perfGuard() {
+  const html = document.documentElement;
+  const syncHidden = () => { html.dataset.hidden = document.hidden ? '1' : '0'; };
+  document.addEventListener('visibilitychange', syncHidden);
+  syncHidden();
+  try { if (new URLSearchParams(location.search).get('lowfx') === '0') localStorage.removeItem('vespir.lowfx'); } catch (e) {}
+  let bad = 0;
+  const measure = () => {
+    if (html.dataset.lowfx === '1') return;
+    if (document.hidden) { setTimeout(measure, 8000); return; }
+    let last = 0, sum = 0, n = 0;
+    const step = (t) => {
+      if (document.hidden) { setTimeout(measure, 8000); return; }
+      if (last) { sum += t - last; n++; }
+      last = t;
+      if (n < 90) { requestAnimationFrame(step); return; }
+      bad = sum / n > 26 ? bad + 1 : 0;
+      if (bad >= 2) {
+        html.dataset.lowfx = '1';
+        try { localStorage.setItem('vespir.lowfx', '1'); } catch (e) {}
+        return;
+      }
+      setTimeout(measure, 10000);
+    };
+    requestAnimationFrame(step);
+  };
+  setTimeout(measure, 6000);
+})();
 async function boot() {
   const qp = new URLSearchParams(location.search);
   if (qp.has('nointro') || qp.has('start') || qp.has('pane') || qp.has('test') || qp.has('phase') || qp.has('action')) S.welcomed = true;
-  /* Ana ekrandaki simgeden açıldıysa tanıtım kartı beklemeden doğrudan
-     sayaç ekranına gelinir: uygulama, uygulama gibi açılır. */
-  if (isStandalone() || qp.get('src') === 'pwa') {
-    S.welcomed = true;
-    document.documentElement.dataset.standalone = '1';
-  }
   if (THEMES[qp.get('theme')]) S.theme = qp.get('theme');
   /* ?halloween=1 ile gelindiyse tema doğrudan Cadılar Bayramı'na çevrilir ki
      tüm içerik (kıyafet, aksesuar, korku sahnesi) ilk karede görünsün. */
@@ -14516,7 +14179,6 @@ async function boot() {
   if (S.lang === 'en') refreshLanguageChrome();
   fitStage();
   requestAnimationFrame(fitStage);
-  if (isStandalone()) requestAnimationFrame(() => window.scrollTo(0, 0));
   setTimeout(fitStage, 620);
   window.addEventListener('resize', queueFitStage, { passive: true });
   window.addEventListener('orientationchange', () => setTimeout(fitStage, 220), { passive: true });
@@ -14585,11 +14247,8 @@ window.Vespir = {
   playCue,
   get audio() { return AC; }
 };
-boot();
-</script>
-
-<script type="module">
-/* ============================================================
+boot();</script>
+<script type="module">/* ============================================================
    Firebase Auth — Google ile giriş
    Ayrı modül çalışır: SDK yüklenemezse uygulamanın geri kalanı
    hiç etkilenmez, yalnızca giriş sayfası bilgi verir.
@@ -14609,10 +14268,8 @@ const FB_CFG = {
   appId: '1:20251227909:web:c6c3f20fc1fc0b2424696c'
 };
 const isFile = location.protocol === 'file:';
-
 /* Kaldırılan e-posta girişinden kalmış olabilecek bekleyen adres kaydı silinir. */
 try { localStorage.removeItem('vespir.auth.email'); } catch (e) {}
-
 const googleBtn = document.getElementById('accountGoogle');
 const googleLabel = document.getElementById('accountGoogleLabel');
 const statusEl = document.getElementById('accountStatus');
@@ -14624,13 +14281,11 @@ const emailShow = document.getElementById('accountEmailShow');
 const signOutBtn = document.getElementById('accountSignOut');
 const subtitle = document.querySelector('#accountBtn [data-account-sub]');
 const titleEl = document.getElementById('accountTitle');
-
 let auth = null;
 let fb = null;
 let user = null;
 let busy = false;
 const en = () => document.documentElement.dataset.lang === 'en';
-
 function msgFor(err) {
   const code = (err && err.code) || '';
   const tr = {
@@ -14659,7 +14314,6 @@ function msgFor(err) {
   };
   return (en() ? eng[code] : tr[code]) || (en() ? 'Something went wrong. Try again in a moment.' : 'Bir şeyler ters gitti. Biraz sonra tekrar dene.');
 }
-
 function setStatus(text, kind) {
   if (!statusEl) return;
   statusEl.textContent = text || '';
@@ -14707,7 +14361,6 @@ function paintAccountNote() {
     : 'Şu an HTML dosyasından açık. Google ile giriş için uygulamayı <b>HTTPS veya localhost</b> üzerinden aç.';
 }
 paintAccountNote();
-
 if (googleBtn) googleBtn.addEventListener('click', async () => {
   if (busy) return;
   if (!fb || !auth) { setStatus(en() ? 'Sign-in isn’t ready yet. Try again in a few seconds.' : 'Giriş servisi henüz hazır değil. Birkaç saniye sonra tekrar dene.', 'err'); return; }
@@ -14743,7 +14396,6 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
     setBusy(false);
   }
 });
-
 (async () => {
   try {
     const [appMod, authMod] = await Promise.all([
@@ -14758,7 +14410,6 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
   } catch (err) {
     setStatus(en() ? 'Couldn’t load the sign-in service. Check your internet connection and reload the page.' : 'Giriş servisi yüklenemedi. İnternet bağlantını kontrol edip sayfayı yenile.', 'err');
   }
-})();
-</script>
+})();</script>
 </body>
 </html>

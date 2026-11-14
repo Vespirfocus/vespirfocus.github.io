@@ -5,21 +5,19 @@
      2) "umbrella" : hava olaylarına göre "montunu / şemsiyeni / gözlüğünü al" hatırlatması
                      (günde en fazla bir kez, sessiz saatler dışında herhangi bir saatte)
    Her iki bildirim de yalnızca 23:00–05:00 arasında susar.
-
    Hava uyarısı için worker, uyandığı anda Open-Meteo'dan güncel havayı kendisi alır;
    sayfanın en son açıldığı andaki eski veriye bağımlı değildir. Bunun için tercih kaydında
    yalnızca 0,1° (~10 km) yuvarlanmış yaklaşık koordinat tutulur. */
-
-const APP_CACHE = 'vespir-app-v8';
+const APP_CACHE = 'vespir-app-v9';
 const SHELL_PATHS = ['index.html'];
-
+/* Simgeler ve manifest de önbelleğe alınır: çevrimdışıyken de ana ekran simgesi ve bildirim görseli eksiksiz olur. */
+const STATIC_PATHS = ['manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 async function fetchWithDeadline(input, options = {}, delay = 5000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), delay);
   try { return await fetch(input, { ...options, signal: controller.signal }); }
   finally { clearTimeout(timeout); }
 }
-
 self.addEventListener('install', (e) => e.waitUntil((async () => {
   /* Güncelleme çevrimdışıyken gelse bile önce önceki kabuğu güvenceye al. */
   try {
@@ -35,6 +33,7 @@ self.addEventListener('install', (e) => e.waitUntil((async () => {
       }
     }
     await Promise.all(SHELL_PATHS.map((path) => cacheShell(new URL(path, self.registration.scope).href)));
+    await Promise.all(STATIC_PATHS.map((path) => cacheStatic(new URL(path, self.registration.scope).href)));
   } catch (err) {}
   await self.skipWaiting();
 })()));
@@ -54,7 +53,6 @@ self.addEventListener('activate', (e) => e.waitUntil((async () => {
       .map((k) => caches.delete(k)));
   } catch (err) {}
 })()));
-
 /* "/" ve "/index.html" aynı sayfadır; ikisi de önbelleğe yazılır ki
    hangisiyle açılırsa açılsın çevrimdışı çalışsın. */
 function shellKeys(url) {
@@ -64,7 +62,6 @@ function shellKeys(url) {
   else if (base.endsWith('/index.html')) keys.push(new Request(base.slice(0, -'index.html'.length), { method: 'GET' }));
   return keys;
 }
-
 /* Bildirim ve mesajlardan gelen adresleri uygulamanın kendi kaynağına sabitler.
    Aksi hâlde bozulmuş bir tercih kaydı kullanıcıyı başka bir siteye açabilirdi. */
 function safeAppUrl(raw) {
@@ -78,12 +75,10 @@ function safeAppUrl(raw) {
     return self.registration.scope;
   }
 }
-
 async function putShell(url, res) {
   const cache = await caches.open(APP_CACHE);
   await Promise.all(shellKeys(url).map((k) => cache.put(k, res.clone())));
 }
-
 /* Sayfa ilk açılışta kendi HTML'ini buraya bırakır: çevrimdışıyken de açılabilsin. */
 async function cacheShell(rawUrl) {
   try {
@@ -95,7 +90,12 @@ async function cacheShell(rawUrl) {
     await putShell(url, res);
   } catch (e) {}
 }
-
+async function cacheStatic(href) {
+  try {
+    const res = await fetchWithDeadline(href, { cache: 'reload', credentials: 'same-origin' });
+    if (res && res.ok) await (await caches.open(APP_CACHE)).put(href, res);
+  } catch (e) {}
+}
 /* Sayfa, bekleyen güncel worker'ı hemen devreye almak için SKIP_WAITING yollar.
    Yalnızca uygulamanın kendi penceresinden gelen mesajlar kabul edilir. */
 self.addEventListener('message', (e) => {
@@ -109,12 +109,25 @@ self.addEventListener('message', (e) => {
     e.waitUntil(cacheShell(data.url));
   }
 });
-
 /* Gezinmelerde önce ağ, erişilemezse önbellekteki uygulama kabuğu. */
 self.addEventListener('fetch', (e) => {
   const req = e.request;
-  if (req.method !== 'GET' || req.mode !== 'navigate') return;
+  if (req.method !== 'GET') return;
   const url = new URL(req.url);
+  if (req.mode !== 'navigate') {
+    /* Simgeler ve manifest: önce önbellek, yoksa ağ (ve önbelleğe yaz). */
+    const known = STATIC_PATHS.some((p) => new URL(p, self.registration.scope).href === url.origin + url.pathname);
+    if (!known) return;
+    e.respondWith((async () => {
+      const cache = await caches.open(APP_CACHE);
+      const hit = await cache.match(url.origin + url.pathname);
+      if (hit) return hit;
+      const res = await fetch(req);
+      if (res && res.ok) { try { await cache.put(url.origin + url.pathname, res.clone()); } catch (err) {} }
+      return res;
+    })());
+    return;
+  }
   if (url.origin !== self.location.origin || !url.pathname.startsWith(new URL(self.registration.scope).pathname)) return;
   e.respondWith((async () => {
     let networkResponse;
@@ -141,7 +154,6 @@ self.addEventListener('fetch', (e) => {
       });
   })());
 });
-
 const PREFS_CACHE = 'vespir-prefs';
 const PREFS_PATH = './__vespir-message-prefs';
 const MSG_GAP = 3 * 3600 * 1000;
@@ -149,10 +161,8 @@ const WEATHER_FRESH = 3 * 3600 * 1000;
 /* Sessiz saatler (yerel saat): 23:00–05:00. Hava uyarısı da bu kurala uyar. */
 const QUIET_FROM = 23;
 const QUIET_TO = 5;
-
 const HELLO_TAG = 'vespir-hello';
 const UMBRELLA_TAG = 'vespir-umbrella';
-
 const WEATHER_ALERTS = {
   rain: [
     'Dışarıda yağmur var; çıkmadan önce şemsiyeni almayı unutma.',
@@ -186,7 +196,6 @@ const WEATHER_ALERTS = {
     'Hava epey rüzgarlı. Dışarı çıkarken sıkı giyin.'
   ]
 };
-
 const HELLO_LINES_FALLBACK = ['Seni özledim. Gel, birlikte çalışalım.'];
 const HELLO_LINES_FALLBACK_EN = ['I miss you. Come, let’s work together.'];
 const TIME_LINES = {
@@ -199,7 +208,6 @@ const TIME_LINES_EN = {
   noon: ['A short round is enough to reset the afternoon.', 'If your coffee is ready, so is my book. I’m waiting.'],
   evening: ['Shall we crown the day with a gentle evening focus?', 'TV can wait a little; your goal comes first.']
 };
-
 /* Aynı hava uyarıları, İngilizce. Sayfa tercihleri İngilizceyse bunlar kullanılır. */
 const WEATHER_ALERTS_EN = {
   rain: [
@@ -234,15 +242,12 @@ const WEATHER_ALERTS_EN = {
     'It’s quite windy. Dress warmly before you go out.'
   ]
 };
-
 function pickLine(list) {
   return list[Math.floor(Math.random() * list.length)];
 }
-
 function prefsUrl() {
   return new URL(PREFS_PATH, self.registration.scope).href;
 }
-
 async function readPrefs() {
   try {
     const cache = await caches.open(PREFS_CACHE);
@@ -252,7 +257,6 @@ async function readPrefs() {
     return null;
   }
 }
-
 /* Kaydetmeden önce güncel kaydı yeniden okur: sayfa araya girip tercihleri
    değiştirdiyse onun alanlarını ezmeden yalnızca worker'ın alanlarını yazar. */
 async function savePrefs(patch) {
@@ -265,7 +269,6 @@ async function savePrefs(patch) {
       new Response(JSON.stringify(Object.assign(current, patch)), { headers: { 'Content-Type': 'application/json' } }));
   } catch (e) {}
 }
-
 function timeBucket(hour, lang) {
   const pool = lang === 'en' ? TIME_LINES_EN : TIME_LINES;
   if (hour >= 5 && hour < 12) return pool.morning;
@@ -273,16 +276,13 @@ function timeBucket(hour, lang) {
   if (hour >= 18 && hour < 23) return pool.evening;
   return [];
 }
-
 function localDay(now) {
   const d = new Date(now);
   return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
 }
-
 function isQuiet(hour) {
   return hour >= QUIET_FROM || hour < QUIET_TO;
 }
-
 async function anyVisibleWindow() {
   const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
   return wins.some((c) => {
@@ -293,7 +293,6 @@ async function anyVisibleWindow() {
     } catch (err) { return false; }
   });
 }
-
 /* Sayfadaki weatherKind / weatherAlertKind ile aynı sınıflandırma (WMO kodları). */
 function weatherKind(code, day) {
   if (code >= 95) return 'storm';
@@ -304,7 +303,6 @@ function weatherKind(code, day) {
   if (code >= 1 && code <= 3) return 'cloud';
   return day ? 'sun' : 'night';
 }
-
 function alertKind(w) {
   const k = weatherKind(w.code, w.day);
   if (k === 'storm' || k === 'snow' || k === 'fog' || k === 'rain' || k === 'drizzle') return k;
@@ -312,7 +310,6 @@ function alertKind(w) {
   if (k === 'sun' && Number.isFinite(w.temp) && w.temp >= 28) return 'clear_hot';
   return '';
 }
-
 /* Worker uyandığında güncel havayı kendisi alır. Başarısızsa null döner. */
 async function fetchWeatherNow(geo) {
   if (!geo || typeof geo.lat !== 'number' || typeof geo.lon !== 'number' ||
@@ -341,14 +338,12 @@ async function fetchWeatherNow(geo) {
     clearTimeout(stop);
   }
 }
-
 /* Hava uyarısı: günde en fazla bir kez; saat sınırı yok, yalnızca sessiz saatler (23:00–05:00) dışında. */
 async function maybeWeatherAlert(prefs, now, hour) {
   const today = localDay(now);
   if (prefs.umbrellaDay === today) return false;     /* bugün uyarı gitti */
   if (now - (Number(prefs.umbrellaCheckedAt) || 0) < MSG_GAP) return false; /* son 3 saatte baktık, uyarılacak bir şey yoktu */
   if (await anyVisibleWindow()) return false;
-
   let condition = '';
   const live = await fetchWeatherNow(prefs.geo);
   if (live) {
@@ -360,7 +355,6 @@ async function maybeWeatherAlert(prefs, now, hour) {
   } else {
     return false;
   }
-
   const latest = await readPrefs();
   if (!latest || !latest.enabled || self.Notification.permission !== 'granted' ||
       isQuiet(new Date().getHours()) || await anyVisibleWindow()) return false;
@@ -371,7 +365,6 @@ async function maybeWeatherAlert(prefs, now, hour) {
     await savePrefs({ umbrellaCheckedAt: now });
     return false;
   }
-
   const alerts = prefs.lang === 'en' ? WEATHER_ALERTS_EN : WEATHER_ALERTS;
   await self.registration.showNotification(prefs.name || 'Vespır', {
     body: pickLine((alerts[condition] || WEATHER_ALERTS[condition])),
@@ -383,14 +376,12 @@ async function maybeWeatherAlert(prefs, now, hour) {
   await savePrefs({ umbrellaDay: today, umbrellaCheckedAt: now });
   return true;
 }
-
 /* Genel mesaj (özlem / davet / hava). En az MSG_GAP aralıkla. */
 async function maybeHello(prefs, now, hour) {
   prefs = await readPrefs();
   if (!prefs || !prefs.enabled || self.Notification.permission !== 'granted' || isQuiet(new Date().getHours())) return false;
   if (now - (Number(prefs.lastMsgAt) || 0) < MSG_GAP) return false;
   if (await anyVisibleWindow()) return false;
-
   const en = prefs.lang === 'en';
   let pool = Array.isArray(prefs.lines) && prefs.lines.length
     ? prefs.lines.slice()
@@ -400,7 +391,6 @@ async function maybeHello(prefs, now, hour) {
   if (weatherPool.length && now - (Number(prefs.weatherAt) || 0) < WEATHER_FRESH && Math.random() < .4) {
     pool = weatherPool.slice();
   }
-
   await self.registration.showNotification(prefs.name || 'Vespır', {
     body: pickLine(pool),
     icon: prefs.icon || undefined,
@@ -411,7 +401,6 @@ async function maybeHello(prefs, now, hour) {
   await savePrefs({ lastMsgAt: now });
   return true;
 }
-
 self.addEventListener('periodicsync', (e) => {
   if (e.tag !== HELLO_TAG) return;
   e.waitUntil((async () => {
@@ -419,18 +408,15 @@ self.addEventListener('periodicsync', (e) => {
       const prefs = await readPrefs();
       if (!prefs || !prefs.enabled) return;
       if (self.Notification.permission !== 'granted') return;
-
       const now = Date.now();
       const hour = new Date(now).getHours();
       if (isQuiet(hour)) return;
-
       /* Önce hava uyarısı (günde bir kez), sonra genel mesaj. */
       const sentAlert = await maybeWeatherAlert(prefs, now, hour);
       if (!sentAlert) await maybeHello(prefs, now, hour);
     } catch (err) {}
   })());
 });
-
 self.addEventListener('notificationclick', (e) => {
   e.notification.close();
   const url = safeAppUrl((e.notification.data && e.notification.data.url) || self.registration.scope);
