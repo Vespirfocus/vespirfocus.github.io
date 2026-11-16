@@ -1,0 +1,6 @@
+// android/app/src/main/java/app/vespir/focus/MainActivity.java dosyasının TAMAMINI bununla değiştir.
+package app.vespir.focus;
+
+import com.getcapacitor.BridgeActivity;
+
+public class MainActivity extends BridgeActivity {}

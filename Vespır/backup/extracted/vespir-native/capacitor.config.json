@@ -1,0 +1,6 @@
+{
+  "appId": "app.vespir.focus",
+  "appName": "Vespır",
+  "webDir": "www",
+  "server": { "androidScheme": "https" }
+}
