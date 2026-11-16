@@ -5968,6 +5968,70 @@ html[data-hidden="1"] *,
 html[data-hidden="1"] *::before,
 html[data-hidden="1"] *::after { animation-play-state: paused !important; }
 </style>
+<style>
+/* ============ UPDATE BANNER (TAM EKRAN) ============ */
+#updateBanner {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  background: var(--glass-3, rgba(30, 16, 32, .92));
+  border: 0;
+  box-shadow: none;
+  color: var(--ink, #f2f9ff);
+  font-family: var(--font, system-ui, sans-serif);
+  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+#updateBanner.show { display: flex; }
+#updateBanner h3 {
+  margin: 0;
+  font-size: clamp(20px, 5vw, 28px);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
+#updateBanner p {
+  margin: 0;
+  font-size: clamp(14px, 3vw, 18px);
+  line-height: 1.6;
+  color: var(--ink-2, #b9cfdd);
+  max-width: 90vw;
+  padding: 0 20px;
+}
+#updateBanner .btn-update {
+  width: min(260px, 90vw);
+  height: 56px;
+  border-radius: 14px;
+  border: 0;
+  background: linear-gradient(118deg, var(--accent, #ff7a80), var(--accent-2, #6fd39a));
+  color: #fff;
+  font-weight: 800;
+  font-size: clamp(16px, 4vw, 20px);
+  cursor: pointer;
+  box-shadow: 0 14px 28px -10px color-mix(in srgb, var(--accent, #ff7a80) 70%, transparent);
+}
+#updateBanner .btn-update:active { transform: scale(.97); }
+#updateBanner .btn-close {
+  margin-top: 12px;
+  background: transparent;
+  border: 0;
+  color: var(--ink-2, #b9cfdd);
+  font-size: clamp(13px, 3vw, 16px);
+  cursor: pointer;
+  text-align: center;
+  width: auto;
+  padding: 0;
+}
+</style>
 </head>
 <body>
 <div class="ambient" aria-hidden="true">
@@ -14426,6 +14490,56 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
     setBusy(false);
   }
 });
+</script>
+<!-- Güncelleme Bildirimi Banner (Zorunlu) -->
+<div id="updateBanner">
+  <h3>Yeni sürüm mevcut</h3>
+  <p>Yapımcı az önce bir güncelleme yayınladı. Uygulamaya devam etmek için aşağıdaki tuşla en yeni sürüme geçmelisiniz.</p>
+  <button class="btn-update" id="btnUpdateNow">Güncelle ve Devam Et</button>
+</div>
+
+<script>
+/* --- PWA Güncelleme Bildirimi (Zorunlu) --- */
+(function() {
+  if (!('serviceWorker' in navigator)) return;
+
+  const banner = document.getElementById('updateBanner');
+  const btnUpdate = document.getElementById('btnUpdateNow');
+
+  if (!banner || !btnUpdate) return;
+
+  function showBanner() {
+    banner.classList.add('show');
+  }
+
+  btnUpdate.addEventListener('click', () => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistration().then(reg => {
+        if (reg && reg.waiting) {
+          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+        window.location.reload();
+      });
+    } else {
+      window.location.reload();
+    }
+  });
+
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      if (!newWorker) return;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && !navigator.serviceWorker.controller) {
+          return;
+        }
+        if (newWorker.state === 'installed') {
+          showBanner();
+        }
+      });
+    });
+  }).catch(() => {});
+})();
 </script>
 </body>
 </html>
