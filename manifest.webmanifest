@@ -12,6 +12,7 @@
     "standalone"
   ],
   "prefer_related_applications": false,
+  "orientation": "portrait-primary",
   "background_color": "#050e16",
   "theme_color": "#050e16",
   "categories": [
