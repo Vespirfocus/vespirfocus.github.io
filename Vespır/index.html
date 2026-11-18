@@ -6032,6 +6032,148 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
   padding: 0;
 }
 </style>
+<style>
+/* ============ IN-APP BROWSER LOCK (Liquid Glass) ============ */
+#inAppLock {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  padding: 24px;
+  background: color-mix(in srgb, var(--glass-3, rgba(30, 16, 32, .82)), transparent 12%);
+  backdrop-filter: blur(26px) saturate(170%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  border: 1px solid color-mix(in srgb, var(--line, rgba(255,255,255,.22)), transparent 35%);
+  color: var(--ink, #f2f9ff);
+  font-family: var(--font, system-ui, sans-serif);
+  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+}
+#inAppLock.show { display: flex; }
+#inAppLock .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent, #ff7a80), 18%);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+#inAppLock h3 {
+  margin: 0;
+  font-size: clamp(20px, 5vw, 30px);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.25;
+}
+#inAppLock p {
+  margin: 0;
+  font-size: clamp(13px, 3vw, 17px);
+  line-height: 1.7;
+  color: var(--ink-2, #b9cfdd);
+  max-width: 82vw;
+  padding: 0 20px;
+}
+#inAppLock .hint {
+  margin-top: 16px;
+  font-size: clamp(11px, 2.5vw, 13px);
+  color: color-mix(in srgb, var(--ink-2, #b9cfdd), 70%);
+  line-height: 1.5;
+}
+#inAppLock .btn-copy {
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--ink, #fff), 45%);
+  color: var(--ink);
+  padding: 11px 20px;
+  border-radius: 12px;
+  font-size: clamp(13px, 3vw, 15px);
+  font-weight: 650;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+#inAppLock .btn-copy:active { transform: scale(.96); }
+</style>
+<style>
+/* ============ LIQUID GLASS BOTTOM NAV (RESİM TARZI - SADECE iOS) ============ */
+#bottomNav {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 120;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 70px;
+  padding: max(10px, env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0 0 34px 34px;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.25);
+  color: var(--ink-2, #b9cfdd);
+  font-family: var(--font, system-ui, sans-serif);
+}
+#bottomNav .item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s cubic-bezier(.4, 0, .2, 1);
+}
+#bottomNav .item svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#bottomNav .item.active {
+  color: #fff;
+  background: linear-gradient(135deg, #ff8a50 0%, #e05d3a 100%);
+  box-shadow: 0 4px 12px rgba(224, 93, 58, 0.4);
+}
+#bottomNav .item:not(.active):active {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(0.95);
+}
+/* iOS kilit ekranı butonu */
+#inAppLock .btn-open {
+  margin-top: 18px;
+  background: linear-gradient(135deg, #ff8a50 0%, #e05d3a 100%);
+  border: 0;
+  color: #fff;
+  padding: 14px 32px;
+  border-radius: 14px;
+  font-size: clamp(15px, 4vw, 18px);
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(224, 93, 58, 0.4);
+}
+#inAppLock .btn-open:active {
+  transform: scale(0.96);
+}
+</style>
 </head>
 <body>
 <div class="ambient" aria-hidden="true">
@@ -14539,6 +14681,106 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
       });
     });
   }).catch(() => {});
+})();
+</script>
+<script>
+/* ============================================================
+   İNGİT: Uygulama içi tarayıcı tespiti ve kilit ekranı
+   Instagram, Facebook, TikTok gibi in-app browser'ları engeller.
+   Normal tarayıcılar ve kurulu PWA (standalone) etkilenmez.
+   ============================================================ */
+(function() {
+  if (document.readyState !== 'complete') {
+    window.addEventListener('DOMContentLoaded', runInAppCheck);
+    return;
+  }
+  runInAppCheck();
+
+  function runInAppCheck() {
+    /* PWA veya standalone moddaysa hiçbir şey yapma */
+    if (window.navigator.standalone === true) return;
+    if (window.matchMedia && matchMedia('(display-mode: standalone)').matches) return;
+
+    const ua = navigator.userAgent || '';
+    const isInApp = /Instagram|FBAN|FBAV|FB_iOS|FBAB|FB4A|FB_iPad|TikTok|BytedanceWebview|Musical_ly|LinkedIn|Snapchat|Twitter|X__|WhatsApp|Line|KakaoTalk|WeChat/i.test(ua);
+    const isAndroid = /Android/i.test(ua);
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (!isInApp) return;
+
+    const currentUrl = window.location.href;
+    const isTr = document.documentElement.dataset.lang !== 'en';
+
+    /* Android: Direkt varsayılan tarayıcıda aç (intent://) */
+    if (isAndroid) {
+      const intentUrl = 'intent:#Intent;action=android.intent.action.VIEW;scheme=https;package=com.android.chrome;S.url=' + encodeURIComponent(currentUrl) + ';end;';
+      try {
+        window.location.replace(intentUrl);
+      } catch (e) {
+        window.location.href = intentUrl;
+      }
+      return;
+    }
+
+    /* iOS: Tam ekran Liquid Glass kilit ekranı - sadece "Tarayıcıda Aç" butonu */
+    const lock = document.createElement('div');
+    lock.id = 'inAppLock';
+    lock.innerHTML = `
+      <div class="badge">Vespır</div>
+      <h3>${isTr ? 'Tarayıcıda Açın' : 'Open in Browser'}</h3>
+      <p>${isTr ? 'Lütfen aşağıdaki tuşa basarak tarayıcınıza gidin. Vespır burada çalışmaz.' : 'Please tap the button below to open in your browser. Vespır does not work here.'}</p>
+      <button class="btn-open" id="btnOpenBrowser">${isTr ? 'Tarayıcıda Aç' : 'Open in Browser'}</button>
+    `;
+    document.body.appendChild(lock);
+    lock.classList.add('show');
+
+    /* Arkadaki uygulamanın etkileşimini tamamen engelle */
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.pointerEvents = 'none';
+    try { document.body.inert = true; } catch(e) {}
+
+    document.getElementById('btnOpenBrowser').addEventListener('click', () => {
+      /* iOS'ta dış tarayıcıya zorla geçiş yapılamaz, sayfayı yeniden yükleyerek kullanıcıya işaretle */
+      window.location.href = currentUrl;
+    });
+  }
+})();
+</script>
+<!-- Liquid Glass Bottom Nav (sadece iOS/Apple cihazlarda, resim tarzı) -->
+<nav id="bottomNav">
+  <button class="item active" id="navOdak" aria-label="Odak" type="button">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v7"/></svg>
+    <span>Odak</span>
+  </button>
+  <button class="item" id="navAyarlar" aria-label="Ayarlar" type="button">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1h-1.24a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1.51 1V21a2 2 0 0 1 2 2 2 2 0 0 1 2-2v-.09A1.65 1.65 0 0 0 19.4 15a1.65 1.65 0 0 0-1.82-.33l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33 1.82 1.65 1.65 0 0 0 1 1.51V21a2 2 0 0 1 2 2 2 2 0 0 1 2-2v-.09A1.65 1.65 0 0 0 19.4 15z"/></svg>
+    <span>Ayarlar</span>
+  </button>
+  <button class="item" id="navHesap" aria-label="Hesap" type="button">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.47"/><path d="M16 3.13A4 4 0 0 1 20.5 7.5"/></svg>
+    <span>Hesap</span>
+  </button>
+  <button class="item" id="navIletisim" aria-label="İletişim" type="button">
+    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 2 2 0 0 1 2.11 2A12.84 12.84 0 0 0 22 16.92z"/></svg>
+    <span>İletişim</span>
+  </button>
+</nav>
+
+<script>
+/* Bottom nav - sadece iOS/Apple cihazlarda görünür */
+(function() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const nav = document.getElementById('bottomNav');
+  if (!nav) return;
+  if (!isIOS) { nav.style.display = 'none'; return; }
+  const items = nav.querySelectorAll('.item');
+  const setActive = (id) => {
+    items.forEach(i => i.classList.toggle('active', i.id === id));
+  };
+  document.getElementById('navOdak')?.addEventListener('click', () => { setActive('navOdak'); });
+  document.getElementById('navAyarlar')?.addEventListener('click', () => { setActive('navAyarlar'); if (typeof openSettings === 'function') openSettings('cat'); });
+  document.getElementById('navHesap')?.addEventListener('click', () => { setActive('navHesap'); if (typeof openAccount === 'function') openAccount(); });
+  document.getElementById('navIletisim')?.addEventListener('click', () => { setActive('navIletisim'); if (typeof openContact === 'function') openContact(); });
 })();
 </script>
 </body>
