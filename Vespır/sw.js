@@ -8,7 +8,7 @@
    Hava uyarısı için worker, uyandığı anda Open-Meteo'dan güncel havayı kendisi alır;
    sayfanın en son açıldığı andaki eski veriye bağımlı değildir. Bunun için tercih kaydında
    yalnızca 0,1° (~10 km) yuvarlanmış yaklaşık koordinat tutulur. */
-const APP_CACHE = 'vespir-app-v9';
+const APP_CACHE = 'vespir-app-v13';
 const SHELL_PATHS = ['index.html'];
 /* Simgeler ve manifest de önbelleğe alınır: çevrimdışıyken de ana ekran simgesi ve bildirim görseli eksiksiz olur. */
 const STATIC_PATHS = ['manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
@@ -433,9 +433,4 @@ self.addEventListener('notificationclick', (e) => {
     }
     if (self.clients.openWindow) return self.clients.openWindow(url);
   })());
-});
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
 });

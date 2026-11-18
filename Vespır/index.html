@@ -23,6 +23,10 @@
     window.__vespirInstall = e;
   });</script>
 <script>  (function () {
+    try {
+      var isAppleTouch = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      document.documentElement.classList.toggle('ios-glass', isAppleTouch);
+    } catch (eG) {}
     /* Cihaz gücü: düşük bellekli telefonlarda ağır arka plan süslemeleri
        kapanır (CSS tarafında html[data-lowfx="1"]). Ana animasyonlar kalır. */
     try {
@@ -5969,70 +5973,6 @@ html[data-hidden="1"] *::before,
 html[data-hidden="1"] *::after { animation-play-state: paused !important; }
 </style>
 <style>
-/* ============ UPDATE BANNER (TAM EKRAN) ============ */
-#updateBanner {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 24px;
-  padding: 24px;
-  background: var(--glass-3, rgba(30, 16, 32, .92));
-  border: 0;
-  box-shadow: none;
-  color: var(--ink, #f2f9ff);
-  font-family: var(--font, system-ui, sans-serif);
-  text-align: center;
-  width: 100vw;
-  height: 100vh;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-#updateBanner.show { display: flex; }
-#updateBanner h3 {
-  margin: 0;
-  font-size: clamp(20px, 5vw, 28px);
-  font-weight: 800;
-  letter-spacing: -.02em;
-  line-height: 1.2;
-}
-#updateBanner p {
-  margin: 0;
-  font-size: clamp(14px, 3vw, 18px);
-  line-height: 1.6;
-  color: var(--ink-2, #b9cfdd);
-  max-width: 90vw;
-  padding: 0 20px;
-}
-#updateBanner .btn-update {
-  width: min(260px, 90vw);
-  height: 56px;
-  border-radius: 14px;
-  border: 0;
-  background: linear-gradient(118deg, var(--accent, #ff7a80), var(--accent-2, #6fd39a));
-  color: #fff;
-  font-weight: 800;
-  font-size: clamp(16px, 4vw, 20px);
-  cursor: pointer;
-  box-shadow: 0 14px 28px -10px color-mix(in srgb, var(--accent, #ff7a80) 70%, transparent);
-}
-#updateBanner .btn-update:active { transform: scale(.97); }
-#updateBanner .btn-close {
-  margin-top: 12px;
-  background: transparent;
-  border: 0;
-  color: var(--ink-2, #b9cfdd);
-  font-size: clamp(13px, 3vw, 16px);
-  cursor: pointer;
-  text-align: center;
-  width: auto;
-  padding: 0;
-}
-</style>
-<style>
 /* ============ IN-APP BROWSER LOCK (Liquid Glass) ============ */
 #inAppLock {
   position: fixed;
@@ -6043,7 +5983,8 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
   justify-content: center;
   align-items: center;
   gap: 18px;
-  padding: 24px;
+  padding: calc(24px + env(safe-area-inset-top, 0px)) 24px calc(24px + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
   background: color-mix(in srgb, var(--glass-3, rgba(30, 16, 32, .82)), transparent 12%);
   backdrop-filter: blur(26px) saturate(170%);
   -webkit-backdrop-filter: blur(26px) saturate(170%);
@@ -6103,6 +6044,17 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
   backdrop-filter: blur(8px);
 }
 #inAppLock .btn-copy:active { transform: scale(.96); }
+#inAppLock .browser-url {
+  width: min(520px, calc(100vw - 48px));
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--line, rgba(255,255,255,.22)), transparent 20%);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, .18);
+  color: var(--ink, #f2f9ff);
+  font: inherit;
+  font-size: 12px;
+}
+#inAppLock .browser-url[hidden] { display: none; }
 </style>
 <style>
 /* ============ LIQUID GLASS BOTTOM NAV (RESİM TARZI - SADECE iOS) ============ */
@@ -6148,30 +6100,66 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+#bottomNav .item svg:not(:first-of-type) { display: none; }
 #bottomNav .item.active {
-  color: #fff;
-  background: linear-gradient(135deg, #ff8a50 0%, #e05d3a 100%);
-  box-shadow: 0 4px 12px rgba(224, 93, 58, 0.4);
+  color: var(--accent);
+  background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 28%, transparent), color-mix(in srgb, var(--accent-2) 18%, transparent));
+  border-color: color-mix(in srgb, var(--accent) 34%, rgba(255, 255, 255, .6));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .34), inset 0 1px 0 rgba(255, 255, 255, .58), 0 5px 16px -12px var(--accent);
 }
 #bottomNav .item:not(.active):active {
-  background: rgba(255, 255, 255, 0.08);
-  transform: scale(0.95);
+  background: color-mix(in srgb, var(--glass-3) 68%, transparent);
+  transform: scale(.97);
 }
-/* iOS kilit ekranı butonu */
-#inAppLock .btn-open {
-  margin-top: 18px;
-  background: linear-gradient(135deg, #ff8a50 0%, #e05d3a 100%);
-  border: 0;
-  color: #fff;
-  padding: 14px 32px;
-  border-radius: 14px;
-  font-size: clamp(15px, 4vw, 18px);
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(224, 93, 58, 0.4);
+html.ios-glass button {
+  background-color: color-mix(in srgb, var(--glass-3, rgba(255, 255, 255, .2)) 62%, transparent);
+  border-color: color-mix(in srgb, var(--line, rgba(255, 255, 255, .18)) 52%, rgba(255, 255, 255, .68));
+  -webkit-backdrop-filter: blur(10px) saturate(148%);
+  backdrop-filter: blur(10px) saturate(148%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .34), inset 0 1px 0 rgba(255, 255, 255, .42), inset 0 -1px 0 rgba(255, 255, 255, .08), 0 8px 20px -16px var(--shadow, rgba(0, 0, 0, .35));
+  transition: transform .24s var(--spring, cubic-bezier(.34, 1.56, .64, 1)), background-color .24s ease, box-shadow .24s ease, border-color .24s ease, color .2s ease, filter .24s ease;
 }
-#inAppLock .btn-open:active {
-  transform: scale(0.96);
+html.ios-glass button:active:not(:disabled) {
+  transform: scale(.97);
+  filter: brightness(1.04);
+}
+html.ios-glass .btn.primary,
+html.ios-glass .btn.primary.running {
+  background:
+    radial-gradient(120% 140% at 18% 0%, rgba(255, 255, 255, .48), transparent 40%),
+    linear-gradient(118deg, color-mix(in srgb, var(--accent) 84%, transparent), color-mix(in srgb, var(--accent-2) 78%, transparent));
+}
+html.ios-glass .contact-copy-btn.done {
+  background: color-mix(in srgb, var(--accent) 78%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 54%, rgba(255, 255, 255, .6));
+}
+html.ios-glass .link-danger.armed,
+html.ios-glass .mini-btn.armed {
+  background: color-mix(in srgb, var(--danger) 82%, transparent);
+  border-color: color-mix(in srgb, var(--danger) 62%, rgba(255, 255, 255, .5));
+}
+html.ios-glass .brand.glass-mini,
+html.ios-glass .icon-btn.glass-mini {
+  -webkit-backdrop-filter: blur(10px) saturate(148%) !important;
+  backdrop-filter: blur(10px) saturate(148%) !important;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  html.ios-glass button {
+    background-color: color-mix(in srgb, var(--glass-3, rgba(255, 255, 255, .2)) 82%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.ios-glass button { transition-duration: .01ms !important; }
+  html.ios-glass button:active:not(:disabled) { transform: none !important; filter: none; }
+}
+html.ios-glass[data-lowfx="1"] button {
+  -webkit-backdrop-filter: blur(4px) saturate(118%);
+  backdrop-filter: blur(4px) saturate(118%);
+}
+html.ios-glass[data-lowfx="1"] .brand.glass-mini,
+html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
+  -webkit-backdrop-filter: blur(4px) saturate(118%) !important;
+  backdrop-filter: blur(4px) saturate(118%) !important;
 }
 </style>
 </head>
@@ -8356,10 +8344,11 @@ if (window.visualViewport) {
 function snowSurfaces(now) {
   const list = snow.surfaces;
   const card = snow.cardEl || (snow.cardEl = document.getElementById('timerCard'));
-  /* Odak sahnesinde sayaç kartı görünmez; sahne geçişinde ise kart
-     kayıp ölçeklenirken kar kütlesi havada asılı kalmasın. */
+  const focusActive = document.body.classList.contains('focus-active');
+  const mobileFocusCard = focusActive && innerWidth <= 768 && innerHeight >= innerWidth;
+  /* Dikey telefon odağında kart görünür; diğer odak görünümlerinde kar kartta birikmesin. */
   const blocked = !card
-    || document.body.classList.contains('focus-active')
+    || (focusActive && !mobileFocusCard)
     || card.classList.contains('is-scene-moving');
   let r = null;
   if (!blocked) {
@@ -12705,24 +12694,20 @@ function syncCycleDots() {
 let deferredPrompt = null;
 let swRegistered = false;
 let pwaInstalled = false;
-try { pwaInstalled = localStorage.getItem('vespir.pwaInstalled') === '1'; } catch (e) {}
+try { localStorage.removeItem('vespir.pwaInstalled'); } catch (e) {}
 let focusSceneScrollY = 0;
 let focusInviteCleanup = 0;
 function hasInstalledPwa() {
   if (isStandalone()) return true;
-  /* Tarayıcı hâlâ kurulum penceresi sunabiliyorsa uygulama kurulu değildir;
-     eski kurulumdan kalan bayrak yanlış "Kurulu" demesin. */
+  /* Kurulum penceresi sunuluyorsa uygulama şu anda kurulmamış demektir. */
   if (deferredPrompt || window.__vespirInstall) return false;
   return pwaInstalled;
 }
 function rememberPwaInstalled() {
   pwaInstalled = true;
-  try { localStorage.setItem('vespir.pwaInstalled', '1'); } catch (e) {}
 }
 function clearPwaInstalled() {
-  if (!pwaInstalled) return;
   pwaInstalled = false;
-  try { localStorage.removeItem('vespir.pwaInstalled'); } catch (e) {}
 }
 function syncFocusScene(scrollY = null) {
   const active = timer.running && timer.phase === 'focus';
@@ -12739,8 +12724,8 @@ function syncFocusScene(scrollY = null) {
   if (active) {
     snow.piles.delete('timer');
     snow.surfaces = [];
-    snow.surfaceDirty = true;
   }
+  snow.surfaceDirty = true;
   if (!active && focusSceneScrollY) window.scrollTo(0, focusSceneScrollY);
   syncSceneEffects();
 }
@@ -14584,7 +14569,6 @@ function paintAccountNote() {
     : 'Şu an HTML dosyasından açık. Google ile giriş için uygulamayı <b>HTTPS veya localhost</b> üzerinden aç.';
 }
 paintAccountNote();
-let fbLoading = false;
 if (googleBtn) googleBtn.addEventListener('click', async () => {
   if (busy) return;
   if (isFile) { setStatus(en() ? 'To sign in with Google, open Vespır over HTTPS or localhost. Sign-in doesn’t work from a local HTML file.' : 'Google ile giriş için Vespır’ı HTTPS veya localhost üzerinden aç. Doğrudan HTML dosyasından giriş yapılamaz.', 'err'); return; }
@@ -14593,8 +14577,7 @@ if (googleBtn) googleBtn.addEventListener('click', async () => {
   setStatus(en() ? 'Loading sign-in service…' : 'Giriş servisi yükleniyor…', '');
   try {
     /* Lazy-load Firebase only when user actually clicks sign-in. */
-    if (!fbLoading) {
-      fbLoading = true;
+    if (!fb) {
       const [appMod, authMod] = await Promise.all([
         import('https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js'),
         import('https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js')
@@ -14632,56 +14615,6 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
     setBusy(false);
   }
 });
-</script>
-<!-- Güncelleme Bildirimi Banner (Zorunlu) -->
-<div id="updateBanner">
-  <h3>Yeni sürüm mevcut</h3>
-  <p>Yapımcı az önce bir güncelleme yayınladı. Uygulamaya devam etmek için aşağıdaki tuşla en yeni sürüme geçmelisiniz.</p>
-  <button class="btn-update" id="btnUpdateNow">Güncelle ve Devam Et</button>
-</div>
-
-<script>
-/* --- PWA Güncelleme Bildirimi (Zorunlu) --- */
-(function() {
-  if (!('serviceWorker' in navigator)) return;
-
-  const banner = document.getElementById('updateBanner');
-  const btnUpdate = document.getElementById('btnUpdateNow');
-
-  if (!banner || !btnUpdate) return;
-
-  function showBanner() {
-    banner.classList.add('show');
-  }
-
-  btnUpdate.addEventListener('click', () => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistration().then(reg => {
-        if (reg && reg.waiting) {
-          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-        }
-        window.location.reload();
-      });
-    } else {
-      window.location.reload();
-    }
-  });
-
-  navigator.serviceWorker.register('./sw.js').then(reg => {
-    reg.addEventListener('updatefound', () => {
-      const newWorker = reg.installing;
-      if (!newWorker) return;
-      newWorker.addEventListener('statechange', () => {
-        if (newWorker.state === 'installed' && !navigator.serviceWorker.controller) {
-          return;
-        }
-        if (newWorker.state === 'installed') {
-          showBanner();
-        }
-      });
-    });
-  }).catch(() => {});
-})();
 </script>
 <script>
 /* ============================================================
@@ -14722,54 +14655,81 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
       return;
     }
 
-    /* iOS: Tam ekran Liquid Glass kilit ekranı - sadece "Tarayıcıda Aç" butonu */
+    /* iOS'ta dış tarayıcıya geçiş zorlanamadığı için bağlantıyı kopyalama yolu sun. */
     const lock = document.createElement('div');
     lock.id = 'inAppLock';
     lock.innerHTML = `
       <div class="badge">Vespır</div>
-      <h3>${isTr ? 'Tarayıcıda Açın' : 'Open in Browser'}</h3>
-      <p>${isTr ? 'Lütfen aşağıdaki tuşa basarak tarayıcınıza gidin. Vespır burada çalışmaz.' : 'Please tap the button below to open in your browser. Vespır does not work here.'}</p>
-      <button class="btn-open" id="btnOpenBrowser">${isTr ? 'Tarayıcıda Aç' : 'Open in Browser'}</button>
+      <h3 id="inAppLockTitle">${isTr ? 'Vespır’ı tarayıcıda aç' : 'Open Vespır in your browser'}</h3>
+      <p id="inAppLockDescription">${isTr ? 'Bu uygulama içi tarayıcıda bazı özellikler çalışmayabilir. Paylaş menüsünden “Safari’de Aç”ı seç. Bu seçenek yoksa bağlantıyı kopyalayıp Safari’ye yapıştır.' : 'Some features may not work in this in-app browser. Choose “Open in Safari” from the share menu. If it is unavailable, copy the link and paste it into Safari.'}</p>
+      <button type="button" class="btn-copy" id="btnCopyBrowserUrl">${isTr ? 'Bağlantıyı kopyala' : 'Copy link'}</button>
+      <input class="browser-url" id="browserUrl" type="url" readonly hidden>
+      <p class="hint" id="browserCopyStatus" role="status" aria-live="polite"></p>
     `;
+    lock.setAttribute('role', 'dialog');
+    lock.setAttribute('aria-modal', 'true');
+    lock.setAttribute('aria-labelledby', 'inAppLockTitle');
+    lock.setAttribute('aria-describedby', 'inAppLockDescription');
     document.body.appendChild(lock);
     lock.classList.add('show');
 
     /* Arkadaki uygulamanın etkileşimini tamamen engelle */
     document.documentElement.style.overflow = 'hidden';
-    document.body.style.pointerEvents = 'none';
-    try { document.body.inert = true; } catch(e) {}
-
-    document.getElementById('btnOpenBrowser').addEventListener('click', () => {
-      /* iOS'ta dış tarayıcıya zorla geçiş yapılamaz, sayfayı yeniden yükleyerek kullanıcıya işaretle */
-      window.location.href = currentUrl;
+    Array.from(document.body.children).forEach((child) => {
+      if (child === lock) return;
+      child.inert = true;
+      child.setAttribute('aria-hidden', 'true');
     });
+    const copyButton = lock.querySelector('#btnCopyBrowserUrl');
+    const urlField = lock.querySelector('#browserUrl');
+    const copyStatus = lock.querySelector('#browserCopyStatus');
+    urlField.value = currentUrl;
+    copyButton.addEventListener('click', async () => {
+      try {
+        if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard API unavailable');
+        await navigator.clipboard.writeText(currentUrl);
+        urlField.hidden = true;
+        copyStatus.textContent = isTr ? 'Bağlantı kopyalandı. Safari’yi açıp yapıştır.' : 'Link copied. Open Safari and paste it.';
+      } catch (e) {
+        urlField.hidden = false;
+        urlField.focus({ preventScroll: true });
+        urlField.select();
+        copyStatus.textContent = isTr
+          ? 'Otomatik kopyalama kullanılamıyor. Seçili bağlantıyı kopyalayıp Safari’ye yapıştır.'
+          : 'Automatic copy is unavailable. Copy the selected link and paste it into Safari.';
+      }
+    });
+    copyButton.focus({ preventScroll: true });
   }
 })();
 </script>
 <!-- Liquid Glass Bottom Nav (sadece iOS/Apple cihazlarda, resim tarzı) -->
-<nav id="bottomNav">
+<nav id="bottomNav" aria-label="Ana gezinme">
   <button class="item active" id="navOdak" aria-label="Odak" type="button">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v7"/></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>
     <span>Odak</span>
   </button>
-  <button class="item" id="navAyarlar" aria-label="Ayarlar" type="button">
+  <button class="item" id="navTema" aria-label="Tema" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.65 0 2.25-1.15 1.55-2.25-.7-1.3.2-2.75 1.7-2.75H18a3 3 0 0 0 3-3c0-5.5-4-10-9-10Z"/><circle cx="7.6" cy="11.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="9.6" cy="7.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="14" cy="6.4" r="1.15" fill="currentColor" stroke="none"/><circle cx="17" cy="9.9" r="1.15" fill="currentColor" stroke="none"/></svg>
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1h-1.24a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1.51 1V21a2 2 0 0 1 2 2 2 2 0 0 1 2-2v-.09A1.65 1.65 0 0 0 19.4 15a1.65 1.65 0 0 0-1.82-.33l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 .33 1.82 1.65 1.65 0 0 0 1 1.51V21a2 2 0 0 1 2 2 2 2 0 0 1 2-2v-.09A1.65 1.65 0 0 0 19.4 15z"/></svg>
+    <span>Tema</span>
+  </button>
+  <button class="item" id="navAyarlar" aria-label="Ayarlar" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 13.2 5l1.9.4 1.8-.7 1.5 1.5-.7 1.8.4 1.9 1.5 1.1v2l-1.5 1.2-.4 1.9.7 1.8-1.5 1.5-1.8-.7-1.9.4-1.2 1.5h-2L8.8 20l-1.9-.4-1.8.7-1.5-1.5.7-1.8-.4-1.9-1.5-1.2v-2L3.9 10l.4-1.9-.7-1.8 1.5-1.5 1.8.7L8.8 5 10 3.5z"/><circle cx="11" cy="12" r="3"/></svg>
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.47"/><path d="M16 3.13A4 4 0 0 1 20.5 7.5"/></svg>
     <span>Ayarlar</span>
   </button>
   <button class="item" id="navHesap" aria-label="Hesap" type="button">
-    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.47"/><path d="M16 3.13A4 4 0 0 1 20.5 7.5"/></svg>
-    <span>Hesap</span>
-  </button>
-  <button class="item" id="navIletisim" aria-label="İletişim" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
     <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 2 2 0 0 1 2.11 2A12.84 12.84 0 0 0 22 16.92z"/></svg>
-    <span>İletişim</span>
+    <span>Hesap</span>
   </button>
 </nav>
 
 <script>
 /* Bottom nav - sadece iOS/Apple cihazlarda görünür */
 (function() {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isIOS = document.documentElement.classList.contains('ios-glass');
   const nav = document.getElementById('bottomNav');
   if (!nav) return;
   if (!isIOS) { nav.style.display = 'none'; return; }
@@ -14778,9 +14738,9 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
     items.forEach(i => i.classList.toggle('active', i.id === id));
   };
   document.getElementById('navOdak')?.addEventListener('click', () => { setActive('navOdak'); });
+  document.getElementById('navTema')?.addEventListener('click', () => { setActive('navTema'); if (typeof openSettings === 'function') openSettings('look'); });
   document.getElementById('navAyarlar')?.addEventListener('click', () => { setActive('navAyarlar'); if (typeof openSettings === 'function') openSettings('cat'); });
   document.getElementById('navHesap')?.addEventListener('click', () => { setActive('navHesap'); if (typeof openAccount === 'function') openAccount(); });
-  document.getElementById('navIletisim')?.addEventListener('click', () => { setActive('navIletisim'); if (typeof openContact === 'function') openContact(); });
 })();
 </script>
 </body>
