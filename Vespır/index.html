@@ -6161,15 +6161,38 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
   -webkit-backdrop-filter: blur(4px) saturate(118%) !important;
   backdrop-filter: blur(4px) saturate(118%) !important;
 }
-</style>
+@keyframes counterSnowFall {
+  to { transform: translateY(100vh); }
+}</style>
 </head>
-<body>
+<body<!-- ============ GÜNCELLEME EKRANI (TAM EKRAN OVERLAY) ============ -->
+<div id="updateOverlay" class="update-overlay" hidden>
+  <div class="update-backdrop">      </div>
+  <div class="update-card">
+    <div class="update-header">
+      <div class="update-dot">      </div>
+      <strong class="update-title">Yeni sürüm hazır</strong>
+      <span class="update-ver" id="updateVer"></span>
+          </div>
+    <div class="update-body">
+      <p class="update-intro">Vespır için yeni bir güncelleme yayınlandı. Devam et diyerek güncellemeyi tamamlayabilir ve yeni sürüme geçebilirsin.</p>
+      <div class="update-news">
+        <div class="news-title">Yenilikler      </div>
+        <div class="news-list" id="newsList">      </div>
+            </div>
+          </div>
+    <div class="update-footer">
+      <button class="update-btn" id="updateContinueBtn" type="button">Devam et</button>
+          </div>
+        </div>
+      </div>
+<!-- ============ /GÜNCELLEME EKRANI ============ -->
 <div class="ambient" aria-hidden="true">
-  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
-</div>
-<div class="noise" aria-hidden="true"></div>
-<div class="grid-deco" aria-hidden="true"></div>
-<div class="particles" id="particles" aria-hidden="true"></div>
+  <div class="blob b1">      </div><div class="blob b2">      </div><div class="blob b3">      </div><div class="blob b4">      </div>
+      </div>
+<div class="noise" aria-hidden="true">      </div>
+<div class="grid-deco" aria-hidden="true">      </div>
+<div class="particles" id="particles" aria-hidden="true">      </div>
 <div class="halloween-scene" aria-hidden="true">
   <i class="hw-moon"></i>
   <i class="hw-pumpkin"><span class="hw-eye l"></span><span class="hw-eye r"></span><b class="hw-mouth"></b></i>
@@ -6296,7 +6319,7 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
         </g>
       </svg>
       <i class="hw-candle c1"></i><i class="hw-candle c2"></i>
-    </div>
+          </div>
     <i class="hw-eyes" aria-hidden="true"><i></i><i></i></i>
     <i class="hw-eyes hw-eyes-b" aria-hidden="true"><i></i><i></i></i>
     <svg class="hw-skeleton" viewBox="0 0 136 172" aria-hidden="true">
@@ -6338,9 +6361,9 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
         <ellipse cx="75.5" cy="27" rx="2.6" ry="3"/>
       </g>
     </svg>
-  </div>
-</div>
-<div class="focus-veil" aria-hidden="true"></div>
+        </div>
+      </div>
+<div class="focus-veil" aria-hidden="true">      </div>
 <header class="topbar">
   <button class="brand glass-mini" id="brandBtn" type="button" aria-label="Vespır ayarlarını aç">
     <span class="brand-mark" aria-hidden="true"><span class="brand-face" id="brandFace"></span></span>
@@ -6359,14 +6382,14 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
     <button class="icon-btn glass-mini" id="settingsBtn" type="button" aria-label="Ayarları aç" title="Ayarlar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14.5" cy="7" r="2.2"/><circle cx="9.5" cy="17" r="2.2"/></svg>
     </button>
-  </div>
+        </div>
 </header>
 <main class="app">
   <div class="stage-col">
     <section class="timer-card glass" id="timerCard" aria-label="Vespır odak zamanlayıcısı">
-      <div class="card-aurora" aria-hidden="true"></div>
-      <div class="card-sheen" aria-hidden="true"></div>
-      <div class="noel-lights" aria-hidden="true"></div>
+      <div class="card-aurora" aria-hidden="true">      </div>
+      <div class="card-sheen" aria-hidden="true">      </div>
+      <div class="noel-lights" aria-hidden="true">      </div>
       <div class="halloween-deco" aria-hidden="true">
         <i class="hw-silk"></i>
         <svg class="hw-spider" viewBox="0 0 40 40" fill="none" aria-hidden="true">
@@ -6385,31 +6408,31 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
           <circle cx="18.9" cy="17.4" r=".72" fill="#ffd27a"/>
           <circle cx="21.1" cy="17.4" r=".72" fill="#ffd27a"/>
         </svg>
-      </div>
-      <div class="hw-blood" aria-hidden="true"></div>
+            </div>
+      <div class="hw-blood" aria-hidden="true">      </div>
       <div class="timer-head">
-        <div class="phase-pill" id="phasePill"><i aria-hidden="true"></i><span id="phaseText">Odak</span></div>
-        <div class="cycle-dots" id="cycleDots" aria-label="Seans ritmi"></div>
-      </div>
+        <div class="phase-pill" id="phasePill"><i aria-hidden="true"></i><span id="phaseText">Odak</span>      </div>
+        <div class="cycle-dots" id="cycleDots" aria-label="Seans ritmi">      </div>
+            </div>
       <div class="session-edit">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17Z"/><path d="m14 8 2 2"/></svg>
         <input class="session-name-input" id="sessionNameInput" maxlength="28" autocomplete="off" spellcheck="false" placeholder="Derin Odak" aria-label="Seans adı">
-      </div>
+            </div>
       <div class="quick-tune" aria-label="Odak ve mola süreleri">
         <div class="quick-group">
           <span>Odak</span>
           <button class="quick-step" id="focusMinus" type="button" aria-label="Odak süresini azalt">−</button>
           <b id="quickFocus">25</b><small>dk</small>
           <button class="quick-step" id="focusPlus" type="button" aria-label="Odak süresini artır">+</button>
-        </div>
-        <div class="quick-div" aria-hidden="true"></div>
+              </div>
+        <div class="quick-div" aria-hidden="true">      </div>
         <div class="quick-group">
           <span>Mola</span>
           <button class="quick-step" id="breakMinus" type="button" aria-label="Mola süresini azalt">−</button>
           <b id="quickBreak">5</b><small>dk</small>
           <button class="quick-step" id="breakPlus" type="button" aria-label="Mola süresini artır">+</button>
-        </div>
-      </div>
+              </div>
+            </div>
       <div class="ring-wrap" id="ringWrap">
         <svg class="ring" viewBox="0 0 320 320" aria-hidden="true">
           <defs>
@@ -6424,14 +6447,14 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
           <circle class="ring-track" cx="160" cy="160" r="132"/>
           <circle class="ring-progress" id="ringProgress" cx="160" cy="160" r="132" transform="rotate(0 160 160)"/>
         </svg>
-        <div class="ring-orb-wrap" id="ringOrbWrap" aria-hidden="true"><span class="ring-orb"></span></div>
+        <div class="ring-orb-wrap" id="ringOrbWrap" aria-hidden="true"><span class="ring-orb"></span>      </div>
         <div class="ring-center">
-          <div class="phase-word" id="phaseWord">odak zamanı</div>
-          <div class="time" id="timeDisplay" role="timer" aria-live="off"><span class="digit" id="timeMin">25</span><span class="colon">:</span><span class="digit" id="timeSec">00</span></div>
-          <div class="ring-sub" id="ringSub">25 dakika odak</div>
-          <div class="cat-note" id="catNote"><i aria-hidden="true"></i><span id="catNoteText">Vespır başlamaya hazır</span></div>
-        </div>
-      </div>
+          <div class="phase-word" id="phaseWord">odak zamanı      </div>
+          <div class="time" id="timeDisplay" role="timer" aria-live="off"><span class="digit" id="timeMin">25</span><span class="colon">:</span><span class="digit" id="timeSec">00</span>      </div>
+          <div class="ring-sub" id="ringSub">25 dakika odak      </div>
+          <div class="cat-note" id="catNote"><i aria-hidden="true"></i><span id="catNoteText">Vespır başlamaya hazır</span>      </div>
+              </div>
+            </div>
       <div class="controls">
         <button class="btn ghost" id="resetBtn" type="button" aria-label="Zamanlayıcıyı sıfırla" title="Sıfırla">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 11a7.7 7.7 0 1 1 2.2 6.1"/><path d="M4 5v6h6"/></svg>
@@ -6443,47 +6466,47 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
         <button class="btn ghost" id="skipBtn" type="button" aria-label="Molayı atla" title="Molayı atla" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5.5 14.5 12 5 18.5Z"/><path d="M19 5v14"/></svg>
         </button>
-      </div>
+            </div>
       <div class="stats-strip" aria-label="Bugünün özeti">
-        <div class="stat"><b id="statMin">0</b><small>dk odak</small></div>
-        <div class="stat-div"></div>
-        <div class="stat"><b id="statSessions">0</b><small>seans</small></div>
-        <div class="stat-div"></div>
-        <div class="stat"><b id="statCycles">0</b><small>tur</small></div>
-      </div>
+        <div class="stat"><b id="statMin">0</b><small>dk odak</small>      </div>
+        <div class="stat-div">      </div>
+        <div class="stat"><b id="statSessions">0</b><small>seans</small>      </div>
+        <div class="stat-div">      </div>
+        <div class="stat"><b id="statCycles">0</b><small>tur</small>      </div>
+            </div>
     </section>
-    <div class="card-glow" aria-hidden="true"></div>
-    <div class="under-hint"><span><kbd>Boşluk</kbd> başlat / duraklat</span><i></i><span>Kısa bir mola, sonra yeni odak.</span></div>
-  </div>
+    <div class="card-glow" aria-hidden="true">      </div>
+    <div class="under-hint"><span><kbd>Boşluk</kbd> başlat / duraklat</span><i></i><span>Kısa bir mola, sonra yeni odak.</span>      </div>
+        </div>
 </main>
 <div class="cat-stage" id="catStage" aria-label="Vespır, senin odak arkadaşın">
   <div class="cat-flip" id="catFlip">
     <div class="cat-perch" id="catPerch" aria-hidden="true">
-      <div class="perch-top"><span class="perch-name"><i></i><span id="perchName">Vespır</span></span><span class="perch-time" id="perchTime">25:00</span></div>
-      <div class="perch-status"><span id="perchStatus">uyuyor · odakta</span></div>
-    </div>
-    <div class="cat-mount" id="catMount"></div>
+      <div class="perch-top"><span class="perch-name"><i></i><span id="perchName">Vespır</span></span><span class="perch-time" id="perchTime">25:00</span>      </div>
+      <div class="perch-status"><span id="perchStatus">uyuyor · odakta</span>      </div>
+          </div>
+    <div class="cat-mount" id="catMount">      </div>
     <div class="cat-bubble" id="catBubble" data-mode="text" aria-live="polite">
-      <div class="bubble-head"><span id="bubbleTitle">Vespır</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
-      <div class="bubble-text" id="bubbleText"></div>
-      <div class="bubble-words" id="bubbleWords"><span>miyav</span><span>mırnav</span><span>prr</span><span>miyav?</span></div>
-    </div>
-    <div class="cat-name-pill" id="catNamePill"><i aria-hidden="true"></i><b id="stageName">Vespır</b><small id="stageMeta">Tekir · meraklı</small></div>
-  </div>
-</div>
-<div class="theme-ripple" id="themeRipple" aria-hidden="true"></div>
-<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+      <div class="bubble-head"><span id="bubbleTitle">Vespır</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>      </div>
+      <div class="bubble-text" id="bubbleText">      </div>
+      <div class="bubble-words" id="bubbleWords"><span>miyav</span><span>mırnav</span><span>prr</span><span>miyav?</span>      </div>
+          </div>
+    <div class="cat-name-pill" id="catNamePill"><i aria-hidden="true"></i><b id="stageName">Vespır</b><small id="stageMeta">Tekir · meraklı</small>      </div>
+        </div>
+      </div>
+<div class="theme-ripple" id="themeRipple" aria-hidden="true">      </div>
+<div class="toast-stack" id="toastStack" aria-live="polite">      </div>
 <canvas id="fxCanvas" aria-hidden="true"></canvas>
 <canvas id="snowCanvas" aria-hidden="true"></canvas>
 <div class="celebrate glass-strong" id="celebrate" aria-live="polite">
   <span class="celebrate-ico" aria-hidden="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
   </span>
-  <div class="celebrate-copy"><small id="celebrateEyebrow">odak tamam</small><b id="celebrateTitle">Harikasın!</b><span id="celebrateSub">Vespır seninle gurur duyuyor.</span></div>
-</div>
+  <div class="celebrate-copy"><small id="celebrateEyebrow">odak tamam</small><b id="celebrateTitle">Harikasın!</b><span id="celebrateSub">Vespır seninle gurur duyuyor.</span>      </div>
+      </div>
 <div class="focus-invite" id="focusInvite" aria-hidden="true" inert>
   <section class="focus-invite-panel" role="dialog" aria-modal="true" aria-labelledby="focusInviteTitle" aria-describedby="focusInviteDescription">
-    <div class="focus-invite-cat" aria-hidden="true"><div class="focus-invite-cat-scale" id="focusInviteCat"></div></div>
+    <div class="focus-invite-cat" aria-hidden="true"><div class="focus-invite-cat-scale" id="focusInviteCat">      </div>      </div>
     <div class="focus-invite-copy">
       <div class="focus-step" data-step="app" id="focusStepApp">
         <span class="eyebrow"><span id="focusInviteName">Vespır</span> · <span id="focusInviteKind">odak arkadaşın</span></span>
@@ -6497,20 +6520,20 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
         <div class="focus-invite-actions">
           <button class="btn primary" id="focusInstallBtn" type="button">Tamam, yapalım</button>
           <button class="btn text" id="focusSkipInstallBtn" type="button">Hayır, şimdi değil</button>
-        </div>
+              </div>
         <p class="focus-invite-status" id="focusInstallStatus" role="status">“Tamam, yapalım” ile kurulum seçeneklerini gör. “Hayır, şimdi değil” ile kurmadan odaklan.</p>
-      </div>
-    </div>
+            </div>
+          </div>
   </section>
-</div>
+      </div>
 <div class="intro" id="intro" aria-hidden="true" inert>
   <div class="intro-card glass-strong" role="dialog" aria-modal="true" aria-labelledby="introTitle">
     <button class="intro-close" id="introClose" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     <div class="intro-cat-holder" aria-hidden="true">
-      <div class="intro-pedestal"></div>
-      <div id="introCat"></div>
+      <div class="intro-pedestal">      </div>
+      <div id="introCat">      </div>
       <span class="intro-spark s1"></span><span class="intro-spark s2"></span><span class="intro-spark s3"></span>
-    </div>
+          </div>
     <div class="intro-copy">
       <span class="eyebrow">miyav · hoş geldin</span>
       <h1 id="introTitle">Ben <span class="grad-text" id="introName">Vespır</span>.</h1>
@@ -6518,16 +6541,16 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
       <div class="intro-actions">
         <button class="btn primary" id="introStart" type="button">Birlikte başlayalım</button>
         <button class="btn text" id="introCustomize" type="button">Önce beni tasarla</button>
-      </div>
+            </div>
       <span class="intro-note">Adımı, tüyümü, tasmamı ve cinsimi birlikte seçebiliriz. İlk selam, bir daha göstermem.</span>
-    </div>
-  </div>
-</div>
+          </div>
+        </div>
+      </div>
 <aside class="settings" id="settings" aria-hidden="true" inert>
-  <div class="settings-backdrop" id="settingsBackdrop" data-close-settings></div>
+  <div class="settings-backdrop" id="settingsBackdrop" data-close-settings>      </div>
   <div class="settings-panel glass-strong" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <header class="settings-head">
-      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p></div>
+      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p>      </div>
       <button class="settings-close" id="settingsClose" type="button" aria-label="Ayarları kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <button class="about-cta contact-cta" id="accountBtn" type="button" data-account>
@@ -6545,104 +6568,115 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
     <div class="settings-scroll" id="settingsScroll">
       <section class="pane active" data-pane="cat">
         <div class="preview-panel">
-          <div class="preview-shine" aria-hidden="true"></div>
-          <div class="preview-stage" id="previewCat"></div>
-          <div class="preview-caption"><b id="previewName">Vespır</b><span id="previewMeta">Tekir · Dişi · Zil</span></div>
-          <div class="preview-actions"><button class="btn ghost surprise" id="randomCatBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Sürpriz görünüm</button></div>
-        </div>
+          <div class="preview-shine" aria-hidden="true">      </div>
+          <div class="preview-stage" id="previewCat">      </div>
+          <div class="preview-caption"><b id="previewName">Vespır</b><span id="previewMeta">Tekir · Dişi · Zil</span>      </div>
+          <div class="preview-actions"><button class="btn ghost surprise" id="randomCatBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Sürpriz görünüm</button>      </div>
+              </div>
         <label class="field-label" for="catNameInput">Adı <small>tasmada da görünür</small></label>
         <input class="input" id="catNameInput" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Vespır">
-        <div class="field-label">Cinsiyet</div>
-        <div class="seg" id="genderGroup"></div>
-        <div class="field-label">Boyut <small>sahnede kapladığı alan</small></div>
+        <div class="field-label">Cinsiyet      </div>
+        <div class="seg" id="genderGroup">      </div>
+        <div class="field-label">Boyut <small>sahnede kapladığı alan</small>      </div>
         <div class="range-row cat-size-row">
           <label for="catScaleRange">Kedi boyu</label>
           <input id="catScaleRange" type="range" min="80" max="120" step="5" value="100" aria-label="Kedi boyu yüzdesi">
           <output id="catScaleVal" for="catScaleRange">100%</output>
-        </div>
-        <div class="field-label">Cinsi</div>
-        <div class="breed-grid" id="breedGroup"></div>
+              </div>
+        <div class="field-label">Cinsi      </div>
+        <div class="breed-grid" id="breedGroup">      </div>
         <p class="note">Tekir, Sarman, Üç Renkli ve Smokin birer tüy desenidir; diğerleri kedi ırkıdır. Her görünüm, ırkın gerçek tüy ve göz rengine göre hazırlandı.</p>
-        <div class="field-label">Tüy rengi</div>
-        <div class="swatches" id="furSwatches"></div>
-        <div class="field-label">Göbek ve patiler</div>
-        <div class="swatches" id="bellySwatches"></div>
-        <div class="field-label">Göz rengi</div>
-        <div class="swatches" id="eyeSwatches"></div>
-        <div class="field-label">Tasma</div>
+        <div class="field-label">Tüy rengi      </div>
+        <div class="swatches" id="furSwatches">      </div>
+        <div class="field-label">Göbek ve patiler      </div>
+        <div class="swatches" id="bellySwatches">      </div>
+        <div class="field-label">Göz rengi      </div>
+        <div class="swatches" id="eyeSwatches">      </div>
+        <div class="field-label">Tasma      </div>
         <label class="toggle-row" style="padding-top:0">
           <span><b>Tasma takılı</b><small>İsmini ve zilini taşısın.</small></span>
           <span class="switch"><input type="checkbox" id="collarToggle"><i></i></span>
         </label>
-        <div class="swatches" id="collarSwatches"></div>
-        <div class="field-label">Kıyafet <small>dolabından bir parça</small></div>
-        <div class="outfit-grid" id="outfitGroup"></div>
+        <div class="swatches" id="collarSwatches">      </div>
+        <div class="field-label">Kıyafet <small>dolabından bir parça</small>      </div>
+        <div class="outfit-grid" id="outfitGroup">      </div>
         <p class="note">Tek seferde bir kıyafet giyer; aksesuarlarla birlikte takılabilir. Kıyafet seçimi de bu tarayıcıda saklanır.</p>
-        <div class="field-label">Aksesuarlar <small>birden fazla seçebilirsin</small></div>
-        <div class="chips" id="accessoryGroup"></div>
+        <div class="field-label">Aksesuarlar <small>birden fazla seçebilirsin</small>      </div>
+        <div class="chips" id="accessoryGroup">      </div>
         <p class="note">Noel şapkası, geyik boynuzu, cadı şapkası ve balkabağı burada her zaman seçilebilir. Tema değişse de kıyafet ve aksesuarların korunur.</p>
-        <div class="field-label">Uygulama <small>Vespır'ı cebine al</small></div>
+        <div class="field-label">Uygulama <small>Vespır'ı cebine al</small>      </div>
         <div class="pwa-card">
           <div class="pwa-copy">
             <b>Vespır'ı cebine koy</b>
             <small id="pwaDetail">Tek dokunuşla açılan minik bir pati kulübü. Sekme yok, dırdır yok; sadece Vespır ve sıcak bir köşe.</small>
-          </div>
+                </div>
           <button class="mini-btn accent" id="installBtn2" type="button">Ana ekrana ekle</button>
-        </div>
+              </div>
       </section>
       <section class="pane" data-pane="look">
-        <div class="field-label">Dil <small>language</small></div>
+        <div class="field-label">Dil <small>language</small>      </div>
         <div class="seg lang-seg" id="langGroup" aria-label="Uygulama dili">
           <button type="button" data-lang="tr"><span>Türkçe</span><small>TR</small></button>
           <button type="button" data-lang="en"><span>English</span><small>EN</small></button>
-        </div>
+              </div>
         <p class="note">Dil değişince arayüz ve bildirimler aynı dili konuşur.</p>
-        <div class="field-label">Görünüm <small>veya üstteki güneşe dokun</small></div>
-        <div class="seg" id="modeGroup"></div>
-        <div class="field-label">Temalar <small>her biri ayrı bir dünya</small></div>
-        <div class="theme-grid" id="themeGrid"></div>
+        <div class="field-label">Görünüm <small>veya üstteki güneşe dokun</small>      </div>
+        <div class="seg" id="modeGroup">      </div>
+        <div class="field-label">Temalar <small>her biri ayrı bir dünya</small>      </div>
+        <div class="theme-grid" id="themeGrid">      </div>
         <p class="note">Tema değişince Vespır'ın dünyası yumuşak bir ışık dalgasıyla yenilenir. Kedi renkleri ayrı kalır.</p>
-        <div class="field-label">Kısayollar <small>hızlı kontrol</small></div>
+        <div class="field-label">Kısayollar <small>hızlı kontrol</small>      </div>
         <div class="set-card shortcut-card">
-          <div class="shortcut-row"><span>Başlat / duraklat</span><kbd>Boşluk</kbd></div>
-          <div class="shortcut-row"><span>Sıfırla</span><kbd>R</kbd></div>
-          <div class="shortcut-row"><span>Paneli kapat</span><kbd>Esc</kbd></div>
+          <div class="shortcut-row"><span>Başlat / duraklat</span><kbd>Boşluk</kbd>      </div>
+          <div class="shortcut-row"><span>Sıfırla</span><kbd>R</kbd>      </div>
+          <div class="shortcut-row"><span>Paneli kapat</span><kbd>Esc</kbd>      </div>
           <label class="toggle-row" style="margin-top:8px">
             <span><b>Bittiğinde titret</b><small>Telefon sessizdeyken patiyle haber versin.</small></span>
-            <span class="switch"><input type="checkbox" id="hapticToggle"><i></i></span>
+            <span class="switch"><input type="checkbox" id="hapticToggle"><i></i></span>        <div class="field-label">Performans <small>ağır efektleri kapat</small>      </div>
+        <div class="set-card shortcut-card">
+          <label class="toggle-row" style="margin-top:8px">
+            <span><b>Performans Modu</b><small>Yalnızca ağır arka plan ve parpaltıcı efektleri kapatır; ana animasyonlar devam eder.</small></span>
+            <span class="switch"><input type="checkbox" id="perfModeToggle"><i></i></span>
           </label>
-        </div>
+              </div>        <div class=\"field-label\">Performans <small>ağır efektleri kapat</small>      </div>
+        <div class=\"set-card shortcut-card\">
+          <label class=\"toggle-row\" style=\"margin-top:8px\">
+            <span><b>Performans Modu</b><small>Yalnızca ağır arka plan ve parpaltıcı efektleri kapatır; ana animasyonlar devam eder.</small></span>
+          </label>
+              </div>
+          </label>
+              </div>
       </section>
       <section class="pane" data-pane="time">
-        <div class="field-label">Günlük hedef <small>kendine nazik bir hedef</small></div>
+        <div class="field-label">Günlük hedef <small>kendine nazik bir hedef</small>      </div>
         <div class="goal-card">
-          <div class="goal-top"><b id="goalNow">0<small>/120 dk</small></b><span id="goalPct">%0<br>tamamlandı</span></div>
-          <div class="goal-bar"><i id="goalFill"></i></div>
-          <div class="goal-note"><span><b id="goalLeft">120 dk kaldı</b></span><span id="goalSessions">0 seans</span></div>
+          <div class="goal-top"><b id="goalNow">0<small>/120 dk</small></b><span id="goalPct">%0<br>tamamlandı</span>      </div>
+          <div class="goal-bar"><i id="goalFill"></i>      </div>
+          <div class="goal-note"><span><b id="goalLeft">120 dk kaldı</b></span><span id="goalSessions">0 seans</span>      </div>
           <div class="goal-actions">
                           <button class="mini-btn accent goal-edit-btn" id="goalEditBtn" type="button" aria-expanded="false" aria-controls="goalPicker">Düzenle</button>
             <span class="goal-target" id="goalTarget">Hedef: 2 sa</span>
-          </div>
+                </div>
           <div class="goal-picker" id="goalPicker" hidden>
             <div class="goal-picker-row">
               <span class="goal-picker-label">Saat</span>
               <button class="goal-step" type="button" data-goal-step="hour" data-dir="-1" aria-label="Saati azalt">−</button>
               <output class="goal-picker-value" id="goalHourOut">2</output>
               <button class="goal-step" type="button" data-goal-step="hour" data-dir="1" aria-label="Saati artır">+</button>
-            </div>
+                  </div>
             <div class="goal-picker-row">
               <span class="goal-picker-label">Dakika</span>
               <button class="goal-step" type="button" data-goal-step="minute" data-dir="-5" aria-label="Dakikayı azalt">−</button>
               <output class="goal-picker-value" id="goalMinOut">00</output>
               <button class="goal-step" type="button" data-goal-step="minute" data-dir="5" aria-label="Dakikayı artır">+</button>
-            </div>
+                  </div>
             <div class="goal-picker-actions">
               <button class="mini-btn" id="goalCancelBtn" type="button">Vazgeç</button>
               <button class="mini-btn accent" id="goalSaveBtn" type="button">Kaydet</button>
-            </div>
-          </div>
-        </div>
-        <div class="field-label">Akış <small>kendi ritmini kur</small></div>
+                  </div>
+                </div>
+              </div>
+        <div class="field-label">Akış <small>kendi ritmini kur</small>      </div>
         <div class="set-card">
           <label class="toggle-row">
             <span><b>Molayı otomatik başlat</b><small>Odak bitince mola kendi kendine başlar.</small></span>
@@ -6656,71 +6690,71 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
             <span><b>Saatlik kısa zil</b><small>Odak sürerken her 60 dakikada minik bir çan.</small></span>
             <span class="switch"><input type="checkbox" id="hourlyToggle"><i></i></span>
           </label>
-        </div>
-        <div class="field-label">Bildirimler <small>başka sekmedeyken de haber ver</small></div>
+              </div>
+        <div class="field-label">Bildirimler <small>başka sekmedeyken de haber ver</small>      </div>
         <div class="set-card">
           <label class="toggle-row">
             <span><b>Bildirim gönder</b><small>Odak veya mola bitince cihazına haber gelsin.</small></span>
             <span class="switch"><input type="checkbox" id="notifyToggle"><i></i></span>
           </label>
-          <div class="notify-status" id="notifyStatus">Durum kontrol ediliyor…</div>
+          <div class="notify-status" id="notifyStatus">Durum kontrol ediliyor…      </div>
           <button class="mini-btn" id="notifyTestBtn" type="button" style="margin-top:9px">Test bildirimi gönder</button>
-        </div>
-        <div class="field-label">Vespır'dan mesajlar <small>ara sıra tatlı bir not</small></div>
+              </div>
+        <div class="field-label">Vespır'dan mesajlar <small>ara sıra tatlı bir not</small>      </div>
         <div class="set-card">
           <label class="toggle-row">
             <span><b>Vespır mesaj göndersin</b><small>“Bugün ne yapıyorsun, çalışalım mı?” gibi notlar yazar. Sen uzaktayken seni özlediğini bildirimle söyler.</small></span>
             <span class="switch"><input type="checkbox" id="catMsgToggle"><i></i></span>
           </label>
-          <div class="notify-status" id="msgStatus"></div>
-        </div>
+          <div class="notify-status" id="msgStatus">      </div>
+              </div>
       </section>
       <section class="pane" data-pane="sound">
-        <div class="field-label">Genel ses <small>cihaz sesinin üzerine eklenir</small></div>
-        <div class="range-row"><label for="volRange">Ses düzeyi</label><input id="volRange" type="range" min="0" max="100" step="1" value="70"><output id="volVal">70%</output></div>
-        <div class="field-label">Başlangıç sesi</div>
+        <div class="field-label">Genel ses <small>cihaz sesinin üzerine eklenir</small>      </div>
+        <div class="range-row"><label for="volRange">Ses düzeyi</label><input id="volRange" type="range" min="0" max="100" step="1" value="70"><output id="volVal">70%</output>      </div>
+        <div class="field-label">Başlangıç sesi      </div>
         <div class="sound-slot">
           <div class="sound-slot-head">
             <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7Z"/></svg>Odak başlarken</b>
             <button class="mini-btn" id="startTestBtn" type="button">Dinle</button>
-          </div>
-          <div class="sound-options" id="startSoundOptions"></div>
-          <div class="wave" id="startWave" aria-hidden="true"></div>
+                </div>
+          <div class="sound-options" id="startSoundOptions">      </div>
+          <div class="wave" id="startWave" aria-hidden="true">      </div>
           <div class="sound-custom">
             <span class="sound-custom-file" id="startFileName">Kendi sesin · seçilmedi</span>
             <button class="mini-btn" id="startFileBtn" type="button">Dosya</button>
             <button class="mini-btn clear-x" id="startClearBtn" type="button" aria-label="Özel başlangıç sesini kaldır" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
-          </div>
+                </div>
           <input type="file" id="startFileInput" accept="audio/*" hidden>
-        </div>
+              </div>
         <div class="sound-slot">
           <div class="sound-slot-head">
             <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7Z"/></svg>Seans biterken</b>
             <button class="mini-btn" id="endTestBtn" type="button">Dinle</button>
-          </div>
-          <div class="sound-options" id="endSoundOptions"></div>
-          <div class="wave" id="endWave" aria-hidden="true"></div>
+                </div>
+          <div class="sound-options" id="endSoundOptions">      </div>
+          <div class="wave" id="endWave" aria-hidden="true">      </div>
           <div class="sound-custom">
             <span class="sound-custom-file" id="endFileName">Kendi sesin · seçilmedi</span>
             <button class="mini-btn" id="endFileBtn" type="button">Dosya</button>
             <button class="mini-btn clear-x" id="endClearBtn" type="button" aria-label="Özel bitiş sesini kaldır" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
-          </div>
+                </div>
           <input type="file" id="endFileInput" accept="audio/*" hidden>
-        </div>
+              </div>
         <label class="hourly-row">
           <span><b>Saatlik zil sesi</b><small>Odak sürdükçe her saatte bir çalar.</small></span>
           <span class="switch"><input type="checkbox" id="hourlyToggleSound"><i></i></span>
         </label>
-        <div class="range-row"><label for="chimeVolRange">Zil sesi</label><input id="chimeVolRange" type="range" min="0" max="100" step="1" value="35"><output id="chimeVolVal">35%</output></div>
+        <div class="range-row"><label for="chimeVolRange">Zil sesi</label><input id="chimeVolRange" type="range" min="0" max="100" step="1" value="35"><output id="chimeVolVal">35%</output>      </div>
         <div class="chips" style="margin-top:4px">
           <button class="chip" id="meowBtn" type="button">Vespır'ı miyavlat</button>
           <button class="chip" id="chimeBtn" type="button">Saatlik zili dinle</button>
-        </div>
+              </div>
         <p class="note" style="margin-top:12px">Özel sesler cihazda sıkıştırılarak saklanır: en fazla 30 saniye, birkaç yüz kilobayt. Cihazından ayrılmaz.</p>
         <p class="note">Sesler tarayıcında üretilir; hiçbir müzik indirilmez. Kendi ses dosyanı seçebilirsin.</p>
       </section>
       <section class="pane about-pane" data-pane="about">
-        <div class="field-label">Hakkımızda <small>Vespır'ın hikâyesi ve sözleşmeler</small></div>
+        <div class="field-label">Hakkımızda <small>Vespır'ın hikâyesi ve sözleşmeler</small>      </div>
         <div class="about-stack">
           <button class="about-cta" id="aboutBtn" type="button">
             <span class="about-cta-ico" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#fdf3f7"/><path d="M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z" fill="#c96a8c"/><circle cx="25" cy="36" r="2.6" fill="#2b2230"/><circle cx="39" cy="36" r="2.6" fill="#2b2230"/><path d="M30 42h4l-2 3z" fill="#2b2230"/></svg></span>
@@ -6737,41 +6771,41 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
             <span class="about-cta-copy"><b>Gizlilik ve Güvenlik</b><small>Yerel veriler, hesaplar ve izinler</small></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
           </button>
-        </div>
+              </div>
         <p class="note">Odak ayarların ve istatistiklerin bu tarayıcıda saklanır. İsteğe bağlı hesap girişi Google/Firebase tarafından sağlanır; veri kullanımı ve izinler gizlilik metninde açıklanır.</p>
       </section>
-    </div>
+          </div>
     <footer class="settings-foot">
       <button class="link-danger" id="resetAllBtn" type="button">Her şeyi sıfırla</button>
       <span>Vespır · yerel · minik</span>
     </footer>
-  </div>
+        </div>
 </aside>
 <div class="about" id="about" aria-hidden="true" inert>
-  <div class="about-backdrop" id="aboutBackdrop" data-close-about></div>
+  <div class="about-backdrop" id="aboutBackdrop" data-close-about>      </div>
   <article class="about-card" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
     <header class="about-head">
       <div>
         <span class="eyebrow">Vespır'ın hikâyesi</span>
         <h2 id="aboutTitle">Vespır Nedir?</h2>
-      </div>
+            </div>
       <button class="about-close" id="aboutClose" type="button" aria-label="Vespır Nedir sayfasını kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="about-scroll" id="aboutScroll">
       <p class="about-copy">Vespır, pomodoro tekniğiyle çalışan bir odak uygulaması ve tepede yaşayan sevimli bir kedi arkadaşıdır. 😺 Sen çalışırken o da boş durmaz: kitap okur, not alır, rengârenk yumağıyla oynar; molada gerinir, iyi iş çıkardığında ödül mamasını hak eder. Arada sana yazar: "Bugün ne yapıyorsun, çalışalım mı?" Saate, hafta sonuna ve istersen bulunduğun yerin havasına göre değişen bu mesajlarla seni yalnız bırakmaz; uzaktayken özlediğini bildirir. Kediyi, temaları ve sesleri kendine göre süsleyebilir; günlük hedefini ve istatistiklerini takip edebilirsin. Uygulamayı cihazına kurabilir, dilersen Google hesabınla giriş yapabilirsin; verilerin cihazında kalır. 🤩 Hadi, oyalanmayı bırak; Vespır ile odaklan!</p>
       <h3 class="about-sub">VESPIR'IN ARKASINDA KİM VAR?</h3>
       <p class="about-copy">Vespır kolay bir yoldan gelmedi. Arkasında ne kalabalık bir ekip vardı ne de büyük bir bütçe; onu tek bir bağımsız geliştirici hayata geçirdi. Evet, sadece bir kişi. İlk kod hatalıydı; ikincisi de, üçüncüsü de... Ama pes edilmedi. Denemeler, düzeltmeler ve uykusuz geceler sonunda Vespır doğdu. Mükemmel değildi ama gerçekti. Belki de önemli olan budur: mükemmellik soğuktur, gerçeklik sıcak. Değil mi?</p>
-    </div>
+          </div>
   </article>
-</div>
+      </div>
 <div class="about contact" id="contact" aria-hidden="true" inert>
-  <div class="about-backdrop" id="contactBackdrop" data-close-contact></div>
+  <div class="about-backdrop" id="contactBackdrop" data-close-contact>      </div>
   <article class="about-card contact-card" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
     <header class="about-head">
       <div>
         <span class="eyebrow">Patileri birleştirelim</span>
         <h2 id="contactTitle">İletişim</h2>
-      </div>
+            </div>
       <button class="about-close" id="contactClose" type="button" aria-label="İletişim sayfasını kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="about-scroll" id="contactScroll">
@@ -6788,37 +6822,37 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
           <svg class="ic-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg>
           <span id="copyMailText">Kopyala</span>
         </button>
-      </div>
+            </div>
       <div class="contact-list">
         <div class="contact-item">
           <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5 13.4 9l4.6 1.4-4.6 1.4L12 16.4l-1.4-4.6L6 10.4 10.6 9Z"/><path d="M18.5 4v3M20 5.5h-3"/></svg>Dilek ve öneriler</b>
           <p>Vespır'da görmek istediğin özellikleri, temaları ve kedi fikirlerini yaz. Her mesajı tek tek okuyoruz; en çok istenenleri sıraya alıyoruz.</p>
-        </div>
+              </div>
         <div class="contact-item">
           <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v5"/><circle cx="12" cy="16.4" r=".9" fill="currentColor" stroke="none"/></svg>Hata bildirimi</b>
           <p>Bir şey ters gittiyse cihazını, tarayıcını ve hatanın ne zaman olduğunu ekle. Kısa bir ekran görüntüsü işi çok hızlandırır.</p>
-        </div>
+              </div>
         <div class="contact-item">
           <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M4.8 19.5a7.2 7.2 0 0 1 14.4 0"/></svg>Partnerlik</b>
           <p>Marka iş birlikleri, topluluk projeleri ve ortak içerikler için yazabilirsin. Küçük bir fikirle başlamak yeterli.</p>
-        </div>
+              </div>
         <div class="contact-item">
           <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/></svg>Basın ve medya</b>
           <p>Vespır'ı yazmak, tanıtmak veya röportaj yapmak istersen basın kiti ve görseller için aynı adrese ulaş.</p>
-        </div>
-      </div>
+              </div>
+            </div>
       <p class="contact-sign">Tek kişilik bir ekip, her mesajı okuyor.</p>
-    </div>
+          </div>
   </article>
-</div>
+      </div>
 <div class="about account" id="account" aria-hidden="true" inert>
-  <div class="about-backdrop" id="accountBackdrop" data-close-account></div>
+  <div class="about-backdrop" id="accountBackdrop" data-close-account>      </div>
   <article class="about-card account-card" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
     <header class="about-head">
       <div>
         <span class="eyebrow">Vespır hesabı</span>
         <h2 id="accountTitle">Giriş</h2>
-      </div>
+            </div>
       <button class="about-close" id="accountClose" type="button" aria-label="Hesap sayfasını kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="account-body" id="accountBody">
@@ -6830,25 +6864,25 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
         </button>
         <p class="account-status" id="accountStatus" role="status" aria-live="polite"></p>
         <p class="account-note" id="accountNote">Giriş isteğe bağlıdır ve Firebase Authentication ile sağlanır. Ayarların ve odak istatistiklerin hesabına yüklenmez. <b>Giriş için internet gerekir.</b></p>
-      </div>
+            </div>
       <div class="account-pane account-signed" id="accountSigned" hidden>
         <span class="account-avatar" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><path d="M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z" fill="rgba(255,255,255,.92)"/><circle cx="25" cy="36" r="2.6" fill="#3a2433"/><circle cx="39" cy="36" r="2.6" fill="#3a2433"/><path d="M30 42h4l-2 3z" fill="#3a2433"/></svg></span>
         <small>Hoş geldin</small>
         <b id="accountEmailShow"></b>
         <button class="btn account-signout" id="accountSignOut" type="button">Çıkış Yap</button>
         <p class="account-status" id="accountOutStatus" role="status" aria-live="polite"></p>
-      </div>
-    </div>
+            </div>
+          </div>
   </article>
-</div>
+      </div>
 <div class="about privacy" id="privacy" aria-hidden="true" inert>
-  <div class="about-backdrop" id="privacyBackdrop" data-close-privacy></div>
+  <div class="about-backdrop" id="privacyBackdrop" data-close-privacy>      </div>
   <article class="about-card privacy-card" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
     <header class="about-head">
       <div>
         <span class="eyebrow" id="privacyEyebrow">Verilerin, hesabın ve tercihlerin</span>
         <h2 id="privacyTitle">Gizlilik ve Güvenlik</h2>
-      </div>
+            </div>
       <button class="about-close" id="privacyClose" type="button" aria-label="Gizlilik ve Güvenlik sayfasını kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="about-scroll" id="privacyScroll">
@@ -6960,13 +6994,13 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
         <h3 class="legal-head"><span class="legal-num">16</span>İletişim ve Güvenlik Bildirimleri</h3>
         <p>Gizlilik soruların, hesap taleplerin ve güvenlik bildirimlerin için e-posta kanalını kullanabilirsin. Sosyal medya hesabı genel iletişim içindir; hassas hesap bilgilerini herkese açık mesajlarda paylaşma.</p>
         <div class="legal-contact">
-          <div class="legal-contact-row"><small>E-posta</small><b>vespirfocuslabs@gmail.com</b></div>
+          <div class="legal-contact-row"><small>E-posta</small><b>vespirfocuslabs@gmail.com</b>      </div>
           <a class="legal-contact-row" href="https://www.instagram.com/vespir.tr/" target="_blank" rel="noopener noreferrer" aria-label="Vespır Instagram sayfasını yeni sekmede aç"><small>Resmi sosyal medya</small><b>@vespir.tr</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg></a>
-        </div>
+              </div>
       </section>
-    </div>
+          </div>
   </article>
-</div>
+      </div>
 <script>'use strict';
 /* ============================================================
    Vespır — tek dosya, sıfır bağımlılık
@@ -9126,44 +9160,44 @@ function catMarkup(state = 'idle', interactive = false) {
   const outfit = OUTFITS[S.cat.outfit] || OUTFITS.none;
   return `
   <div class="cat-wrap" data-state="${state}"${interactive ? ` role="button" tabindex="0" aria-label="${escapeHTML(S.cat.name)}’ı sev"` : ' aria-hidden="true"'}>
-    <div class="cat-halo"></div>
-    <div class="cat-shadow"></div>
+    <div class="cat-halo">      </div>
+    <div class="cat-shadow">      </div>
     <div class="cat3d${S.cat.collarOn ? '' : ' collar-off'}" data-breed="${S.cat.breed}" data-gender="${S.cat.gender}" data-acc="${catAccessoryList().join(' ')}" data-outfit="${escapeHTML(S.cat.outfit)}">
       <div class="cat-tilt">
-        <div class="tail"></div>
+        <div class="tail">      </div>
         <div class="body">
-          <div class="body-pattern"></div>
-          <div class="belly"></div>
-        </div>
+          <div class="body-pattern">      </div>
+          <div class="belly">      </div>
+              </div>
         <div class="outfit" data-kind="${outfit.kind}" aria-hidden="true">
           <i class="of-body"></i>
           <i class="of-collar"></i>
           <b class="of-badge"></b>
           <span class="of-extra"></span>
           <span class="of-extra2"></span>
-        </div>
+              </div>
         <div class="head">
-          <div class="ear left"><i></i></div>
-          <div class="ear right"><i></i></div>
+          <div class="ear left"><i></i>      </div>
+          <div class="ear right"><i></i>      </div>
           <div class="head-base">
-            <div class="face-pattern"></div>
-            <div class="forehead"></div>
-            <div class="eye left"><span class="iris"><span class="pupil"></span><span class="shine"></span></span><span class="lid"></span><span class="shut"></span><span class="lash"></span></div>
-            <div class="eye right"><span class="iris"><span class="pupil"></span><span class="shine"></span></span><span class="lid"></span><span class="shut"></span><span class="lash"></span></div>
-            <div class="muzzle"><span class="nose"></span><span class="mouth"></span><span class="jaw"></span><span class="lick"></span></div>
-            <div class="cheek left"></div>
-            <div class="cheek right"></div>
-            <div class="whiskers left"><i></i><i></i><i></i></div>
-            <div class="whiskers right"><i></i><i></i><i></i></div>
-          </div>
-          <div class="head-snow" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-          <div class="acc acc-bow"><i></i><i></i><b></b></div>
-          <div class="acc acc-flower"><i></i><i></i><i></i><i></i><i></i><b></b></div>
-          <div class="acc acc-crown"></div>
-          <div class="acc acc-glasses"><i></i><b></b><s></s></div>
-          <div class="acc acc-headphones"><i></i><b></b></div>
-          <div class="acc acc-star"></div>
-          <div class="acc acc-santa"><b></b></div>
+            <div class="face-pattern">      </div>
+            <div class="forehead">      </div>
+            <div class="eye left"><span class="iris"><span class="pupil"></span><span class="shine"></span></span><span class="lid"></span><span class="shut"></span><span class="lash"></span>      </div>
+            <div class="eye right"><span class="iris"><span class="pupil"></span><span class="shine"></span></span><span class="lid"></span><span class="shut"></span><span class="lash"></span>      </div>
+            <div class="muzzle"><span class="nose"></span><span class="mouth"></span><span class="jaw"></span><span class="lick"></span>      </div>
+            <div class="cheek left">      </div>
+            <div class="cheek right">      </div>
+            <div class="whiskers left"><i></i><i></i><i></i>      </div>
+            <div class="whiskers right"><i></i><i></i><i></i>      </div>
+                </div>
+          <div class="head-snow" aria-hidden="true"><i></i><i></i><i></i><i></i>      </div>
+          <div class="acc acc-bow"><i></i><i></i><b></b>      </div>
+          <div class="acc acc-flower"><i></i><i></i><i></i><i></i><i></i><b></b>      </div>
+          <div class="acc acc-crown">      </div>
+          <div class="acc acc-glasses"><i></i><b></b><s></s>      </div>
+          <div class="acc acc-headphones"><i></i><b></b>      </div>
+          <div class="acc acc-star">      </div>
+          <div class="acc acc-santa"><b></b>      </div>
           <div class="acc acc-antlers" aria-hidden="true">
             <svg viewBox="0 0 176 86" fill="none">
               <g stroke="#8a5a34" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
@@ -9183,77 +9217,77 @@ function catMarkup(state = 'idle', interactive = false) {
               <circle cx="63" cy="36" r="3" fill="#f4d06a"/>
               <circle cx="113" cy="36" r="3" fill="#f4d06a"/>
             </svg>
-          </div>
-          <div class="acc acc-nose"></div>
-          <div class="acc acc-witchhat"><i></i><b></b></div>
-        </div>
+                </div>
+          <div class="acc acc-nose">      </div>
+          <div class="acc acc-witchhat"><i></i><b></b>      </div>
+              </div>
         <div class="catch-flake f1" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
             <path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7"/>
             <path d="M9 4l3 3 3-3M9 20l3-3 3 3M5 9l4 1-1 4M19 15l-4-1 1-4M19 9l-4 1 1 4M5 15l4-1-1-4"/>
           </svg>
-        </div>
+              </div>
         <div class="catch-flake f2" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
             <path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7"/>
             <path d="M9 4l3 3 3-3M9 20l3-3 3 3M5 9l4 1-1 4M19 15l-4-1 1-4M19 9l-4 1 1 4M5 15l4-1-1-4"/>
           </svg>
-        </div>
+              </div>
         <div class="catch-flake f3" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
             <path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7"/>
             <path d="M9 4l3 3 3-3M9 20l3-3 3 3M5 9l4 1-1 4M19 15l-4-1 1-4M19 9l-4 1 1 4M5 15l4-1-1-4"/>
           </svg>
-        </div>
-        <div class="paw left"><i></i><i></i><i></i></div>
-        <div class="paw right"><i></i><i></i><i></i><b class="paw-pen"></b></div>
+              </div>
+        <div class="paw left"><i></i><i></i><i></i>      </div>
+        <div class="paw right"><i></i><i></i><i></i><b class="paw-pen"></b>      </div>
         <div class="book" aria-hidden="true">
-          <div class="book-page left"><span class="book-kicker"></span><strong class="book-title"></strong><span class="book-copy"></span></div>
-          <div class="book-page right"><span class="book-kicker"></span><span class="book-copy"></span></div>
-          <div class="page-flip"></div>
-          <div class="hl-line"></div>
-          <div class="book-spine"></div>
+          <div class="book-page left"><span class="book-kicker"></span><strong class="book-title"></strong><span class="book-copy"></span>      </div>
+          <div class="book-page right"><span class="book-kicker"></span><span class="book-copy"></span>      </div>
+          <div class="page-flip">      </div>
+          <div class="hl-line">      </div>
+          <div class="book-spine">      </div>
           <i class="book-ribbon"></i>
-        </div>
-        <div class="yarn-toy" aria-hidden="true"><div class="yarn-ball"><i></i><i></i><i></i></div></div>
-        <div class="acc acc-pumpkin" aria-hidden="true"><i></i></div>
+              </div>
+        <div class="yarn-toy" aria-hidden="true"><div class="yarn-ball"><i></i><i></i><i></i>      </div>      </div>
+        <div class="acc acc-pumpkin" aria-hidden="true"><i></i>      </div>
         <div class="reward-bowl" aria-hidden="true">
-          <div class="bowl-glow"></div>
-          <div class="bowl-shadow"></div>
-          <div class="bowl-shell"></div>
+          <div class="bowl-glow">      </div>
+          <div class="bowl-shadow">      </div>
+          <div class="bowl-shell">      </div>
           <div class="bowl-food">
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
             <b class="bowl-fish treat-1"></b>
             <b class="bowl-fish treat-2"></b>
             <b class="bowl-fish treat-3"></b>
-          </div>
-          <div class="bowl-rim"></div>
-        </div>
+                </div>
+          <div class="bowl-rim">      </div>
+              </div>
         <div class="reward-cocoa" aria-hidden="true">
-          <div class="cocoa-shadow"></div>
-          <div class="cocoa-steam"><i></i><i></i><i></i></div>
-          <div class="cocoa-mug"><i></i><b>♥</b></div>
-        </div>
+          <div class="cocoa-shadow">      </div>
+          <div class="cocoa-steam"><i></i><i></i><i></i>      </div>
+          <div class="cocoa-mug"><i></i><b>♥</b>      </div>
+              </div>
         <div class="reward-cauldron" aria-hidden="true">
-          <div class="cauldron-glow"></div>
-          <div class="cauldron-shadow"></div>
-          <div class="cauldron-steam"><i></i><i></i><i></i></div>
-          <div class="cauldron-pot"></div>
-          <div class="cauldron-brew"><i></i><i></i><i></i></div>
-          <div class="cauldron-rim"></div>
+          <div class="cauldron-glow">      </div>
+          <div class="cauldron-shadow">      </div>
+          <div class="cauldron-steam"><i></i><i></i><i></i>      </div>
+          <div class="cauldron-pot">      </div>
+          <div class="cauldron-brew"><i></i><i></i><i></i>      </div>
+          <div class="cauldron-rim">      </div>
           <b class="cauldron-candy c1"></b><b class="cauldron-candy c2"></b><b class="cauldron-candy c3"></b>
-        </div>
-        <div class="collar"></div>
-        <div class="cat-tag"><span class="cat-name-text">${escapeHTML(S.cat.name)}</span></div>
+              </div>
+        <div class="collar">      </div>
+        <div class="cat-tag"><span class="cat-name-text">${escapeHTML(S.cat.name)}</span>      </div>
         <span class="bell" aria-hidden="true"></span>
-        <div class="acc acc-bandana"></div>
-        <div class="acc acc-tie"><i></i><b></b></div>
-        <div class="acc acc-scarf"><i></i></div>
-        <div class="acc acc-bowtie"><i></i></div>
-        <div class="zzz" aria-hidden="true"><i>Z</i><i>z</i><i>z</i></div>
-      </div>
-    </div>
-  </div>`;
+        <div class="acc acc-bandana">      </div>
+        <div class="acc acc-tie"><i></i><b></b>      </div>
+        <div class="acc acc-scarf"><i></i>      </div>
+        <div class="acc acc-bowtie"><i></i>      </div>
+        <div class="zzz" aria-hidden="true"><i>Z</i><i>z</i><i>z</i>      </div>
+            </div>
+          </div>
+        </div>`;
 }
 function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -11273,19 +11307,19 @@ async function explainLocationAsk() {
     const en = S.lang === 'en';
     wrap.innerHTML = `
       <div class="geo-card">
-        <div class="geo-badge" aria-hidden="true">📍</div>
+        <div class="geo-badge" aria-hidden="true">📍      </div>
         <h2 id="geoAskTitle">${en ? 'Location permission needed' : 'Konum izni gerekiyor'}</h2>
         <p class="geo-lead">${en ? 'Your browser is about to ask for permission. Here’s why:' : 'Tarayıcı birazdan izin isteyecek. Neden istendiği:'}</p>
         <ul class="geo-list">
-          <li><span aria-hidden="true">🎯</span><div>${en ? 'Used only for current weather and weather alerts.' : 'Yalnızca güncel hava ve hava uyarısı için kullanılır.'}</div></li>
-          <li><span aria-hidden="true">🔒</span><div>${en ? 'Rounded approximate coordinates (~10 km) are sent to Open-Meteo to get weather information.' : 'Yuvarlanmış yaklaşık koordinat (~10 km), hava bilgisi almak için Open-Meteo’ya iletilir.'}</div></li>
-          <li><span aria-hidden="true">⚙️</span><div>${en ? 'You can decline; the app still works.' : 'Reddedebilirsin; uygulama yine çalışır.'}</div></li>
+          <li><span aria-hidden="true">🎯</span><div>${en ? 'Used only for current weather and weather alerts.' : 'Yalnızca güncel hava ve hava uyarısı için kullanılır.'}      </div></li>
+          <li><span aria-hidden="true">🔒</span><div>${en ? 'Rounded approximate coordinates (~10 km) are sent to Open-Meteo to get weather information.' : 'Yuvarlanmış yaklaşık koordinat (~10 km), hava bilgisi almak için Open-Meteo’ya iletilir.'}      </div></li>
+          <li><span aria-hidden="true">⚙️</span><div>${en ? 'You can decline; the app still works.' : 'Reddedebilirsin; uygulama yine çalışır.'}      </div></li>
         </ul>
         <div class="geo-actions">
           <button type="button" class="btn primary" data-geo="yes">${en ? 'Continue' : 'Devam et'}</button>
           <button type="button" class="btn text" data-geo="later">${en ? 'Not now' : 'Şimdi değil'}</button>
-        </div>
-      </div>`;
+              </div>
+            </div>`;
     const finish = (ok) => {
       document.removeEventListener('keydown', onKey, true);
       wrap.remove();
@@ -12157,7 +12191,28 @@ function syncTimerChrome(before = null, scrollY = null) {
   const timerCard = $('#timerCard');
   const nextPhase = timer.running ? timer.phase : 'idle';
   /* Faz ve çalışma durumu yalnızca etkilenen üç kabuğa yazılır.
-     Eskiden <body> üzerindeydi; her başlat/duraklat tüm sayfanın
+     Eskiden <body<!-- ============ GÜNCELLEME EKRANI (TAM EKRAN OVERLAY) ============ -->
+<div id="updateOverlay" class="update-overlay" hidden>
+  <div class="update-backdrop">      </div>
+  <div class="update-card">
+    <div class="update-header">
+      <div class="update-dot">      </div>
+      <strong class="update-title">Yeni sürüm hazır</strong>
+      <span class="update-ver" id="updateVer"></span>
+          </div>
+    <div class="update-body">
+      <p class="update-intro">Vespır için yeni bir güncelleme yayınlandı. Devam et diyerek güncellemeyi tamamlayabilir ve yeni sürüme geçebilirsin.</p>
+      <div class="update-news">
+        <div class="news-title">Yenilikler      </div>
+        <div class="news-list" id="newsList">      </div>
+            </div>
+          </div>
+    <div class="update-footer">
+      <button class="update-btn" id="updateContinueBtn" type="button">Devam et</button>
+          </div>
+        </div>
+      </div>
+<!-- ============ /GÜNCELLEME EKRANI ============ --> üzerindeydi; her başlat/duraklat tüm sayfanın
      stilini yeniden çözdürüyordu. Artık kapsam dar: sayaç kartı ve kedi. */
   const phaseChanged = ((stage && stage.dataset.phase) || 'idle') !== nextPhase;
   const flip = phaseChanged ? (before || flipBegin()) : null;
@@ -13275,7 +13330,7 @@ function buildThemeGrid() {
     btn.dataset.themeCard = key;
     btn.innerHTML = `<span class="theme-swatch" data-preview="${key}"></span>
       <span class="theme-info"><span><b>${t.label}</b><small>${t.tag}</small></span>
-      <div class="theme-check">${checkIcon}</div></span>`;
+      <div class="theme-check">${checkIcon}      </div></span>`;
     box.appendChild(btn);
   });
   if (box.dataset.bound) return;
@@ -14659,7 +14714,7 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
     const lock = document.createElement('div');
     lock.id = 'inAppLock';
     lock.innerHTML = `
-      <div class="badge">Vespır</div>
+      <div class="badge">Vespır      </div>
       <h3 id="inAppLockTitle">${isTr ? 'Vespır’ı tarayıcıda aç' : 'Open Vespır in your browser'}</h3>
       <p id="inAppLockDescription">${isTr ? 'Bu uygulama içi tarayıcıda bazı özellikler çalışmayabilir. Paylaş menüsünden “Safari’de Aç”ı seç. Bu seçenek yoksa bağlantıyı kopyalayıp Safari’ye yapıştır.' : 'Some features may not work in this in-app browser. Choose “Open in Safari” from the share menu. If it is unavailable, copy the link and paste it into Safari.'}</p>
       <button type="button" class="btn-copy" id="btnCopyBrowserUrl">${isTr ? 'Bağlantıyı kopyala' : 'Copy link'}</button>
@@ -14745,3 +14800,8 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
 </script>
 </body>
 </html>
+
+
+
+      <div class="timer-counter-snow" id="timerCounterSnow" data-active="0" aria-hidden="true"></div>
+
