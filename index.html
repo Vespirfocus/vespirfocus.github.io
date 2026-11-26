@@ -9,7 +9,7 @@
 <title>Vespır - En İyi Dostun</title>
 <link rel="icon" type="image/png" href="./icon-round-192.png">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="apple-touch-icon" id="appleIcon" href="./icon-round-192.png">
+<link rel="apple-touch-icon" id="appleIcon" sizes="180x180" href="./icon-apple-180.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
@@ -1005,6 +1005,35 @@ html[data-theme="halloween"] .theme-deco i {
   width: 9px; height: 8px; margin-left: -4.5px; border-radius: 46% 46% 50% 50%;
   background: radial-gradient(circle at 38% 34%, #ffc46a, #ff8f1f 68%, #d9610e);
   box-shadow: 0 0 9px rgba(255, 148, 34, .6);
+}
+/* Açık modda kart neredeyse beyaz: beyaz/pembe motifler kayboluyordu.
+   Aynı motiflerin koyulaştırılmış tonları yalnızca açık modda devreye girer. */
+html[data-mode="light"][data-theme="midnight"] .theme-deco i {
+  background: radial-gradient(circle at 50% 50%, #f2faff, #57a3e6 52%, #1f6bb0);
+  filter: drop-shadow(0 0 4px rgba(38, 118, 186, .5));
+}
+html[data-mode="light"][data-theme="galaxy"] .theme-deco i {
+  background: radial-gradient(circle at 50% 50%, #f7f1ff, #8f6bea 52%, #5730b0);
+  filter: drop-shadow(0 0 4px rgba(104, 66, 200, .48));
+}
+html[data-mode="light"][data-theme="ocean"] .theme-deco i {
+  border-color: rgba(22, 122, 158, .9);
+  background:
+    radial-gradient(circle at 34% 30%, rgba(255, 255, 255, .95) 0 1.5px, transparent 1.9px),
+    radial-gradient(circle at 50% 52%, rgba(146, 230, 248, .95), rgba(32, 140, 175, .5));
+  box-shadow: 0 0 6px rgba(26, 140, 175, .45);
+}
+html[data-mode="light"][data-theme="peach"] .theme-deco i {
+  background: #ffb29a;
+  box-shadow: 3.5px -2px 0 -1px #ffb29a, -3.5px -1px 0 -1px #ffc9b6, 0 0 6px rgba(255, 128, 92, .38);
+}
+html[data-mode="light"][data-theme="lavender"] .theme-deco i {
+  background:
+    radial-gradient(circle at 30% 30%, #b89af0 0 2.7px, transparent 2.9px),
+    radial-gradient(circle at 70% 30%, #b89af0 0 2.7px, transparent 2.9px),
+    radial-gradient(circle at 30% 70%, #a688e6 0 2.7px, transparent 2.9px),
+    radial-gradient(circle at 70% 70%, #a688e6 0 2.7px, transparent 2.9px);
+  filter: drop-shadow(0 0 4px rgba(140, 110, 220, .4));
 }
 @media (prefers-reduced-motion: reduce) { .theme-deco { animation: none; } }
 html[data-lowfx="1"] .theme-deco { animation: none; }
@@ -3986,7 +4015,7 @@ html[data-theme="halloween"] .cat-wrap[data-state="play"] .yarn-toy { animation:
 .intro {
   position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 18px;
   background: var(--bg-0);
-  background: color-mix(in srgb, var(--bg-0) 80%, transparent);
+  background: color-mix(in srgb, var(--bg-0) 92%, transparent);
   /* Tam ekran blur, intro açılırken her karede tüm ekranı yeniden karıştırıyordu.
      Yumuşak geçiş korunuyor; blur kartın kendi cam yüzeyinden geliyordu. */
   will-change: opacity;
@@ -4098,7 +4127,7 @@ html[data-theme="halloween"] .cat-wrap[data-state="play"] .yarn-toy { animation:
 .settings.open { pointer-events: auto; }
 .settings-backdrop {
   position: absolute; inset: 0; background: var(--scrim);
-  position: absolute; inset: 0; background: color-mix(in srgb, var(--scrim) 76%, transparent);
+  position: absolute; inset: 0; background: color-mix(in srgb, var(--scrim) 90%, transparent);
   opacity: 0; transition: opacity .45s;
 }
 .settings.open .settings-backdrop { opacity: 1; }
@@ -4167,7 +4196,7 @@ body.sheet-open .cat-halo,
 body.sheet-open .card-aurora,
 body.sheet-open .card-sheen,
 body.sheet-open .brand-mark::after { animation-play-state: paused !important; }
-@keyframes paneIn { from { opacity: 0; transform: translateY(9px); } }
+@keyframes paneIn { from { transform: translateY(9px); } }
 .field-label { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 20px 0 8px; font-size: 9.5px; font-weight: 700; letter-spacing: .17em; text-transform: uppercase; color: var(--ink-3); }
 .field-label:first-child { margin-top: 4px; }
 .field-label small { font-weight: 500; letter-spacing: .02em; text-transform: none; font-size: 10px; color: var(--ink-3); opacity: .8; }
@@ -4487,7 +4516,7 @@ html[data-mode="dark"] .notify-status.warn b { color: #ffc07a; }
 .about-backdrop {
   position: absolute; inset: 0; opacity: 0; transition: opacity .42s var(--soft);
   background: var(--scrim);
-  background: color-mix(in srgb, var(--scrim) 62%, transparent);
+  background: color-mix(in srgb, var(--scrim) 88%, transparent);
   -webkit-backdrop-filter: blur(16px) saturate(112%); backdrop-filter: blur(16px) saturate(112%);
 }
 .about.open .about-backdrop { opacity: 1; }
@@ -4498,11 +4527,11 @@ html[data-mode="dark"] .notify-status.warn b { color: #ffc07a; }
   background: linear-gradient(158deg, var(--glass-3), var(--glass-3) 52%, var(--bg-0));
   background: linear-gradient(158deg, var(--glass-3), color-mix(in srgb, var(--glass-3) 90%, transparent) 52%, color-mix(in srgb, var(--bg-0) 96%, transparent));
   box-shadow: 0 42px 110px -44px var(--shadow), inset 0 1px 0 rgba(255,255,255,.5);
-  opacity: 0; transform: translateY(22px) scale(.965);
-  transition: opacity .4s var(--soft), transform .62s var(--spring);
+  transform: translateY(22px) scale(.965);
+  transition: transform .62s var(--spring);
   will-change: transform, opacity;
 }
-.about.open .about-card { opacity: 1; transform: none; }
+.about.open .about-card { transform: none; }
 .about-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 22px 24px 10px; flex: none; }
 .about-head h2 { margin: 4px 0 0; font-family: var(--display); font-size: 27px; font-weight: 700; letter-spacing: -.045em; }
 .about-head p { margin: 5px 0 0; font-size: 11px; color: var(--ink-3); }
@@ -6267,7 +6296,7 @@ html[data-mode="light"] #bottomNav .nav-moon { display: none; }
 .update-overlay[hidden] { display: none; }
 .update-backdrop {
   position: absolute; inset: 0;
-  background: color-mix(in srgb, var(--scrim) 68%, transparent);
+  background: color-mix(in srgb, var(--scrim) 86%, transparent);
   -webkit-backdrop-filter: blur(18px) saturate(118%); backdrop-filter: blur(18px) saturate(118%);
 }
 .update-card {
@@ -6278,7 +6307,7 @@ html[data-mode="light"] #bottomNav .nav-moon { display: none; }
   box-shadow: 0 46px 110px -46px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .5);
   animation: updateIn .5s var(--spring) both;
 }
-@keyframes updateIn { from { opacity: 0; transform: translateY(18px) scale(.97); } }
+@keyframes updateIn { from { transform: translateY(18px) scale(.97); } }
 .update-header { display: flex; align-items: center; gap: 10px; padding: 20px 22px 6px; flex: none; }
 .update-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
 .update-title { font-family: var(--display); font-size: 19px; font-weight: 700; letter-spacing: -.03em; color: var(--ink); }
@@ -6854,7 +6883,7 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
   <div class="settings-backdrop" id="settingsBackdrop" data-close-settings>      </div>
   <div class="settings-panel glass-strong" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <header class="settings-head">
-      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p><div class="settings-meta"><span class="app-version" id="appVersion">v24</span></div>      </div>
+      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p><div class="settings-meta"><span class="app-version" id="appVersion">v25</span></div>      </div>
       <button class="settings-close" id="settingsClose" type="button" aria-label="Ayarları kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <button class="about-cta contact-cta" id="accountBtn" type="button" data-account>
@@ -13071,7 +13100,7 @@ function restoreTimer() {
   if (timer.remaining <= .01) timer.remaining = timer.total;
   return false;
 }
-const APP_VERSION = 'v24';
+const APP_VERSION = 'v25';
 function updateStatsUI() {
   if (rollStatsDay()) saveNow();
   const min = Math.floor(Math.max(0, S.stats.sec) / 60);
@@ -15288,6 +15317,20 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
   if (!overlay || !list || !btn) return;
   const KEY = 'vespir.seenVersion';
   const NEWS = {
+    v25: {
+      tr: [
+        'Her temanın süsü mobil ve masaüstünde tek tek kontrol edildi; açık modda kaybolan yıldız, bulut ve baloncuk motifleri koyulaştırıldı.',
+        'Ekran açılırken arayüzün aşırı saydam görünmesi giderildi: paneller artık saydamlıktan gelmiyor, arkalarındaki perde daha koyu.',
+        'Uygulama simgesi, favicon ve Apple simgesi yuvarlak üretildi; Android için maskelenebilir sürüm korundu.',
+        'Ana ekrana eklenen Vespır simgesi artık her yerde yuvarlak görünüyor.'
+      ],
+      en: [
+        'Every theme ornament was checked one by one on mobile and desktop; the stars, clouds and bubbles that disappeared in light mode are now deeper in tone.',
+        'Screens no longer look almost see-through while opening: panels slide in without fading from transparent and their backdrops are darker.',
+        'The app icon, favicon and Apple icon are now round; the maskable Android version is kept.',
+        'The Vespır icon on your home screen now looks round everywhere.'
+      ]
+    },
     v24: {
       tr: [
         '"Vespır Nedir?" satırındaki görsel, verdiğin yuvarlak Noel kedi resmiyle değiştirildi; arayüzdeki tüm görseller yuvarlak.',

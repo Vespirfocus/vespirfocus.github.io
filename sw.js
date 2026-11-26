@@ -8,10 +8,10 @@
    Hava uyarısı için worker, uyandığı anda Open-Meteo'dan güncel havayı kendisi alır;
    sayfanın en son açıldığı andaki eski veriye bağımlı değildir. Bunun için tercih kaydında
    yalnızca 0,1° (~10 km) yuvarlanmış yaklaşık koordinat tutulur. */
-const APP_CACHE = 'vespir-app-v24';
+const APP_CACHE = 'vespir-app-v25';
 const SHELL_PATHS = ['index.html'];
 /* Simgeler ve manifest de önbelleğe alınır: çevrimdışıyken de ana ekran simgesi ve bildirim görseli eksiksiz olur. */
-const STATIC_PATHS = ['manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'assets/vespir-noel.webp'];
+const STATIC_PATHS = ['manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'icon-round-192.png', 'icon-apple-180.png', 'assets/vespir-noel.webp'];
 async function fetchWithDeadline(input, options = {}, delay = 5000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), delay);
