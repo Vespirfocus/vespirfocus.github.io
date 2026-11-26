@@ -889,17 +889,125 @@ main.app input, main.app textarea { user-select: text; -webkit-user-select: text
   border-radius: 50%; opacity: .6;
 }
 html[data-theme="noel"] .noel-lights { display: block; }
-/* Işık dizisi kartın içeriğine değmesin: Noel'de üstte ayrı bir boşluk
-   ayrılır, böylece "ODAK" etiketi ve seans adı temiz kalır. */
-html[data-theme="noel"] .timer-card { padding-top: 26px; }
-html[data-theme="noel"] main.app.focus-active #timerCard { padding-top: 26px; }
+/* Süs şeridi kartın içeriğine değmesin: her temada üstte aynı boşluk kalır,
+   böylece "ODAK" etiketi ve seans adı temiz durur. */
+html[data-theme] .timer-card { padding-top: 26px; }
+html[data-theme] main.app.focus-active #timerCard { padding-top: 22px; }
 @media (max-width: 768px) {
-  html[data-theme="noel"] .timer-card { padding-top: 24px; }
+  html[data-theme] .timer-card { padding-top: 24px; }
 }
 @media (max-width: 768px) and (max-height: 620px) {
-  html[data-theme="noel"] .timer-card { padding-top: 22px; }
+  html[data-theme] .timer-card { padding-top: 22px; }
 }
 @keyframes noelLightsGlow { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
+/* ============ TEMA SÜSLERİ ============ */
+/* Her tema sayacın üst kenarında kendi motifini taşır; Noel'in ışık dizisi
+   ayrı kalır. Motifler yalnızca CSS ile çizilir: ek resim ya da istek yok. */
+.theme-deco {
+  position: absolute; left: 21px; right: 21px; top: 3px; height: 15px; z-index: 3;
+  pointer-events: none; opacity: .94;
+  animation: decoGlow 5.2s ease-in-out infinite;
+}
+html[data-theme="noel"] .theme-deco { display: none; }
+.theme-deco::after {
+  content: ""; position: absolute; left: 0; right: 0; top: 0; height: 13px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  border-radius: 50% / 100%; opacity: .55;
+}
+.theme-deco i { position: absolute; display: block; width: 7px; height: 7px; margin-left: -3.5px; }
+.theme-deco i:nth-child(1) { left: 1%; top: 0; }
+.theme-deco i:nth-child(2) { left: 15%; top: 4px; }
+.theme-deco i:nth-child(3) { left: 29%; top: 7px; }
+.theme-deco i:nth-child(4) { left: 43%; top: 9px; }
+.theme-deco i:nth-child(5) { left: 57%; top: 9px; }
+.theme-deco i:nth-child(6) { left: 71%; top: 7px; }
+.theme-deco i:nth-child(7) { left: 85%; top: 4px; }
+.theme-deco i:nth-child(8) { left: 99%; top: 0; }
+@keyframes decoGlow { 0%, 100% { opacity: .82; } 50% { opacity: 1; } }
+/* Sakura: beş yapraklı minik çiçekler. */
+html[data-theme="sakura"] .theme-deco i {
+  width: 10px; height: 10px; margin-left: -5px;
+  background: linear-gradient(150deg, #ffe3ee, #ff9cc4 62%, #f278a8);
+  clip-path: polygon(50% 0, 61% 34%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 34%);
+  filter: drop-shadow(0 0 5px rgba(255, 150, 190, .55));
+}
+/* Gece Mavisi: dört uçlu yıldızlar. */
+html[data-theme="midnight"] .theme-deco i {
+  width: 9px; height: 9px; margin-left: -4.5px;
+  background: radial-gradient(circle at 50% 50%, #fff, #9fd4ff 55%, #4a8fd0);
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  filter: drop-shadow(0 0 6px rgba(120, 200, 255, .8));
+}
+/* Orman: sırayla sağa sola dönen yapraklar. */
+html[data-theme="forest"] .theme-deco i {
+  width: 10px; height: 6px; margin-left: -5px; border-radius: 0 100% 0 100%;
+  background: linear-gradient(140deg, #a9e5b4, #3f9a68);
+  filter: drop-shadow(0 0 5px rgba(90, 190, 130, .5));
+}
+html[data-theme="forest"] .theme-deco i:nth-child(odd) { transform: rotate(-34deg); }
+html[data-theme="forest"] .theme-deco i:nth-child(even) { transform: rotate(26deg); }
+/* Gün Batımı: ince ışık çizgileri. */
+html[data-theme="sunset"] .theme-deco i {
+  width: 3px; height: 11px; margin-left: -1.5px; border-radius: 999px;
+  background: linear-gradient(180deg, #ffe0a0, #ff8f6a 70%, #ff6f91);
+  box-shadow: 0 0 8px rgba(255, 150, 110, .7);
+}
+/* Lavanta: dört yapraklı mor çiçekler. */
+html[data-theme="lavender"] .theme-deco i {
+  width: 10px; height: 10px; margin-left: -5px;
+  background:
+    radial-gradient(circle at 30% 30%, #efe2ff 0 2.7px, transparent 2.9px),
+    radial-gradient(circle at 70% 30%, #efe2ff 0 2.7px, transparent 2.9px),
+    radial-gradient(circle at 30% 70%, #e3d1ff 0 2.7px, transparent 2.9px),
+    radial-gradient(circle at 70% 70%, #e3d1ff 0 2.7px, transparent 2.9px);
+  filter: drop-shadow(0 0 5px rgba(186, 150, 255, .65));
+}
+/* Okyanus: küçük baloncuklar. */
+html[data-theme="ocean"] .theme-deco i {
+  width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%;
+  border: 1px solid rgba(200, 248, 255, .8);
+  background:
+    radial-gradient(circle at 34% 30%, rgba(255,255,255,.95) 0 1.5px, transparent 1.9px),
+    radial-gradient(circle at 50% 52%, rgba(170, 244, 255, .55), rgba(70, 190, 225, .22));
+  box-shadow: 0 0 8px rgba(120, 225, 245, .5);
+}
+/* Şeftali: minik bulutlar. */
+html[data-theme="peach"] .theme-deco i {
+  width: 11px; height: 7px; margin-left: -5.5px; border-radius: 999px;
+  background: #ffd6c8;
+  box-shadow: 3.5px -2px 0 -1px #ffd6c8, -3.5px -1px 0 -1px #ffe6dc, 0 0 8px rgba(255, 175, 150, .45);
+}
+/* Nane: taze yapraklar. */
+html[data-theme="mint"] .theme-deco i {
+  width: 9px; height: 6px; margin-left: -4.5px; border-radius: 0 100% 0 100%;
+  background: linear-gradient(140deg, #d8fff0, #57c79a);
+  filter: drop-shadow(0 0 5px rgba(110, 225, 175, .5));
+}
+html[data-theme="mint"] .theme-deco i:nth-child(odd) { transform: rotate(-30deg); }
+html[data-theme="mint"] .theme-deco i:nth-child(even) { transform: rotate(24deg); }
+/* Kakao: ikiye ayrık kahve çekirdekleri. */
+html[data-theme="cocoa"] .theme-deco i {
+  width: 10px; height: 7px; margin-left: -5px; border-radius: 50%;
+  background:
+    linear-gradient(92deg, transparent 45%, rgba(74, 46, 28, .85) 46% 54%, transparent 55%),
+    linear-gradient(150deg, #d8ab7c, #9c6a40);
+  box-shadow: 0 0 6px rgba(190, 140, 95, .4);
+}
+/* Galaksi: parlayan yıldız tozları. */
+html[data-theme="galaxy"] .theme-deco i {
+  width: 10px; height: 10px; margin-left: -5px;
+  background: radial-gradient(circle at 50% 50%, #fff, #cbb2ff 55%, #7d5be0);
+  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
+  filter: drop-shadow(0 0 7px rgba(160, 110, 255, .8));
+}
+/* Cadılar Bayramı: minik balkabakları (örümcek zaten ağdan sarkıyor). */
+html[data-theme="halloween"] .theme-deco i {
+  width: 9px; height: 8px; margin-left: -4.5px; border-radius: 46% 46% 50% 50%;
+  background: radial-gradient(circle at 38% 34%, #ffc46a, #ff8f1f 68%, #d9610e);
+  box-shadow: 0 0 9px rgba(255, 148, 34, .6);
+}
+@media (prefers-reduced-motion: reduce) { .theme-deco { animation: none; } }
+html[data-lowfx="1"] .theme-deco { animation: none; }
 html[data-theme="noel"] .timer-card { box-shadow: 0 30px 80px -50px color-mix(in srgb, var(--accent) 55%, transparent), inset 0 1px 0 rgba(255, 255, 255, .55); }
 /* Halkanın ışıması ayrı ve statik katmandan gelir. Harekete bağlı
    drop-shadow her saniye yeniden bulanıklaştırma yapıp kasmaya yol açıyordu. */
@@ -938,18 +1046,6 @@ html[data-theme="halloween"] .timer-card::after {
 .cycle-dot { width: 18px; height: 18px; color: var(--ink-3); opacity: .35; transition: color .4s, opacity .4s, transform .45s var(--spring); }
 .cycle-dot svg { width: 100%; height: 100%; fill: currentColor; }
 .cycle-dot.on { color: var(--accent); opacity: 1; transform: translateY(-1px); filter: drop-shadow(0 2px 7px color-mix(in srgb, var(--accent) 55%, transparent)); }
-.session-btn {
-  position: relative; z-index: 2;
-  display: flex; align-items: center; justify-content: center; gap: 7px;
-  width: 100%; margin: 10px 0 0; padding: 4px 8px;
-  font-family: var(--display); font-size: 12.5px; font-weight: 600;
-  letter-spacing: .17em; text-transform: uppercase; color: var(--ink-2);
-  border-radius: 10px; transition: color .25s, background .25s;
-}
-.session-btn span { max-width: 85%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.session-btn svg { width: 13px; height: 13px; opacity: .42; transition: opacity .25s, transform .25s; }
-.session-btn:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 4%, transparent); }
-.session-btn:hover svg { opacity: .85; transform: rotate(-8deg); }
 .session-edit {
   position: relative; z-index: 2;
   display: flex; align-items: center; gap: 6px;
@@ -5258,6 +5354,7 @@ main.app.focus-active .controls { max-width: 230px; margin: 8px auto 0; }
    Işık dizisi, dönem etiketi ve durum satırı susar; daire içindeki kısa
    bilgi satırı ise kullanıcıya molanın ne zaman geleceğini gösterir. */
 main.app.focus-active .noel-lights,
+main.app.focus-active .theme-deco,
 main.app.focus-active .halloween-deco,
 main.app.focus-active .ring-center .phase-word,
 main.app.focus-active .ring-center .cat-note { opacity: 0 !important; pointer-events: none; }
@@ -6152,8 +6249,8 @@ html[data-lowfx="1"] .intro-cat-holder * {
 .ring-today { display: flex; margin: 0 auto 10px; align-self: center; width: max-content; max-width: 92%; }
 main.app.focus-active .ring-today { display: none !important; }
 /* "Vespır Nedir?" satırındaki logo yerine her zamanki kış görseli. */
-.about-cta-ico-photo { background: #eef6fb; }
-img.about-cta-img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: 50% 58%; }
+.about-cta-ico-photo { background: #0d3a24; }
+img.about-cta-img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: 50% 50%; }
 /* Alt bar: Vespır'a özel ikonlar. */
 #bottomNav .nav-ico { display: grid; place-items: center; width: 25px; height: 25px; }
 #bottomNav .nav-ico svg { grid-area: 1 / 1; width: 25px; height: 25px; }
@@ -6601,6 +6698,7 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
       <div class="card-aurora" aria-hidden="true">      </div>
       <div class="card-sheen" aria-hidden="true">      </div>
       <div class="noel-lights" aria-hidden="true">      </div>
+      <div class="theme-deco" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <div class="halloween-deco" aria-hidden="true">
         <i class="hw-silk"></i>
         <svg class="hw-spider" viewBox="0 0 40 40" fill="none" aria-hidden="true">
@@ -6756,7 +6854,7 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
   <div class="settings-backdrop" id="settingsBackdrop" data-close-settings>      </div>
   <div class="settings-panel glass-strong" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <header class="settings-head">
-      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p><div class="settings-meta"><span class="app-version" id="appVersion">v23</span></div>      </div>
+      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p><div class="settings-meta"><span class="app-version" id="appVersion">v24</span></div>      </div>
       <button class="settings-close" id="settingsClose" type="button" aria-label="Ayarları kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <button class="about-cta contact-cta" id="accountBtn" type="button" data-account>
@@ -6959,7 +7057,7 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
         <div class="field-label">Hakkımızda <small>Vespır'ın hikâyesi ve sözleşmeler</small>      </div>
         <div class="about-stack">
           <button class="about-cta" id="aboutBtn" type="button">
-            <span class="about-cta-ico about-cta-ico-photo" aria-hidden="true"><img class="about-cta-img" src="assets/noel-vespir.jpg" alt="" width="1392" height="752" decoding="async"></span>
+            <span class="about-cta-ico about-cta-ico-photo" aria-hidden="true"><img class="about-cta-img" src="assets/vespir-noel.webp" alt="Noel şapkalı Vespır" width="192" height="192" decoding="async"></span>
             <span class="about-cta-copy"><b>Vespır Nedir?</b><small>Hikâyesi, karakteri ve onu hayata geçiren tek kişi</small></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
           </button>
@@ -7502,7 +7600,7 @@ function updateBookIdentity() {
   });
 }
 const DEFAULTS = () => ({
-  v: 3,
+  v: 4,
   theme: 'noel',
   mode: 'dark',
   lang: 'tr',
@@ -7548,7 +7646,7 @@ function loadSettings() {
   if (!['light', 'dark', 'auto'].includes(s.mode)) s.mode = base.mode;
   /* v3: uygulama karanlık Noel temasıyla açılır. Bu kural yalnızca bir kez
      uygulanır; kullanıcı sonradan temasını/modunu değiştirirse tercihi korunur. */
-  if (!saved.v || Number(saved.v) < 3) {
+  if (!saved.v || Number(saved.v) < 4) {
     s.theme = base.theme;
     s.mode = base.mode;
   }
@@ -7607,7 +7705,7 @@ function loadSettings() {
   ['fur', 'belly', 'eyes', 'patch', 'patch2', 'collar'].forEach((k) => {
     if (!/^#[0-9a-f]{6}$/i.test(s.cat[k] || '')) s.cat[k] = base.cat[k];
   });
-  s.v = 3;
+  s.v = 4;
   s.stats.sec = Number.isFinite(Number(s.stats.sec)) ? Math.max(0, Number(s.stats.sec)) : 0;
   s.stats.sessions = Number.isFinite(Number(s.stats.sessions)) ? Math.max(0, Math.round(Number(s.stats.sessions))) : 0;
   s.stats.hourMark = Number.isFinite(Number(s.stats.hourMark)) ? Math.max(0, Math.floor(Number(s.stats.hourMark))) : 0;
@@ -12397,7 +12495,9 @@ const sceneAnimations = [];
 let sceneMotionTimer = 0;
 function flipBegin() {
   if (perfModeOn()) return null;
-  const before = [$('#catMount'), $('#timerCard')].map((el) => ({ el, rect: el.getBoundingClientRect() }));
+  /* Yalnızca kedi FLIP ile taşınır. Kart da ölçeklenirse halkanın içindeki
+     rakamlar dikeyde gerilip aşağı kaymış gibi görünüyordu. */
+  const before = [$('#catMount')].map((el) => ({ el, rect: el.getBoundingClientRect() }));
   while (sceneAnimations.length) sceneAnimations.pop().cancel();
   return before;
 }
@@ -12971,7 +13071,7 @@ function restoreTimer() {
   if (timer.remaining <= .01) timer.remaining = timer.total;
   return false;
 }
-const APP_VERSION = 'v23';
+const APP_VERSION = 'v24';
 function updateStatsUI() {
   if (rollStatsDay()) saveNow();
   const min = Math.floor(Math.max(0, S.stats.sec) / 60);
@@ -15188,6 +15288,22 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
   if (!overlay || !list || !btn) return;
   const KEY = 'vespir.seenVersion';
   const NEWS = {
+    v24: {
+      tr: [
+        '"Vespır Nedir?" satırındaki görsel, verdiğin yuvarlak Noel kedi resmiyle değiştirildi; arayüzdeki tüm görseller yuvarlak.',
+        'Her tema sayacın üstünde kendi süsünü taşıyor: Sakura çiçekleri, Gece Mavisi yıldızları, Orman yaprakları, Okyanus baloncukları, Kakao çekirdekleri, balkabakları…',
+        'Odak sahnesine girerken sayacı gerip rakamları aşağı kaydıran geçiş düzeltildi; süre artık dairenin tam ortasında.',
+        'Uygulama artık karanlık Noel temasıyla açılıyor; temayı istediğin zaman değiştirebilirsin.',
+        'Widget ve kullanılmayan dosyalar kaldırıldı; kurulum daha hafif.'
+      ],
+      en: [
+        'The image on the "What is Vespır?" row is now the round Christmas cat picture you gave me, and every image in the interface is round.',
+        'Every theme carries its own ornament above the timer: Sakura blossoms, Midnight stars, Forest leaves, Ocean bubbles, Cocoa beans, pumpkins…',
+        'The transition into focus mode no longer stretches the timer and pushes the digits down; the time sits dead centre of the ring.',
+        'The app now opens in the dark Christmas theme; you can change the theme whenever you like.',
+        'The widget and unused files were removed; the install is lighter.'
+      ]
+    },
     v23: {
       tr: [
         'Hakkımızda sayfasındaki büyük kış görseli kaldırıldı; aynı görsel artık "Vespır Nedir?" satırındaki logo yerinde duruyor.',
