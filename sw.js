@@ -8,10 +8,10 @@
    Hava uyarısı için worker, uyandığı anda Open-Meteo'dan güncel havayı kendisi alır;
    sayfanın en son açıldığı andaki eski veriye bağımlı değildir. Bunun için tercih kaydında
    yalnızca 0,1° (~10 km) yuvarlanmış yaklaşık koordinat tutulur. */
-const APP_CACHE = 'vespir-app-v9';
+const APP_CACHE = 'vespir-app-v22';
 const SHELL_PATHS = ['index.html'];
 /* Simgeler ve manifest de önbelleğe alınır: çevrimdışıyken de ana ekran simgesi ve bildirim görseli eksiksiz olur. */
-const STATIC_PATHS = ['manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
+const STATIC_PATHS = ['manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'assets/noel-vespir.jpg'];
 async function fetchWithDeadline(input, options = {}, delay = 5000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), delay);
@@ -135,9 +135,10 @@ self.addEventListener('fetch', (e) => {
       /* cache: 'reload' — tarayıcının HTTP önbelleğindeki eski HTML yerine
          sunucudaki güncel dosya alınır. Böylece güncelleme yayınlandığında
          kurulu uygulama bir sonraki açılışta yeni sürümü görür.
-         (waitUntil, respondWith içinde await'ten sonra çağrılamaz; bu yüzden
-         kabuk önbelleğe yazımı doğrudan beklenir.) */
-      const res = await fetchWithDeadline(req, { cache: 'reload' });
+         Zaman aşımı yok: eskiden 5 sn'yi geçen yavaş bağlantılarda önbellekteki
+         ESKİ kabuk dönüyordu (kullanıcı güncellemeyi hiç görmüyordu). Artık
+         yalnızca gerçek bir ağ hatasında önbelleğe düşülür. */
+      const res = await fetch(req, { cache: 'reload' });
       if (res && res.ok) { try { await putShell(url, res.clone()); } catch (err) {} }
       if (res && res.status < 500) return res;
       networkResponse = res;
@@ -157,7 +158,7 @@ self.addEventListener('fetch', (e) => {
 const PREFS_CACHE = 'vespir-prefs';
 const PREFS_PATH = './__vespir-message-prefs';
 const MSG_GAP = 3 * 3600 * 1000;
-const WEATHER_FRESH = 3 * 3600 * 1000;
+const WEATHER_FRESH = 45 * 60 * 1000;
 /* Sessiz saatler (yerel saat): 23:00–05:00. Hava uyarısı da bu kurala uyar. */
 const QUIET_FROM = 23;
 const QUIET_TO = 5;
@@ -433,9 +434,4 @@ self.addEventListener('notificationclick', (e) => {
     }
     if (self.clients.openWindow) return self.clients.openWindow(url);
   })());
-});
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
 });

@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#050e16" id="metaTheme">
+<meta name="theme-color" content="#0b3d2e" id="metaTheme">
 <meta name="description" content="Vespır: 3B kedili, Liquid Glass tasarımlı bir odak arkadaşı. Kedi uyur, kitap okur, miyavlar; sen odaklanırsın.">
 <title>Vespır - En İyi Dostun</title>
-<link rel="icon" type="image/png" href="./icon-192.png">
+<link rel="icon" type="image/png" href="./icon-round-192.png">
 <link rel="manifest" href="./manifest.webmanifest">
-<link rel="apple-touch-icon" id="appleIcon" href="./icon-192.png">
+<link rel="apple-touch-icon" id="appleIcon" href="./icon-round-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="format-detection" content="telephone=no">
@@ -23,6 +23,10 @@
     window.__vespirInstall = e;
   });</script>
 <script>  (function () {
+    try {
+      var isAppleTouch = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      document.documentElement.classList.toggle('ios-glass', isAppleTouch);
+    } catch (eG) {}
     /* Cihaz gücü: düşük bellekli telefonlarda ağır arka plan süslemeleri
        kapanır (CSS tarafında html[data-lowfx="1"]). Ana animasyonlar kalır. */
     try {
@@ -30,7 +34,8 @@
       var coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;
       var cores = navigator.hardwareConcurrency || 8, forced = '';
       try { forced = localStorage.getItem('vespir.lowfx') || ''; } catch (eF) {}
-      document.documentElement.dataset.lowfx = (forced === '1' || (coarse && (dm <= 4 || cores <= 4))) ? '1' : '0';
+      /* forced: '' = otomatik, '1' = kullanıcı açtı, '0' = kullanıcı kapattı. */
+      document.documentElement.dataset.lowfx = (forced === '1' || (forced !== '0' && coarse && (dm <= 4 || cores <= 4))) ? '1' : '0';
     } catch (eL) {}
     try {
       var raw = localStorage.getItem('vespir.v1');
@@ -746,7 +751,7 @@ kbd {
   overflow: hidden;
 }
 .brand-face { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; }
-.brand-face svg { width: 100%; height: 100%; display: block; }
+.brand-face svg { width: 86%; height: 86%; display: block; margin: auto; }
 .brand-mark::after {
   content: ""; position: absolute; width: 150%; height: 40%;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent);
@@ -1024,10 +1029,11 @@ html[data-theme="halloween"] .timer-card::after {
 @keyframes orbPulse { 50% { transform: scale(1.16); opacity: .92; } }
 .ring-center {
   position: absolute; inset: 16%; border-radius: 50%;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; gap: 2px; pointer-events: none;
+  display: grid; grid-template-rows: 1fr auto 1fr;
+  align-items: center; justify-items: center;
+  text-align: center; pointer-events: none;
 }
-.phase-word { font-size: 9.5px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-3); display: flex; align-items: center; gap: 6px; }
+.phase-word { position: static; align-self: end; margin-bottom: 7px; white-space: nowrap; font-size: 9.5px; font-weight: 700; letter-spacing: .24em; text-transform: uppercase; color: var(--ink-3); display: flex; align-items: center; justify-content: center; gap: 6px; }
 .phase-word::before, .phase-word::after { content: "·"; opacity: .6; }
 .time {
   font-family: var(--display);
@@ -1053,17 +1059,20 @@ html[data-theme="halloween"] .timer-card::after {
 .time .digit.tick { animation: digitTick .38s var(--spring); }
 @keyframes digitTick { 38% { transform: translate3d(0, -4px, 0) scale(1.045); } }
 .time.long { font-size: clamp(48px, 7vw, 62px); }
-.ring-sub { margin-top: 5px; font-size: 11.5px; font-weight: 500; letter-spacing: .015em; color: var(--ink-2); max-width: 78%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ring-foot {
+  align-self: start; margin-top: 7px; width: 100%;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+}
+.ring-sub { max-width: 100%; font-size: 11.5px; font-weight: 500; letter-spacing: .015em; color: var(--ink-2); max-width: 78%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cat-note {
-  margin-top: 9px; display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 0; display: inline-flex; align-items: center; gap: 6px;
   padding: 5px 9px; border-radius: 999px;
   font-size: 9px; font-weight: 600; letter-spacing: .06em; color: var(--ink-3);
   background: var(--ink);
   background: color-mix(in srgb, var(--ink) 4%, transparent);
   transition: opacity .4s, transform .4s;
 }
-.cat-note i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-3); box-shadow: 0 0 8px var(--accent-3); }
-.cat-note.pulse i { animation: dotPulse 2s infinite; }
+.cat-note .today-min { color: var(--accent); font-weight: 800; letter-spacing: .04em; }
 .controls { display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: 2px; position: relative; z-index: 2; }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -4672,6 +4681,9 @@ html.no-trans *:not(#catStage):not(#catStage *)::after { transition: none !impor
     will-change: transform;
   }
   .glass { -webkit-backdrop-filter: blur(5px) saturate(114%); backdrop-filter: blur(5px) saturate(114%); }
+  /* En çok oynayan yüzey mobilde de bulanıklaşmaz: bu kural sonradan geldiği
+     için .timer-card üzerindeki "none" kararını eziyordu. */
+  .timer-card { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
   .glass-strong { -webkit-backdrop-filter: blur(7px) saturate(116%); backdrop-filter: blur(7px) saturate(116%); }
   /* Ayar paneli büyük yüzey: mobilde de gerçek blur kullanmaz. */
   #settings .settings-panel.glass-strong { -webkit-backdrop-filter: none; backdrop-filter: none; }
@@ -5174,7 +5186,7 @@ main.app.focus-active {
 }
 main.app.focus-active .stage-col {
   position: relative; left: auto; top: auto; width: min(420px, 100%);
-  max-width: none; margin: 0 0 0 220px; transform: none;
+  max-width: none; margin: 0; transform: none;
 }
 main.app.focus-active #timerCard {
   width: 100%; max-width: none; padding: 16px; background: none;
@@ -5211,7 +5223,7 @@ body.focus-active #catPerch i { animation-play-state: paused !important; }
 main.app.focus-active .ring-wrap { width: min(320px, 100%); margin: 0 auto; }
 main.app.focus-active .controls { max-width: 230px; margin: 8px auto 0; }
 #catStage.focus-active {
-  position: fixed; top: 50%; left: calc(50% - 220px);
+  position: fixed; top: 50%; left: calc(50% - 370px);
   width: 280px; max-width: none; height: 300px;
   transform: translate(-50%, -50%); z-index: 35;
 }
@@ -5220,6 +5232,11 @@ main.app.focus-active .controls { max-width: 230px; margin: 8px auto 0; }
   --ms: calc(var(--cat-scale) * var(--stage-scale));
   left: 50%; top: auto; bottom: 24px;
   transform: translateX(-50%) scale(var(--ms)); transform-origin: 50% 100%;
+}
+/* 901-1100 px: kart 420 px ortada; kedi küçültülüp sola alınır ki çakışmasın. */
+@media (min-width: 901px) and (max-width: 1100px) {
+  #catStage.focus-active { left: calc(50% - 330px); }
+  #catStage.focus-active #catMount { --stage-scale: .66; }
 }
 #catStage.focus-active #catPerch,
 #catStage.focus-active #catNamePill { opacity: 0; }
@@ -5256,6 +5273,52 @@ main.app.focus-active .ring-center .ring-sub {
 body.focus-active #snowCanvas,
 body.focus-active #fxCanvas,
 body.focus-active .particles { opacity: 0 !important; pointer-events: none; }
+/* DİKEY EKRAN ODAK SAHNESİ: telefonda kedi kartın üstünde (Noel'de ışık
+   dizisinin üstünde) uyur, sayaç ekranın tam ortasında kalır. Masaüstünde
+   kedi sayaçın yanında durmaya devam eder. */
+@media (max-width: 768px) and (orientation: portrait) {
+  body.focus-active { overflow-y: auto; }
+  main.app.focus-active {
+    position: relative; inset: auto;
+    display: flex; flex-direction: column; align-items: center;
+    height: auto; min-height: 100vh; min-height: 100svh;
+    overflow: visible;
+    padding: var(--m-card-top)
+             calc(12px + env(safe-area-inset-right, 0px))
+             calc(20px + env(safe-area-inset-bottom, 0px))
+             calc(12px + env(safe-area-inset-left, 0px));
+  }
+  main.app.focus-active .stage-col {
+    position: relative; left: auto; top: auto;
+    width: 100%; max-width: 470px; margin: 0 auto; transform: none;
+  }
+  main.app.focus-active #timerCard {
+    width: 100%; max-width: none;
+    padding: 16px 15px 13px;
+  }
+  #catStage.focus-active {
+    position: absolute; top: var(--m-cat-top); left: 50%;
+    width: 100%; max-width: 470px; height: 168px;
+    transform: translateX(-50%); z-index: 55;
+  }
+  #catStage.focus-active #catMount {
+    --stage-scale: var(--side-cat);
+    --ms: calc(min(var(--cat-scale), 1.1) * var(--stage-scale) * var(--fit-scale));
+    left: 50%; top: 4px; bottom: auto;
+    transform: translateX(-50%) scale(var(--ms)); transform-origin: 50% 0;
+  }
+  #catStage.focus-active #catBubble {
+    left: calc(50% + 62px); right: auto; top: 8px; bottom: auto;
+    width: min(190px, calc(50vw - 66px));
+    border-radius: 6px 16px 16px 16px; transform-origin: 0 10px;
+  }
+  #catStage.focus-active #catBubble::after {
+    left: -5px; top: 16px; bottom: auto;
+    border: 0; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  /* Noel'de kedi ışıkların üstünde uyur: ışık dizisi odak sahnesinde de açık kalır. */
+  body.focus-active main.app.focus-active .noel-lights { opacity: .9 !important; }
+}
 /* Yalnız görünmeyen hareketler bekler; sahne geri gelince aynı animasyon sürer. */
 html.page-hidden *, html.page-hidden *::before, html.page-hidden *::after,
 body.focus-active .particle,
@@ -5524,7 +5587,7 @@ html[data-theme="halloween"] .hw-horror { display: block; }
 .hw-skeleton {
   position: absolute; right: clamp(10px, 7vw, 128px); bottom: max(12px, env(safe-area-inset-bottom, 0px));
   width: clamp(112px, 12.5vw, 166px); height: auto; opacity: .92;
-  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, .5));
+  will-change: transform;
   animation: hwBoneSway 12s ease-in-out infinite alternate;
 }
 @keyframes hwBoneSway {
@@ -5561,7 +5624,7 @@ html[data-theme="halloween"] .hw-horror { display: block; }
 }
 html[data-mode="light"] .hw-vignette { background: radial-gradient(125% 105% at 50% 40%, transparent 46%, rgba(70, 34, 44, .14) 80%, rgba(46, 20, 28, .28) 100%); }
 /* Çerçeveleyen çıplak, bükülmüş ölü ağaçlar. Yalnızca transform ile çok yavaş salınım. */
-.hw-tree { position: absolute; bottom: -1vh; height: 52vh; width: auto; opacity: .9; pointer-events: none; transform-origin: 50% 100%; filter: drop-shadow(0 0 1px rgba(0, 0, 0, .6)); }
+.hw-tree { position: absolute; bottom: -1vh; height: 52vh; width: auto; opacity: .9; pointer-events: none; transform-origin: 50% 100%; will-change: transform; }
 .hw-tree-l { left: -3vw; animation: hwTreeSway 17s ease-in-out infinite alternate; }
 .hw-tree-r { right: -3vw; transform: scaleX(-1); animation: hwTreeSwayR 21s ease-in-out infinite alternate; }
 html[data-mode="light"] .hw-tree { opacity: .5; }
@@ -5648,8 +5711,8 @@ html[data-mode="light"] .hw-web { opacity: .32; }
   filter: drop-shadow(0 0 6px rgba(255, 180, 80, .8));
   animation: hwFlame 1.7s ease-in-out infinite;
 }
-.hw-candle.c1 { left: 18%; }
-.hw-candle.c2 { right: 24%; height: 20px; }
+.hw-candle.c1 { left: 3%; }
+.hw-candle.c2 { right: 22.5%; height: 20px; }
 .hw-candle.c2::before { animation-delay: -.6s; }
 @keyframes hwFlame {
   0%, 100% { opacity: .85; transform: translateX(-50%) scaleY(1); }
@@ -5688,9 +5751,10 @@ html[data-mode="light"] .hw-web { opacity: .32; }
   .hw-ghost-b { right: 6%; top: 40%; }
   .hw-vignette { background: radial-gradient(118% 100% at 50% 44%, transparent 52%, rgba(4, 1, 6, .46) 84%, rgba(2, 0, 3, .72) 100%); }
 }
-/* ============ PERFORMANS / DÜŞÜK BELLEK ============ */
-/* 3 GB'lık telefonlarda (ör. Galaxy A04s) yalnızca arka plan süslemeleri
-   kapanır. Sayaç, halka, rakam pop'u, kedi ve ödül animasyonları aynen kalır. */
+/* ============ PERFORMANS MODU ============ */
+/* Tek amaç: süs için tek kare bile harcanmasın. Sürekli çizilen katmanlar
+   gizlenir, animasyon ve geçişler tek kareye iner, cam bulanıklığı kapanır.
+   Uygulama eksiksiz çalışır: sayaç, kedi, ödül akışı ve bildirimler aynı. */
 html[data-lowfx="1"] .hw-ghost,
 html[data-lowfx="1"] .hw-raven,
 html[data-lowfx="1"] .hw-hand,
@@ -5703,24 +5767,42 @@ html[data-lowfx="1"] .hw-eyes,
 html[data-lowfx="1"] .hw-eyes-b { display: none !important; }
 html[data-lowfx="1"] .hw-fog-b,
 html[data-lowfx="1"] .hw-fog-c { display: none; }
-/* Cam bulanıklığı her karede kartın arkasını yeniden rasterize eder. Kartın
-   içi saniyede bir oynarken bu maliyet kasmaya dönüşüyor. */
-main.app.focus-active .timer-card,
-html[data-lowfx="1"] .glass-strong { -webkit-backdrop-filter: none; backdrop-filter: none; }
-html[data-lowfx="1"] .glass,
-html[data-lowfx="1"] .glass-mini,
-html[data-lowfx="1"] .glass-strong,
-html[data-lowfx="1"] .cat-bubble { -webkit-backdrop-filter: none; backdrop-filter: none; }
-/* Sürekli dönen arka plan süsleri zayıf cihazda tamamen durur: tek kare bile
-   harcamazlar. Sayaç, halka, kedi ve rakam animasyonları etkilenmez. */
+html[data-lowfx="1"] #snowCanvas,
+html[data-lowfx="1"] #fxCanvas,
+html[data-lowfx="1"] .particles,
 html[data-lowfx="1"] .ambient::before,
+html[data-lowfx="1"] .ambient::after,
 html[data-lowfx="1"] .blob,
+html[data-lowfx="1"] .noise,
+html[data-lowfx="1"] .grid-deco,
 html[data-lowfx="1"] .card-sheen,
 html[data-lowfx="1"] .card-aurora,
+html[data-lowfx="1"] .card-glow,
 html[data-lowfx="1"] .cat-halo,
-html[data-lowfx="1"] .brand-mark::after { animation: none !important; }
-/* Sayaç rakamları yalnızca kompozitörde oynasın: alt katman yeniden çizilmesin. */
-.time { contain: layout paint; }
+html[data-lowfx="1"] .cat-shadow,
+html[data-lowfx="1"] .brand-mark::after,
+html[data-lowfx="1"] .noel-lights,
+html[data-lowfx="1"] .intro-spark,
+html[data-lowfx="1"] .ring-deco,
+html[data-lowfx="1"] .ring-glow,
+html[data-lowfx="1"] .ring-orb-wrap,
+html[data-lowfx="1"] .zzz,
+html[data-lowfx="1"] .theme-ripple { display: none !important; }
+/* Animasyonlar son karelerine anında atlar (forwards/both ile görünen son hâl
+   korunur), geçişler 1 ms olur: hiçbir şey sürekli oynamaz, hiçbir öğe de
+   görünmez kalmaz. */
+html[data-lowfx="1"] *,
+html[data-lowfx="1"] *::before,
+html[data-lowfx="1"] *::after {
+  animation-duration: 1ms !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+html[data-lowfx="1"] .stage-col { will-change: auto; }
+html[data-lowfx="1"] .ring-progress { filter: none !important; }
 /* ============ CADILAR ÖDÜLÜ: GERÇEK KAZAN ============ */
 /* Eski kazan mor bir kâse gibi duruyordu; tabak sanılması normaldi. Artık dökme
    demir gövde, kalın ağız kenarı, yan kulplar, üç ayak ve parlak yeşil iksir var. */
@@ -5969,77 +6051,321 @@ html[data-hidden="1"] *::before,
 html[data-hidden="1"] *::after { animation-play-state: paused !important; }
 </style>
 <style>
-/* ============ UPDATE BANNER (TAM EKRAN) ============ */
-#updateBanner {
+/* ============ IN-APP BROWSER LOCK (Liquid Glass) ============ */
+#inAppLock {
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: 99999;
   display: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 24px;
-  padding: 24px;
-  background: var(--glass-3, rgba(30, 16, 32, .92));
-  border: 0;
-  box-shadow: none;
+  gap: 18px;
+  padding: calc(24px + env(safe-area-inset-top, 0px)) 24px calc(24px + env(safe-area-inset-bottom, 0px));
+  overflow-y: auto;
+  background: color-mix(in srgb, var(--glass-3, rgba(30, 16, 32, .82)), transparent 12%);
+  backdrop-filter: blur(26px) saturate(170%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  border: 1px solid color-mix(in srgb, var(--line, rgba(255,255,255,.22)), transparent 35%);
   color: var(--ink, #f2f9ff);
   font-family: var(--font, system-ui, sans-serif);
   text-align: center;
   width: 100vw;
   height: 100vh;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  box-sizing: border-box;
 }
-#updateBanner.show { display: flex; }
-#updateBanner h3 {
+#inAppLock.show { display: flex; }
+#inAppLock .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent, #ff7a80), 18%);
+  color: #fff;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+#inAppLock h3 {
   margin: 0;
-  font-size: clamp(20px, 5vw, 28px);
+  font-size: clamp(20px, 5vw, 30px);
   font-weight: 800;
   letter-spacing: -.02em;
-  line-height: 1.2;
+  line-height: 1.25;
 }
-#updateBanner p {
+#inAppLock p {
   margin: 0;
-  font-size: clamp(14px, 3vw, 18px);
-  line-height: 1.6;
+  font-size: clamp(13px, 3vw, 17px);
+  line-height: 1.7;
   color: var(--ink-2, #b9cfdd);
-  max-width: 90vw;
+  max-width: 82vw;
   padding: 0 20px;
 }
-#updateBanner .btn-update {
-  width: min(260px, 90vw);
-  height: 56px;
-  border-radius: 14px;
-  border: 0;
-  background: linear-gradient(118deg, var(--accent, #ff7a80), var(--accent-2, #6fd39a));
-  color: #fff;
-  font-weight: 800;
-  font-size: clamp(16px, 4vw, 20px);
-  cursor: pointer;
-  box-shadow: 0 14px 28px -10px color-mix(in srgb, var(--accent, #ff7a80) 70%, transparent);
+#inAppLock .hint {
+  margin-top: 16px;
+  font-size: clamp(11px, 2.5vw, 13px);
+  color: color-mix(in srgb, var(--ink-2, #b9cfdd), 70%);
+  line-height: 1.5;
 }
-#updateBanner .btn-update:active { transform: scale(.97); }
-#updateBanner .btn-close {
-  margin-top: 12px;
+#inAppLock .btn-copy {
+  margin-top: 10px;
   background: transparent;
-  border: 0;
-  color: var(--ink-2, #b9cfdd);
-  font-size: clamp(13px, 3vw, 16px);
+  border: 1px solid color-mix(in srgb, var(--ink, #fff), 45%);
+  color: var(--ink);
+  padding: 11px 20px;
+  border-radius: 12px;
+  font-size: clamp(13px, 3vw, 15px);
+  font-weight: 650;
   cursor: pointer;
-  text-align: center;
-  width: auto;
-  padding: 0;
+  backdrop-filter: blur(8px);
+}
+#inAppLock .btn-copy:active { transform: scale(.96); }
+#inAppLock .browser-url {
+  width: min(520px, calc(100vw - 48px));
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--line, rgba(255,255,255,.22)), transparent 20%);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, .18);
+  color: var(--ink, #f2f9ff);
+  font: inherit;
+  font-size: 12px;
+}
+#inAppLock .browser-url[hidden] { display: none; }
+/* Performans modu — son katman. Hareket kilidi (@media prefers-reduced-motion)
+   id seçicileriyle animasyonları geri açtığı için kedi hareketleri burada,
+   daha yüksek özgüllükle tamamen durdurulur; pozlar temel hâlinde kalır. */
+html[data-lowfx="1"] #catMount,
+html[data-lowfx="1"] #catMount *,
+html[data-lowfx="1"] .cat-stage,
+html[data-lowfx="1"] .cat-stage *,
+html[data-lowfx="1"] .intro-cat-holder,
+html[data-lowfx="1"] .intro-cat-holder * {
+  animation: none !important;
+  transition: none !important;
 }
 </style>
+<style>
+/* ============ LIQUID GLASS BOTTOM NAV (RESİM TARZI - SADECE iOS) ============ */
+/* Sayaç halkasının hemen altındaki günlük odak etiketi. */
+.ring-today { display: flex; margin: 0 auto 10px; align-self: center; width: max-content; max-width: 92%; }
+main.app.focus-active .ring-today { display: none !important; }
+/* Hakkımızda sayfasındaki kış görseli. */
+.about-hero {
+  margin: 4px 0 18px; padding: 0; overflow: hidden;
+  border-radius: 22px; border: 1px solid var(--line);
+  box-shadow: 0 26px 54px -38px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .42);
+}
+img.about-hero-img {
+  display: block; width: 100%; height: auto; aspect-ratio: 1392 / 752;
+  border-radius: 22px !important; object-fit: cover;
+}
+/* Alt bar: Vespır'a özel ikonlar. */
+#bottomNav .nav-ico { display: grid; place-items: center; width: 25px; height: 25px; }
+#bottomNav .nav-ico svg { grid-area: 1 / 1; width: 25px; height: 25px; }
+#bottomNav .nav-sun { display: none; }
+html[data-mode="light"] #bottomNav .nav-sun { display: block; }
+html[data-mode="light"] #bottomNav .nav-moon { display: none; }
+#bottomNav .item.active .nav-ico { filter: drop-shadow(0 3px 7px color-mix(in srgb, var(--accent) 58%, transparent)); }
+#bottomNav .item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* Güncelleme ekranı (güncelle + devam et) */
+.update-overlay {
+  position: fixed; inset: 0; z-index: 320; display: grid; place-items: center;
+  padding: 18px; opacity: 1;
+}
+.update-overlay[hidden] { display: none; }
+.update-backdrop {
+  position: absolute; inset: 0;
+  background: color-mix(in srgb, var(--scrim) 68%, transparent);
+  -webkit-backdrop-filter: blur(18px) saturate(118%); backdrop-filter: blur(18px) saturate(118%);
+}
+.update-card {
+  position: relative; width: min(520px, calc(100vw - 24px)); max-height: min(86svh, 720px);
+  display: flex; flex-direction: column; overflow: hidden; border-radius: 28px;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
+  background: linear-gradient(158deg, var(--glass-3), color-mix(in srgb, var(--glass-3) 92%, transparent) 55%, color-mix(in srgb, var(--bg-0) 96%, transparent));
+  box-shadow: 0 46px 110px -46px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .5);
+  animation: updateIn .5s var(--spring) both;
+}
+@keyframes updateIn { from { opacity: 0; transform: translateY(18px) scale(.97); } }
+.update-header { display: flex; align-items: center; gap: 10px; padding: 20px 22px 6px; flex: none; }
+.update-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
+.update-title { font-family: var(--display); font-size: 19px; font-weight: 700; letter-spacing: -.03em; color: var(--ink); }
+.update-ver {
+  margin-left: auto; padding: 3px 9px; border-radius: 999px; font-size: 10px; font-weight: 800;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--accent);
+  background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+}
+.update-body { padding: 4px 22px 8px; overflow-y: auto; overscroll-behavior: contain; }
+.update-intro { margin: 0 0 12px; font-size: 12.5px; line-height: 1.62; color: var(--ink-2); }
+.update-news { border-radius: 18px; border: 1px solid var(--line); background: var(--field); padding: 12px 14px; }
+.news-title { font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.news-list { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.news-list li { position: relative; padding-left: 16px; font-size: 12px; line-height: 1.5; color: var(--ink-2); }
+.news-list li::before { content: ""; position: absolute; left: 2px; top: .5em; width: 6px; height: 6px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 70%, transparent); }
+.update-footer { padding: 10px 22px 18px; flex: none; }
+.update-btn {
+  width: 100%; height: 48px; border-radius: 16px; font-size: 14px; font-weight: 700; color: #fff;
+  background: linear-gradient(118deg, var(--accent), color-mix(in srgb, var(--accent) 58%, var(--accent-2)));
+  box-shadow: 0 16px 30px -18px var(--accent), inset 0 1px 0 rgba(255, 255, 255, .5);
+  transition: transform .22s var(--spring), filter .2s;
+}
+.update-btn:active { transform: scale(.98); }
+#bottomNav {
+  position: fixed;
+  left: 50%;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 120;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 2px;
+  width: min(540px, calc(100vw - 18px));
+  padding: 7px;
+  border-radius: 30px;
+  background: color-mix(in srgb, var(--glass-strong, rgba(255, 255, 255, .78)) 86%, transparent);
+  -webkit-backdrop-filter: blur(26px) saturate(185%);
+  backdrop-filter: blur(26px) saturate(185%);
+  border: 1px solid color-mix(in srgb, var(--line, rgba(255, 255, 255, .42)) 78%, rgba(255, 255, 255, .7));
+  box-shadow: 0 18px 40px -24px rgba(0, 0, 0, .55), inset 0 1px 0 rgba(255, 255, 255, .55);
+  color: color-mix(in srgb, var(--ink) 40%, transparent);
+  font-family: var(--font, system-ui, sans-serif);
+}
+#bottomNav .item {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 4px 9px;
+  border: 1px solid transparent;
+  border-radius: 23px;
+  background: transparent;
+  color: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .2s ease, background .24s ease, box-shadow .24s ease, transform .24s var(--spring, cubic-bezier(.34, 1.56, .64, 1));
+}
+#bottomNav .item svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#bottomNav .item span { line-height: 1.1; white-space: nowrap; }
+#bottomNav .item.active {
+  color: var(--accent);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 22%, rgba(255, 255, 255, .86)), color-mix(in srgb, var(--accent-2) 15%, rgba(255, 255, 255, .66)));
+  border-color: color-mix(in srgb, var(--accent) 34%, rgba(255, 255, 255, .72));
+  box-shadow: 0 10px 22px -16px var(--accent), inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+#bottomNav .item.active svg { stroke-width: 2.1; }
+#bottomNav .item:not(.active):active { transform: scale(.96); }
+@media (max-width: 380px) {
+  #bottomNav .item { font-size: 10.5px; padding: 9px 2px 8px; gap: 4px; }
+  #bottomNav .item svg { width: 22px; height: 22px; }
+}
+/* iOS alt barı içeriği kapatmasın. */
+html.ios-glass body { padding-bottom: calc(102px + env(safe-area-inset-bottom)); }
+/* Tüm resimler yuvarlak. */
+img, picture img, video, .account-avatar, .about-cta-ico, .contact-cta-ico { border-radius: 50% !important; }
+/* Ayarlar başlığındaki sürüm + bugünkü odak etiketi. */
+.settings-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 8px; }
+.app-version { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line-2); background: color-mix(in srgb, var(--ink) 6%, transparent); color: var(--ink-3); font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.stat-chip { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 26%, transparent); background: var(--accent-soft); color: var(--accent); font-size: 10.5px; font-weight: 750; letter-spacing: .01em; }
+html.ios-glass button {
+  background-color: color-mix(in srgb, var(--glass-3, rgba(255, 255, 255, .2)) 62%, transparent);
+  border-color: color-mix(in srgb, var(--line, rgba(255, 255, 255, .18)) 52%, rgba(255, 255, 255, .68));
+  -webkit-backdrop-filter: blur(10px) saturate(148%);
+  backdrop-filter: blur(10px) saturate(148%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .34), inset 0 1px 0 rgba(255, 255, 255, .42), inset 0 -1px 0 rgba(255, 255, 255, .08), 0 8px 20px -16px var(--shadow, rgba(0, 0, 0, .35));
+  transition: transform .24s var(--spring, cubic-bezier(.34, 1.56, .64, 1)), background-color .24s ease, box-shadow .24s ease, border-color .24s ease, color .2s ease, filter .24s ease;
+}
+html.ios-glass button:active:not(:disabled) {
+  transform: scale(.97);
+  filter: brightness(1.04);
+}
+html.ios-glass .btn.primary,
+html.ios-glass .btn.primary.running {
+  background:
+    radial-gradient(120% 140% at 18% 0%, rgba(255, 255, 255, .48), transparent 40%),
+    linear-gradient(118deg, color-mix(in srgb, var(--accent) 84%, transparent), color-mix(in srgb, var(--accent-2) 78%, transparent));
+}
+html.ios-glass .contact-copy-btn.done {
+  background: color-mix(in srgb, var(--accent) 78%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 54%, rgba(255, 255, 255, .6));
+}
+html.ios-glass .link-danger.armed,
+html.ios-glass .mini-btn.armed {
+  background: color-mix(in srgb, var(--danger) 82%, transparent);
+  border-color: color-mix(in srgb, var(--danger) 62%, rgba(255, 255, 255, .5));
+}
+html.ios-glass .brand.glass-mini,
+html.ios-glass .icon-btn.glass-mini {
+  -webkit-backdrop-filter: blur(10px) saturate(148%) !important;
+  backdrop-filter: blur(10px) saturate(148%) !important;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  html.ios-glass button {
+    background-color: color-mix(in srgb, var(--glass-3, rgba(255, 255, 255, .2)) 82%, transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.ios-glass button { transition-duration: .01ms !important; }
+  html.ios-glass button:active:not(:disabled) { transform: none !important; filter: none; }
+}
+html.ios-glass[data-lowfx="1"] button {
+  -webkit-backdrop-filter: blur(4px) saturate(118%);
+  backdrop-filter: blur(4px) saturate(118%);
+}
+html.ios-glass[data-lowfx="1"] .brand.glass-mini,
+html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
+  -webkit-backdrop-filter: blur(4px) saturate(118%) !important;
+  backdrop-filter: blur(4px) saturate(118%) !important;
+}
+@keyframes counterSnowFall {
+  to { transform: translateY(100vh); }
+}</style>
 </head>
 <body>
+<!-- ============ GÜNCELLEME EKRANI (TAM EKRAN OVERLAY) ============ -->
+<div id="updateOverlay" class="update-overlay" hidden>
+  <div class="update-backdrop">      </div>
+  <div class="update-card">
+    <div class="update-header">
+      <div class="update-dot">      </div>
+      <strong class="update-title">Yeni sürüm hazır</strong>
+      <span class="update-ver" id="updateVer"></span>
+          </div>
+    <div class="update-body">
+      <p class="update-intro">Vespır için yeni bir güncelleme yayınlandı. Devam et diyerek güncellemeyi tamamlayabilir ve yeni sürüme geçebilirsin.</p>
+      <div class="update-news">
+        <div class="news-title">Yenilikler      </div>
+        <div class="news-list" id="newsList">      </div>
+            </div>
+          </div>
+    <div class="update-footer">
+      <button class="update-btn" id="updateContinueBtn" type="button">Devam et</button>
+          </div>
+        </div>
+      </div>
+<!-- ============ /GÜNCELLEME EKRANI ============ -->
 <div class="ambient" aria-hidden="true">
-  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
-</div>
-<div class="noise" aria-hidden="true"></div>
-<div class="grid-deco" aria-hidden="true"></div>
-<div class="particles" id="particles" aria-hidden="true"></div>
+  <div class="blob b1">      </div><div class="blob b2">      </div><div class="blob b3">      </div><div class="blob b4">      </div>
+      </div>
+<div class="noise" aria-hidden="true">      </div>
+<div class="grid-deco" aria-hidden="true">      </div>
+<div class="particles" id="particles" aria-hidden="true">      </div>
 <div class="halloween-scene" aria-hidden="true">
   <i class="hw-moon"></i>
   <i class="hw-pumpkin"><span class="hw-eye l"></span><span class="hw-eye r"></span><b class="hw-mouth"></b></i>
@@ -6166,51 +6492,58 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
         </g>
       </svg>
       <i class="hw-candle c1"></i><i class="hw-candle c2"></i>
-    </div>
+          </div>
     <i class="hw-eyes" aria-hidden="true"><i></i><i></i></i>
     <i class="hw-eyes hw-eyes-b" aria-hidden="true"><i></i><i></i></i>
-    <svg class="hw-skeleton" viewBox="0 0 136 172" aria-hidden="true">
+    <svg class="hw-skeleton" viewBox="0 0 136 176" aria-hidden="true">
       <defs>
-        <linearGradient id="hwBoneG" x1="40" y1="6" x2="96" y2="168" gradientUnits="userSpaceOnUse">
+        <linearGradient id="hwBoneG" x1="46" y1="4" x2="96" y2="170" gradientUnits="userSpaceOnUse">
           <stop stop-color="#f0ebdc"/><stop offset=".58" stop-color="#d3ccb8"/><stop offset="1" stop-color="#a29b87"/>
         </linearGradient>
       </defs>
-      <g stroke="#1d1a22" stroke-width="1.1" stroke-linejoin="round">
-        <path d="M88 128c6-4 10-2 12 3 2 6-2 11-8 12-6 1-10-3-10-8 0-3 2-5 6-7Z" fill="url(#hwBoneG)"/>
-        <path d="M74 128c-6-4-10-2-12 3-2 6 2 11 8 12 6 1 10-3 10-8 0-3-2-5-6-7Z" fill="url(#hwBoneG)"/>
-        <path d="M71 62v66" stroke="url(#hwBoneG)" stroke-width="6" stroke-linecap="round"/>
-        <g fill="none" stroke="url(#hwBoneG)" stroke-width="4" stroke-linecap="round">
-          <path d="M70 72c-12 2-17 8-17 16"/><path d="M71 72c12 2 17 8 17 16"/>
-          <path d="M70 84c-13 2-18 8-18 17"/><path d="M71 84c13 2 18 8 18 17"/>
-          <path d="M70 96c-12 2-17 8-17 16"/><path d="M71 96c12 2 17 8 17 16"/>
-          <path d="M70 108c-10 2-14 7-14 13"/><path d="M71 108c10 2 14 7 14 13"/>
+      <g stroke="#1d1a22" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round">
+        <path d="M68 54v52" fill="none" stroke="url(#hwBoneG)" stroke-width="6"/>
+        <path d="M68 104c-9-4-19-1-21 8-2 8 4 14 12 13l9-9Z" fill="url(#hwBoneG)"/>
+        <path d="M68 104c9-4 19-1 21 8 2 8-4 14-12 13l-9-9Z" fill="url(#hwBoneG)"/>
+        <g fill="none" stroke="url(#hwBoneG)" stroke-width="4">
+          <path d="M68 66c-11 1-18 6-18 12"/><path d="M68 66c11 1 18 6 18 12"/>
+          <path d="M68 75c-12 1-19 6-19 12"/><path d="M68 75c12 1 19 6 19 12"/>
+          <path d="M68 84c-11 1-17 6-17 11"/><path d="M68 84c11 1 17 6 17 11"/>
+          <path d="M68 93c-9 1-14 5-14 9"/><path d="M68 93c9 1 14 5 14 9"/>
         </g>
-        <path d="M71 78v38" stroke="url(#hwBoneG)" stroke-width="2.4" stroke-linecap="round"/>
-        <g fill="none" stroke="url(#hwBoneG)" stroke-width="5" stroke-linecap="round">
-          <path d="M54 94c-4 12-6 24-3 34"/><path d="M54 128v24"/><path d="M44 152h10"/>
-          <path d="M88 98c4 10 6 22 4 32"/><path d="M92 130v22"/><path d="M85 152h9"/>
+        <g fill="none" stroke="url(#hwBoneG)" stroke-width="5">
+          <path d="M52 64c-7 5-11 13-12 22"/><path d="M40 86c-1 9 0 17 3 24"/>
+          <path d="M84 64c7 5 11 13 12 22"/><path d="M96 86c1 9 0 17-3 24"/>
         </g>
-        <path d="M52 82c-7 1-11 6-10 13" fill="none" stroke="url(#hwBoneG)" stroke-width="3.4" stroke-linecap="round"/>
-        <path d="M90 82c7 1 11 6 10 13" fill="none" stroke="url(#hwBoneG)" stroke-width="3.4" stroke-linecap="round"/>
-        <g transform="translate(46 8)">
-          <path d="M12 14 4-2l14 8Z" fill="url(#hwBoneG)"/>
-          <path d="M32 14 40-2 26 6Z" fill="url(#hwBoneG)"/>
-          <path d="M22 2c-11 0-19 8-19 18 0 9 6 15 14 17v7c0 2 2 4 5 4s5-2 5-4v-7c8-2 14-8 14-17 0-10-8-18-19-18Z" fill="url(#hwBoneG)"/>
-          <ellipse cx="14.5" cy="19" rx="6.2" ry="7.2" fill="#0d0b11" stroke="none"/>
-          <ellipse cx="29.5" cy="19" rx="6.2" ry="7.2" fill="#0d0b11" stroke="none"/>
-          <path d="M22 28l-3.2 3.4c-1 1.1-.2 2.6 1.3 2.6h3.8c1.5 0 2.3-1.5 1.3-2.6Z" fill="#0d0b11" stroke="none"/>
-          <path d="M16 41v5M19 41v5M25 41v5M28 41v5" stroke="#0d0b11" stroke-width="1.6"/>
-          <path d="M13 40h18" stroke="#0d0b11" stroke-width="1.6"/>
+        <g fill="url(#hwBoneG)">
+          <path d="M43 108c4-2 8 0 8 4 0 3-1 6-4 8l-6-2c-2-2-2-5 0-7Z"/>
+          <path d="M93 108c-4-2-8 0-8 4 0 3 1 6 4 8l6-2c2-2 2-5 0-7Z"/>
         </g>
+        <g fill="none" stroke="url(#hwBoneG)" stroke-width="6">
+          <path d="M60 118c-3 9-4 18-4 27"/><path d="M56 145v18"/>
+          <path d="M76 118c3 9 4 18 4 27"/><path d="M80 145v18"/>
+        </g>
+        <g fill="none" stroke="url(#hwBoneG)" stroke-width="5">
+          <path d="M56 161H47"/><path d="M80 161h9"/>
+        </g>
+        <path d="M68 6c-13 0-22 9-22 21 0 8 4 15 10 19v6c0 4 3 7 7 7h10c4 0 7-3 7-7v-6c6-4 10-11 10-19 0-12-9-21-22-21Z" fill="url(#hwBoneG)"/>
+        <path d="M57 50h22v7c0 3-2 5-5 5H62c-3 0-5-2-5-5Z" fill="url(#hwBoneG)"/>
+        <g fill="#0d0b11" stroke="none">
+          <ellipse cx="59" cy="25" rx="6" ry="7.2"/>
+          <ellipse cx="77" cy="25" rx="6" ry="7.2"/>
+          <path d="M68 33l-3.4 4.2h6.8Z"/>
+        </g>
+        <path d="M58 50v7M62 50v7M66 50v7M70 50v7M74 50v7M78 50v7" stroke="#0d0b11" stroke-width="1.4"/>
+        <path d="M62 39h12" stroke="#0d0b11" stroke-width="1.6"/>
       </g>
       <g class="hw-skel-eyes" fill="#a6f2b4">
-        <ellipse cx="60.5" cy="27" rx="2.6" ry="3"/>
-        <ellipse cx="75.5" cy="27" rx="2.6" ry="3"/>
+        <ellipse cx="59" cy="25" rx="3" ry="3.4"/>
+        <ellipse cx="77" cy="25" rx="3" ry="3.4"/>
       </g>
     </svg>
-  </div>
-</div>
-<div class="focus-veil" aria-hidden="true"></div>
+        </div>
+      </div>
+<div class="focus-veil" aria-hidden="true">      </div>
 <header class="topbar">
   <button class="brand glass-mini" id="brandBtn" type="button" aria-label="Vespır ayarlarını aç">
     <span class="brand-mark" aria-hidden="true"><span class="brand-face" id="brandFace"></span></span>
@@ -6229,14 +6562,14 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
     <button class="icon-btn glass-mini" id="settingsBtn" type="button" aria-label="Ayarları aç" title="Ayarlar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h8M16 7h4M4 17h4M12 17h8"/><circle cx="14.5" cy="7" r="2.2"/><circle cx="9.5" cy="17" r="2.2"/></svg>
     </button>
-  </div>
+        </div>
 </header>
 <main class="app">
   <div class="stage-col">
     <section class="timer-card glass" id="timerCard" aria-label="Vespır odak zamanlayıcısı">
-      <div class="card-aurora" aria-hidden="true"></div>
-      <div class="card-sheen" aria-hidden="true"></div>
-      <div class="noel-lights" aria-hidden="true"></div>
+      <div class="card-aurora" aria-hidden="true">      </div>
+      <div class="card-sheen" aria-hidden="true">      </div>
+      <div class="noel-lights" aria-hidden="true">      </div>
       <div class="halloween-deco" aria-hidden="true">
         <i class="hw-silk"></i>
         <svg class="hw-spider" viewBox="0 0 40 40" fill="none" aria-hidden="true">
@@ -6255,31 +6588,31 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
           <circle cx="18.9" cy="17.4" r=".72" fill="#ffd27a"/>
           <circle cx="21.1" cy="17.4" r=".72" fill="#ffd27a"/>
         </svg>
-      </div>
-      <div class="hw-blood" aria-hidden="true"></div>
+            </div>
+      <div class="hw-blood" aria-hidden="true">      </div>
       <div class="timer-head">
-        <div class="phase-pill" id="phasePill"><i aria-hidden="true"></i><span id="phaseText">Odak</span></div>
-        <div class="cycle-dots" id="cycleDots" aria-label="Seans ritmi"></div>
-      </div>
+        <div class="phase-pill" id="phasePill"><i aria-hidden="true"></i><span id="phaseText">Odak</span>      </div>
+        <div class="cycle-dots" id="cycleDots" aria-label="Seans ritmi">      </div>
+            </div>
       <div class="session-edit">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17Z"/><path d="m14 8 2 2"/></svg>
         <input class="session-name-input" id="sessionNameInput" maxlength="28" autocomplete="off" spellcheck="false" placeholder="Derin Odak" aria-label="Seans adı">
-      </div>
+            </div>
       <div class="quick-tune" aria-label="Odak ve mola süreleri">
         <div class="quick-group">
           <span>Odak</span>
           <button class="quick-step" id="focusMinus" type="button" aria-label="Odak süresini azalt">−</button>
           <b id="quickFocus">25</b><small>dk</small>
           <button class="quick-step" id="focusPlus" type="button" aria-label="Odak süresini artır">+</button>
-        </div>
-        <div class="quick-div" aria-hidden="true"></div>
+              </div>
+        <div class="quick-div" aria-hidden="true">      </div>
         <div class="quick-group">
           <span>Mola</span>
           <button class="quick-step" id="breakMinus" type="button" aria-label="Mola süresini azalt">−</button>
           <b id="quickBreak">5</b><small>dk</small>
           <button class="quick-step" id="breakPlus" type="button" aria-label="Mola süresini artır">+</button>
-        </div>
-      </div>
+              </div>
+            </div>
       <div class="ring-wrap" id="ringWrap">
         <svg class="ring" viewBox="0 0 320 320" aria-hidden="true">
           <defs>
@@ -6294,14 +6627,16 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
           <circle class="ring-track" cx="160" cy="160" r="132"/>
           <circle class="ring-progress" id="ringProgress" cx="160" cy="160" r="132" transform="rotate(0 160 160)"/>
         </svg>
-        <div class="ring-orb-wrap" id="ringOrbWrap" aria-hidden="true"><span class="ring-orb"></span></div>
+        <div class="ring-orb-wrap" id="ringOrbWrap" aria-hidden="true"><span class="ring-orb"></span>      </div>
         <div class="ring-center">
-          <div class="phase-word" id="phaseWord">odak zamanı</div>
-          <div class="time" id="timeDisplay" role="timer" aria-live="off"><span class="digit" id="timeMin">25</span><span class="colon">:</span><span class="digit" id="timeSec">00</span></div>
-          <div class="ring-sub" id="ringSub">25 dakika odak</div>
-          <div class="cat-note" id="catNote"><i aria-hidden="true"></i><span id="catNoteText">Vespır başlamaya hazır</span></div>
-        </div>
-      </div>
+          <div class="phase-word" id="phaseWord">odak zamanı      </div>
+          <div class="time" id="timeDisplay" role="timer" aria-live="off"><span class="digit" id="timeMin">25</span><span class="colon">:</span><span class="digit" id="timeSec">00</span>      </div>
+          <div class="ring-foot">
+          <div class="ring-sub" id="ringSub">25 dakika odak      </div>
+          </div>
+              </div>
+            </div>
+      <div class="ring-today cat-note" id="catNote"><span class="today-min" id="todayFocusChip">Bugün 0 dk odak</span></div>
       <div class="controls">
         <button class="btn ghost" id="resetBtn" type="button" aria-label="Zamanlayıcıyı sıfırla" title="Sıfırla">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 11a7.7 7.7 0 1 1 2.2 6.1"/><path d="M4 5v6h6"/></svg>
@@ -6313,47 +6648,40 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
         <button class="btn ghost" id="skipBtn" type="button" aria-label="Molayı atla" title="Molayı atla" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 5.5 14.5 12 5 18.5Z"/><path d="M19 5v14"/></svg>
         </button>
-      </div>
-      <div class="stats-strip" aria-label="Bugünün özeti">
-        <div class="stat"><b id="statMin">0</b><small>dk odak</small></div>
-        <div class="stat-div"></div>
-        <div class="stat"><b id="statSessions">0</b><small>seans</small></div>
-        <div class="stat-div"></div>
-        <div class="stat"><b id="statCycles">0</b><small>tur</small></div>
-      </div>
+            </div>
     </section>
-    <div class="card-glow" aria-hidden="true"></div>
-    <div class="under-hint"><span><kbd>Boşluk</kbd> başlat / duraklat</span><i></i><span>Kısa bir mola, sonra yeni odak.</span></div>
-  </div>
+    <div class="card-glow" aria-hidden="true">      </div>
+    <div class="under-hint"><span><kbd>Boşluk</kbd> başlat / duraklat</span><i></i><span>Kısa bir mola, sonra yeni odak.</span>      </div>
+        </div>
 </main>
 <div class="cat-stage" id="catStage" aria-label="Vespır, senin odak arkadaşın">
   <div class="cat-flip" id="catFlip">
     <div class="cat-perch" id="catPerch" aria-hidden="true">
-      <div class="perch-top"><span class="perch-name"><i></i><span id="perchName">Vespır</span></span><span class="perch-time" id="perchTime">25:00</span></div>
-      <div class="perch-status"><span id="perchStatus">uyuyor · odakta</span></div>
-    </div>
-    <div class="cat-mount" id="catMount"></div>
+      <div class="perch-top"><span class="perch-name"><i></i><span id="perchName">Vespır</span></span><span class="perch-time" id="perchTime">25:00</span>      </div>
+      <div class="perch-status"><span id="perchStatus">uyuyor · odakta</span>      </div>
+          </div>
+    <div class="cat-mount" id="catMount">      </div>
     <div class="cat-bubble" id="catBubble" data-mode="text" aria-live="polite">
-      <div class="bubble-head"><span id="bubbleTitle">Vespır</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
-      <div class="bubble-text" id="bubbleText"></div>
-      <div class="bubble-words" id="bubbleWords"><span>miyav</span><span>mırnav</span><span>prr</span><span>miyav?</span></div>
-    </div>
-    <div class="cat-name-pill" id="catNamePill"><i aria-hidden="true"></i><b id="stageName">Vespır</b><small id="stageMeta">Tekir · meraklı</small></div>
-  </div>
-</div>
-<div class="theme-ripple" id="themeRipple" aria-hidden="true"></div>
-<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+      <div class="bubble-head"><span id="bubbleTitle">Vespır</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>      </div>
+      <div class="bubble-text" id="bubbleText">      </div>
+      <div class="bubble-words" id="bubbleWords"><span>miyav</span><span>mırnav</span><span>prr</span><span>miyav?</span>      </div>
+          </div>
+    <div class="cat-name-pill" id="catNamePill"><i aria-hidden="true"></i><b id="stageName">Vespır</b><small id="stageMeta">Tekir · meraklı</small>      </div>
+        </div>
+      </div>
+<div class="theme-ripple" id="themeRipple" aria-hidden="true">      </div>
+<div class="toast-stack" id="toastStack" aria-live="polite">      </div>
 <canvas id="fxCanvas" aria-hidden="true"></canvas>
 <canvas id="snowCanvas" aria-hidden="true"></canvas>
 <div class="celebrate glass-strong" id="celebrate" aria-live="polite">
   <span class="celebrate-ico" aria-hidden="true">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>
   </span>
-  <div class="celebrate-copy"><small id="celebrateEyebrow">odak tamam</small><b id="celebrateTitle">Harikasın!</b><span id="celebrateSub">Vespır seninle gurur duyuyor.</span></div>
-</div>
+  <div class="celebrate-copy"><small id="celebrateEyebrow">odak tamam</small><b id="celebrateTitle">Harikasın!</b><span id="celebrateSub">Vespır seninle gurur duyuyor.</span>      </div>
+      </div>
 <div class="focus-invite" id="focusInvite" aria-hidden="true" inert>
   <section class="focus-invite-panel" role="dialog" aria-modal="true" aria-labelledby="focusInviteTitle" aria-describedby="focusInviteDescription">
-    <div class="focus-invite-cat" aria-hidden="true"><div class="focus-invite-cat-scale" id="focusInviteCat"></div></div>
+    <div class="focus-invite-cat" aria-hidden="true"><div class="focus-invite-cat-scale" id="focusInviteCat">      </div>      </div>
     <div class="focus-invite-copy">
       <div class="focus-step" data-step="app" id="focusStepApp">
         <span class="eyebrow"><span id="focusInviteName">Vespır</span> · <span id="focusInviteKind">odak arkadaşın</span></span>
@@ -6367,20 +6695,20 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
         <div class="focus-invite-actions">
           <button class="btn primary" id="focusInstallBtn" type="button">Tamam, yapalım</button>
           <button class="btn text" id="focusSkipInstallBtn" type="button">Hayır, şimdi değil</button>
-        </div>
+              </div>
         <p class="focus-invite-status" id="focusInstallStatus" role="status">“Tamam, yapalım” ile kurulum seçeneklerini gör. “Hayır, şimdi değil” ile kurmadan odaklan.</p>
-      </div>
-    </div>
+            </div>
+          </div>
   </section>
-</div>
+      </div>
 <div class="intro" id="intro" aria-hidden="true" inert>
   <div class="intro-card glass-strong" role="dialog" aria-modal="true" aria-labelledby="introTitle">
     <button class="intro-close" id="introClose" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     <div class="intro-cat-holder" aria-hidden="true">
-      <div class="intro-pedestal"></div>
-      <div id="introCat"></div>
+      <div class="intro-pedestal">      </div>
+      <div id="introCat">      </div>
       <span class="intro-spark s1"></span><span class="intro-spark s2"></span><span class="intro-spark s3"></span>
-    </div>
+          </div>
     <div class="intro-copy">
       <span class="eyebrow">miyav · hoş geldin</span>
       <h1 id="introTitle">Ben <span class="grad-text" id="introName">Vespır</span>.</h1>
@@ -6388,16 +6716,16 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
       <div class="intro-actions">
         <button class="btn primary" id="introStart" type="button">Birlikte başlayalım</button>
         <button class="btn text" id="introCustomize" type="button">Önce beni tasarla</button>
-      </div>
+            </div>
       <span class="intro-note">Adımı, tüyümü, tasmamı ve cinsimi birlikte seçebiliriz. İlk selam, bir daha göstermem.</span>
-    </div>
-  </div>
-</div>
+          </div>
+        </div>
+      </div>
 <aside class="settings" id="settings" aria-hidden="true" inert>
-  <div class="settings-backdrop" id="settingsBackdrop" data-close-settings></div>
+  <div class="settings-backdrop" id="settingsBackdrop" data-close-settings>      </div>
   <div class="settings-panel glass-strong" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <header class="settings-head">
-      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p></div>
+      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p><div class="settings-meta"><span class="app-version" id="appVersion">v22</span></div>      </div>
       <button class="settings-close" id="settingsClose" type="button" aria-label="Ayarları kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <button class="about-cta contact-cta" id="accountBtn" type="button" data-account>
@@ -6415,104 +6743,111 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
     <div class="settings-scroll" id="settingsScroll">
       <section class="pane active" data-pane="cat">
         <div class="preview-panel">
-          <div class="preview-shine" aria-hidden="true"></div>
-          <div class="preview-stage" id="previewCat"></div>
-          <div class="preview-caption"><b id="previewName">Vespır</b><span id="previewMeta">Tekir · Dişi · Zil</span></div>
-          <div class="preview-actions"><button class="btn ghost surprise" id="randomCatBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Sürpriz görünüm</button></div>
-        </div>
+          <div class="preview-shine" aria-hidden="true">      </div>
+          <div class="preview-stage" id="previewCat">      </div>
+          <div class="preview-caption"><b id="previewName">Vespır</b><span id="previewMeta">Tekir · Dişi · Zil</span>      </div>
+          <div class="preview-actions"><button class="btn ghost surprise" id="randomCatBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg>Sürpriz görünüm</button>      </div>
+              </div>
         <label class="field-label" for="catNameInput">Adı <small>tasmada da görünür</small></label>
         <input class="input" id="catNameInput" maxlength="16" autocomplete="off" spellcheck="false" placeholder="Vespır">
-        <div class="field-label">Cinsiyet</div>
-        <div class="seg" id="genderGroup"></div>
-        <div class="field-label">Boyut <small>sahnede kapladığı alan</small></div>
+        <div class="field-label">Cinsiyet      </div>
+        <div class="seg" id="genderGroup">      </div>
+        <div class="field-label">Boyut <small>sahnede kapladığı alan</small>      </div>
         <div class="range-row cat-size-row">
           <label for="catScaleRange">Kedi boyu</label>
           <input id="catScaleRange" type="range" min="80" max="120" step="5" value="100" aria-label="Kedi boyu yüzdesi">
           <output id="catScaleVal" for="catScaleRange">100%</output>
-        </div>
-        <div class="field-label">Cinsi</div>
-        <div class="breed-grid" id="breedGroup"></div>
+              </div>
+        <div class="field-label">Cinsi      </div>
+        <div class="breed-grid" id="breedGroup">      </div>
         <p class="note">Tekir, Sarman, Üç Renkli ve Smokin birer tüy desenidir; diğerleri kedi ırkıdır. Her görünüm, ırkın gerçek tüy ve göz rengine göre hazırlandı.</p>
-        <div class="field-label">Tüy rengi</div>
-        <div class="swatches" id="furSwatches"></div>
-        <div class="field-label">Göbek ve patiler</div>
-        <div class="swatches" id="bellySwatches"></div>
-        <div class="field-label">Göz rengi</div>
-        <div class="swatches" id="eyeSwatches"></div>
-        <div class="field-label">Tasma</div>
+        <div class="field-label">Tüy rengi      </div>
+        <div class="swatches" id="furSwatches">      </div>
+        <div class="field-label">Göbek ve patiler      </div>
+        <div class="swatches" id="bellySwatches">      </div>
+        <div class="field-label">Göz rengi      </div>
+        <div class="swatches" id="eyeSwatches">      </div>
+        <div class="field-label">Tasma      </div>
         <label class="toggle-row" style="padding-top:0">
           <span><b>Tasma takılı</b><small>İsmini ve zilini taşısın.</small></span>
           <span class="switch"><input type="checkbox" id="collarToggle"><i></i></span>
         </label>
-        <div class="swatches" id="collarSwatches"></div>
-        <div class="field-label">Kıyafet <small>dolabından bir parça</small></div>
-        <div class="outfit-grid" id="outfitGroup"></div>
+        <div class="swatches" id="collarSwatches">      </div>
+        <div class="field-label">Kıyafet <small>dolabından bir parça</small>      </div>
+        <div class="outfit-grid" id="outfitGroup">      </div>
         <p class="note">Tek seferde bir kıyafet giyer; aksesuarlarla birlikte takılabilir. Kıyafet seçimi de bu tarayıcıda saklanır.</p>
-        <div class="field-label">Aksesuarlar <small>birden fazla seçebilirsin</small></div>
-        <div class="chips" id="accessoryGroup"></div>
+        <div class="field-label">Aksesuarlar <small>birden fazla seçebilirsin</small>      </div>
+        <div class="chips" id="accessoryGroup">      </div>
         <p class="note">Noel şapkası, geyik boynuzu, cadı şapkası ve balkabağı burada her zaman seçilebilir. Tema değişse de kıyafet ve aksesuarların korunur.</p>
-        <div class="field-label">Uygulama <small>Vespır'ı cebine al</small></div>
+        <div class="field-label">Uygulama <small>Vespır'ı cebine al</small>      </div>
         <div class="pwa-card">
           <div class="pwa-copy">
             <b>Vespır'ı cebine koy</b>
             <small id="pwaDetail">Tek dokunuşla açılan minik bir pati kulübü. Sekme yok, dırdır yok; sadece Vespır ve sıcak bir köşe.</small>
-          </div>
+                </div>
           <button class="mini-btn accent" id="installBtn2" type="button">Ana ekrana ekle</button>
-        </div>
+              </div>
       </section>
       <section class="pane" data-pane="look">
-        <div class="field-label">Dil <small>language</small></div>
+        <div class="field-label">Dil <small>language</small>      </div>
         <div class="seg lang-seg" id="langGroup" aria-label="Uygulama dili">
-          <button type="button" data-lang="tr"><span>Türkçe</span><small>TR</small></button>
+          <button type="button" data-lang="tr" class="active" aria-pressed="true"><span>Türkçe</span><small>TR</small></button>
           <button type="button" data-lang="en"><span>English</span><small>EN</small></button>
-        </div>
+              </div>
         <p class="note">Dil değişince arayüz ve bildirimler aynı dili konuşur.</p>
-        <div class="field-label">Görünüm <small>veya üstteki güneşe dokun</small></div>
-        <div class="seg" id="modeGroup"></div>
-        <div class="field-label">Temalar <small>her biri ayrı bir dünya</small></div>
-        <div class="theme-grid" id="themeGrid"></div>
+        <div class="field-label">Görünüm <small>veya üstteki güneşe dokun</small>      </div>
+        <div class="seg" id="modeGroup">      </div>
+        <div class="field-label">Temalar <small>her biri ayrı bir dünya</small>      </div>
+        <div class="theme-grid" id="themeGrid">      </div>
         <p class="note">Tema değişince Vespır'ın dünyası yumuşak bir ışık dalgasıyla yenilenir. Kedi renkleri ayrı kalır.</p>
-        <div class="field-label">Kısayollar <small>hızlı kontrol</small></div>
+        <div class="field-label">Kısayollar <small>hızlı kontrol</small>      </div>
         <div class="set-card shortcut-card">
-          <div class="shortcut-row"><span>Başlat / duraklat</span><kbd>Boşluk</kbd></div>
-          <div class="shortcut-row"><span>Sıfırla</span><kbd>R</kbd></div>
-          <div class="shortcut-row"><span>Paneli kapat</span><kbd>Esc</kbd></div>
+          <div class="shortcut-row"><span>Başlat / duraklat</span><kbd>Boşluk</kbd>      </div>
+          <div class="shortcut-row"><span>Sıfırla</span><kbd>R</kbd>      </div>
+          <div class="shortcut-row"><span>Paneli kapat</span><kbd>Esc</kbd>      </div>
           <label class="toggle-row" style="margin-top:8px">
             <span><b>Bittiğinde titret</b><small>Telefon sessizdeyken patiyle haber versin.</small></span>
             <span class="switch"><input type="checkbox" id="hapticToggle"><i></i></span>
           </label>
-        </div>
+              </div>
+        <div class="field-label">Performans <small>tüm efektleri kapat</small>      </div>
+        <div class="set-card shortcut-card">
+          <label class="toggle-row" style="margin-top:8px">
+<span><b>Performans Modu</b><small>Tüm efektleri kapatır: animasyon, geçiş, cam bulanıklığı, kar/parçacık ve parıltılar durur. Sayaç, kedi ve ödül akışı aynen çalışır.</small></span>
+            <span class="switch"><input type="checkbox" id="perfModeToggle"><i></i></span>
+          </label>
+              </div>
       </section>
       <section class="pane" data-pane="time">
-        <div class="field-label">Günlük hedef <small>kendine nazik bir hedef</small></div>
+        <div class="field-label">Günlük hedef <small>kendine nazik bir hedef</small>      </div>
         <div class="goal-card">
-          <div class="goal-top"><b id="goalNow">0<small>/120 dk</small></b><span id="goalPct">%0<br>tamamlandı</span></div>
-          <div class="goal-bar"><i id="goalFill"></i></div>
-          <div class="goal-note"><span><b id="goalLeft">120 dk kaldı</b></span><span id="goalSessions">0 seans</span></div>
+          <div class="goal-top"><b id="goalNow">0<small>/120 dk</small></b><span id="goalPct">%0<br>tamamlandı</span>      </div>
+          <div class="goal-bar"><i id="goalFill"></i>      </div>
+          <div class="goal-note"><span><b id="goalLeft">120 dk kaldı</b></span><span id="goalSessions">0 seans</span>      </div>
           <div class="goal-actions">
                           <button class="mini-btn accent goal-edit-btn" id="goalEditBtn" type="button" aria-expanded="false" aria-controls="goalPicker">Düzenle</button>
             <span class="goal-target" id="goalTarget">Hedef: 2 sa</span>
-          </div>
+                </div>
           <div class="goal-picker" id="goalPicker" hidden>
             <div class="goal-picker-row">
               <span class="goal-picker-label">Saat</span>
               <button class="goal-step" type="button" data-goal-step="hour" data-dir="-1" aria-label="Saati azalt">−</button>
               <output class="goal-picker-value" id="goalHourOut">2</output>
               <button class="goal-step" type="button" data-goal-step="hour" data-dir="1" aria-label="Saati artır">+</button>
-            </div>
+                  </div>
             <div class="goal-picker-row">
               <span class="goal-picker-label">Dakika</span>
               <button class="goal-step" type="button" data-goal-step="minute" data-dir="-5" aria-label="Dakikayı azalt">−</button>
               <output class="goal-picker-value" id="goalMinOut">00</output>
               <button class="goal-step" type="button" data-goal-step="minute" data-dir="5" aria-label="Dakikayı artır">+</button>
-            </div>
+                  </div>
             <div class="goal-picker-actions">
               <button class="mini-btn" id="goalCancelBtn" type="button">Vazgeç</button>
               <button class="mini-btn accent" id="goalSaveBtn" type="button">Kaydet</button>
-            </div>
-          </div>
-        </div>
-        <div class="field-label">Akış <small>kendi ritmini kur</small></div>
+                  </div>
+                </div>
+              </div>
+        <div class="field-label">Akış <small>kendi ritmini kur</small>      </div>
         <div class="set-card">
           <label class="toggle-row">
             <span><b>Molayı otomatik başlat</b><small>Odak bitince mola kendi kendine başlar.</small></span>
@@ -6526,71 +6861,71 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
             <span><b>Saatlik kısa zil</b><small>Odak sürerken her 60 dakikada minik bir çan.</small></span>
             <span class="switch"><input type="checkbox" id="hourlyToggle"><i></i></span>
           </label>
-        </div>
-        <div class="field-label">Bildirimler <small>başka sekmedeyken de haber ver</small></div>
+              </div>
+        <div class="field-label">Bildirimler <small>başka sekmedeyken de haber ver</small>      </div>
         <div class="set-card">
           <label class="toggle-row">
             <span><b>Bildirim gönder</b><small>Odak veya mola bitince cihazına haber gelsin.</small></span>
             <span class="switch"><input type="checkbox" id="notifyToggle"><i></i></span>
           </label>
-          <div class="notify-status" id="notifyStatus">Durum kontrol ediliyor…</div>
+          <div class="notify-status" id="notifyStatus">Durum kontrol ediliyor…      </div>
           <button class="mini-btn" id="notifyTestBtn" type="button" style="margin-top:9px">Test bildirimi gönder</button>
-        </div>
-        <div class="field-label">Vespır'dan mesajlar <small>ara sıra tatlı bir not</small></div>
+              </div>
+        <div class="field-label">Vespır'dan mesajlar <small>ara sıra tatlı bir not</small>      </div>
         <div class="set-card">
           <label class="toggle-row">
             <span><b>Vespır mesaj göndersin</b><small>“Bugün ne yapıyorsun, çalışalım mı?” gibi notlar yazar. Sen uzaktayken seni özlediğini bildirimle söyler.</small></span>
             <span class="switch"><input type="checkbox" id="catMsgToggle"><i></i></span>
           </label>
-          <div class="notify-status" id="msgStatus"></div>
-        </div>
+          <div class="notify-status" id="msgStatus">      </div>
+              </div>
       </section>
       <section class="pane" data-pane="sound">
-        <div class="field-label">Genel ses <small>cihaz sesinin üzerine eklenir</small></div>
-        <div class="range-row"><label for="volRange">Ses düzeyi</label><input id="volRange" type="range" min="0" max="100" step="1" value="70"><output id="volVal">70%</output></div>
-        <div class="field-label">Başlangıç sesi</div>
+        <div class="field-label">Genel ses <small>cihaz sesinin üzerine eklenir</small>      </div>
+        <div class="range-row"><label for="volRange">Ses düzeyi</label><input id="volRange" type="range" min="0" max="100" step="1" value="70"><output id="volVal">70%</output>      </div>
+        <div class="field-label">Başlangıç sesi      </div>
         <div class="sound-slot">
           <div class="sound-slot-head">
             <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7Z"/></svg>Odak başlarken</b>
             <button class="mini-btn" id="startTestBtn" type="button">Dinle</button>
-          </div>
-          <div class="sound-options" id="startSoundOptions"></div>
-          <div class="wave" id="startWave" aria-hidden="true"></div>
+                </div>
+          <div class="sound-options" id="startSoundOptions">      </div>
+          <div class="wave" id="startWave" aria-hidden="true">      </div>
           <div class="sound-custom">
             <span class="sound-custom-file" id="startFileName">Kendi sesin · seçilmedi</span>
             <button class="mini-btn" id="startFileBtn" type="button">Dosya</button>
             <button class="mini-btn clear-x" id="startClearBtn" type="button" aria-label="Özel başlangıç sesini kaldır" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
-          </div>
+                </div>
           <input type="file" id="startFileInput" accept="audio/*" hidden>
-        </div>
+              </div>
         <div class="sound-slot">
           <div class="sound-slot-head">
             <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14l11-7Z"/></svg>Seans biterken</b>
             <button class="mini-btn" id="endTestBtn" type="button">Dinle</button>
-          </div>
-          <div class="sound-options" id="endSoundOptions"></div>
-          <div class="wave" id="endWave" aria-hidden="true"></div>
+                </div>
+          <div class="sound-options" id="endSoundOptions">      </div>
+          <div class="wave" id="endWave" aria-hidden="true">      </div>
           <div class="sound-custom">
             <span class="sound-custom-file" id="endFileName">Kendi sesin · seçilmedi</span>
             <button class="mini-btn" id="endFileBtn" type="button">Dosya</button>
             <button class="mini-btn clear-x" id="endClearBtn" type="button" aria-label="Özel bitiş sesini kaldır" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
-          </div>
+                </div>
           <input type="file" id="endFileInput" accept="audio/*" hidden>
-        </div>
+              </div>
         <label class="hourly-row">
           <span><b>Saatlik zil sesi</b><small>Odak sürdükçe her saatte bir çalar.</small></span>
           <span class="switch"><input type="checkbox" id="hourlyToggleSound"><i></i></span>
         </label>
-        <div class="range-row"><label for="chimeVolRange">Zil sesi</label><input id="chimeVolRange" type="range" min="0" max="100" step="1" value="35"><output id="chimeVolVal">35%</output></div>
+        <div class="range-row"><label for="chimeVolRange">Zil sesi</label><input id="chimeVolRange" type="range" min="0" max="100" step="1" value="35"><output id="chimeVolVal">35%</output>      </div>
         <div class="chips" style="margin-top:4px">
           <button class="chip" id="meowBtn" type="button">Vespır'ı miyavlat</button>
           <button class="chip" id="chimeBtn" type="button">Saatlik zili dinle</button>
-        </div>
+              </div>
         <p class="note" style="margin-top:12px">Özel sesler cihazda sıkıştırılarak saklanır: en fazla 30 saniye, birkaç yüz kilobayt. Cihazından ayrılmaz.</p>
         <p class="note">Sesler tarayıcında üretilir; hiçbir müzik indirilmez. Kendi ses dosyanı seçebilirsin.</p>
       </section>
       <section class="pane about-pane" data-pane="about">
-        <div class="field-label">Hakkımızda <small>Vespır'ın hikâyesi ve sözleşmeler</small></div>
+        <div class="field-label">Hakkımızda <small>Vespır'ın hikâyesi ve sözleşmeler</small>      </div>
         <div class="about-stack">
           <button class="about-cta" id="aboutBtn" type="button">
             <span class="about-cta-ico" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#fdf3f7"/><path d="M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z" fill="#c96a8c"/><circle cx="25" cy="36" r="2.6" fill="#2b2230"/><circle cx="39" cy="36" r="2.6" fill="#2b2230"/><path d="M30 42h4l-2 3z" fill="#2b2230"/></svg></span>
@@ -6607,41 +6942,42 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
             <span class="about-cta-copy"><b>Gizlilik ve Güvenlik</b><small>Yerel veriler, hesaplar ve izinler</small></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
           </button>
-        </div>
+              </div>
         <p class="note">Odak ayarların ve istatistiklerin bu tarayıcıda saklanır. İsteğe bağlı hesap girişi Google/Firebase tarafından sağlanır; veri kullanımı ve izinler gizlilik metninde açıklanır.</p>
       </section>
-    </div>
+          </div>
     <footer class="settings-foot">
       <button class="link-danger" id="resetAllBtn" type="button">Her şeyi sıfırla</button>
       <span>Vespır · yerel · minik</span>
     </footer>
-  </div>
+        </div>
 </aside>
 <div class="about" id="about" aria-hidden="true" inert>
-  <div class="about-backdrop" id="aboutBackdrop" data-close-about></div>
+  <div class="about-backdrop" id="aboutBackdrop" data-close-about>      </div>
   <article class="about-card" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
     <header class="about-head">
       <div>
         <span class="eyebrow">Vespır'ın hikâyesi</span>
         <h2 id="aboutTitle">Vespır Nedir?</h2>
-      </div>
+            </div>
       <button class="about-close" id="aboutClose" type="button" aria-label="Vespır Nedir sayfasını kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="about-scroll" id="aboutScroll">
+      <figure class="about-hero"><img class="about-hero-img" src="assets/noel-vespir.jpg" alt="Vespır çam ağacının altında, kış temalı illüstrasyon" width="1392" height="752" decoding="async"></figure>
       <p class="about-copy">Vespır, pomodoro tekniğiyle çalışan bir odak uygulaması ve tepede yaşayan sevimli bir kedi arkadaşıdır. 😺 Sen çalışırken o da boş durmaz: kitap okur, not alır, rengârenk yumağıyla oynar; molada gerinir, iyi iş çıkardığında ödül mamasını hak eder. Arada sana yazar: "Bugün ne yapıyorsun, çalışalım mı?" Saate, hafta sonuna ve istersen bulunduğun yerin havasına göre değişen bu mesajlarla seni yalnız bırakmaz; uzaktayken özlediğini bildirir. Kediyi, temaları ve sesleri kendine göre süsleyebilir; günlük hedefini ve istatistiklerini takip edebilirsin. Uygulamayı cihazına kurabilir, dilersen Google hesabınla giriş yapabilirsin; verilerin cihazında kalır. 🤩 Hadi, oyalanmayı bırak; Vespır ile odaklan!</p>
       <h3 class="about-sub">VESPIR'IN ARKASINDA KİM VAR?</h3>
       <p class="about-copy">Vespır kolay bir yoldan gelmedi. Arkasında ne kalabalık bir ekip vardı ne de büyük bir bütçe; onu tek bir bağımsız geliştirici hayata geçirdi. Evet, sadece bir kişi. İlk kod hatalıydı; ikincisi de, üçüncüsü de... Ama pes edilmedi. Denemeler, düzeltmeler ve uykusuz geceler sonunda Vespır doğdu. Mükemmel değildi ama gerçekti. Belki de önemli olan budur: mükemmellik soğuktur, gerçeklik sıcak. Değil mi?</p>
-    </div>
+          </div>
   </article>
-</div>
+      </div>
 <div class="about contact" id="contact" aria-hidden="true" inert>
-  <div class="about-backdrop" id="contactBackdrop" data-close-contact></div>
+  <div class="about-backdrop" id="contactBackdrop" data-close-contact>      </div>
   <article class="about-card contact-card" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
     <header class="about-head">
       <div>
         <span class="eyebrow">Patileri birleştirelim</span>
         <h2 id="contactTitle">İletişim</h2>
-      </div>
+            </div>
       <button class="about-close" id="contactClose" type="button" aria-label="İletişim sayfasını kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="about-scroll" id="contactScroll">
@@ -6658,37 +6994,37 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
           <svg class="ic-done" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg>
           <span id="copyMailText">Kopyala</span>
         </button>
-      </div>
+            </div>
       <div class="contact-list">
         <div class="contact-item">
           <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4.5 13.4 9l4.6 1.4-4.6 1.4L12 16.4l-1.4-4.6L6 10.4 10.6 9Z"/><path d="M18.5 4v3M20 5.5h-3"/></svg>Dilek ve öneriler</b>
           <p>Vespır'da görmek istediğin özellikleri, temaları ve kedi fikirlerini yaz. Her mesajı tek tek okuyoruz; en çok istenenleri sıraya alıyoruz.</p>
-        </div>
+              </div>
         <div class="contact-item">
           <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v5"/><circle cx="12" cy="16.4" r=".9" fill="currentColor" stroke="none"/></svg>Hata bildirimi</b>
           <p>Bir şey ters gittiyse cihazını, tarayıcını ve hatanın ne zaman olduğunu ekle. Kısa bir ekran görüntüsü işi çok hızlandırır.</p>
-        </div>
+              </div>
         <div class="contact-item">
           <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M4.8 19.5a7.2 7.2 0 0 1 14.4 0"/></svg>Partnerlik</b>
           <p>Marka iş birlikleri, topluluk projeleri ve ortak içerikler için yazabilirsin. Küçük bir fikirle başlamak yeterli.</p>
-        </div>
+              </div>
         <div class="contact-item">
           <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0"/><path d="M12 17.5V21"/></svg>Basın ve medya</b>
           <p>Vespır'ı yazmak, tanıtmak veya röportaj yapmak istersen basın kiti ve görseller için aynı adrese ulaş.</p>
-        </div>
-      </div>
+              </div>
+            </div>
       <p class="contact-sign">Tek kişilik bir ekip, her mesajı okuyor.</p>
-    </div>
+          </div>
   </article>
-</div>
+      </div>
 <div class="about account" id="account" aria-hidden="true" inert>
-  <div class="about-backdrop" id="accountBackdrop" data-close-account></div>
+  <div class="about-backdrop" id="accountBackdrop" data-close-account>      </div>
   <article class="about-card account-card" role="dialog" aria-modal="true" aria-labelledby="accountTitle">
     <header class="about-head">
       <div>
         <span class="eyebrow">Vespır hesabı</span>
         <h2 id="accountTitle">Giriş</h2>
-      </div>
+            </div>
       <button class="about-close" id="accountClose" type="button" aria-label="Hesap sayfasını kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="account-body" id="accountBody">
@@ -6700,25 +7036,25 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
         </button>
         <p class="account-status" id="accountStatus" role="status" aria-live="polite"></p>
         <p class="account-note" id="accountNote">Giriş isteğe bağlıdır ve Firebase Authentication ile sağlanır. Ayarların ve odak istatistiklerin hesabına yüklenmez. <b>Giriş için internet gerekir.</b></p>
-      </div>
+            </div>
       <div class="account-pane account-signed" id="accountSigned" hidden>
         <span class="account-avatar" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><path d="M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z" fill="rgba(255,255,255,.92)"/><circle cx="25" cy="36" r="2.6" fill="#3a2433"/><circle cx="39" cy="36" r="2.6" fill="#3a2433"/><path d="M30 42h4l-2 3z" fill="#3a2433"/></svg></span>
         <small>Hoş geldin</small>
         <b id="accountEmailShow"></b>
         <button class="btn account-signout" id="accountSignOut" type="button">Çıkış Yap</button>
         <p class="account-status" id="accountOutStatus" role="status" aria-live="polite"></p>
-      </div>
-    </div>
+            </div>
+          </div>
   </article>
-</div>
+      </div>
 <div class="about privacy" id="privacy" aria-hidden="true" inert>
-  <div class="about-backdrop" id="privacyBackdrop" data-close-privacy></div>
+  <div class="about-backdrop" id="privacyBackdrop" data-close-privacy>      </div>
   <article class="about-card privacy-card" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
     <header class="about-head">
       <div>
         <span class="eyebrow" id="privacyEyebrow">Verilerin, hesabın ve tercihlerin</span>
         <h2 id="privacyTitle">Gizlilik ve Güvenlik</h2>
-      </div>
+            </div>
       <button class="about-close" id="privacyClose" type="button" aria-label="Gizlilik ve Güvenlik sayfasını kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="about-scroll" id="privacyScroll">
@@ -6830,13 +7166,13 @@ html[data-hidden="1"] *::after { animation-play-state: paused !important; }
         <h3 class="legal-head"><span class="legal-num">16</span>İletişim ve Güvenlik Bildirimleri</h3>
         <p>Gizlilik soruların, hesap taleplerin ve güvenlik bildirimlerin için e-posta kanalını kullanabilirsin. Sosyal medya hesabı genel iletişim içindir; hassas hesap bilgilerini herkese açık mesajlarda paylaşma.</p>
         <div class="legal-contact">
-          <div class="legal-contact-row"><small>E-posta</small><b>vespirfocuslabs@gmail.com</b></div>
+          <div class="legal-contact-row"><small>E-posta</small><b>vespirfocuslabs@gmail.com</b>      </div>
           <a class="legal-contact-row" href="https://www.instagram.com/vespir.tr/" target="_blank" rel="noopener noreferrer" aria-label="Vespır Instagram sayfasını yeni sekmede aç"><small>Resmi sosyal medya</small><b>@vespir.tr</b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg></a>
-        </div>
+              </div>
       </section>
-    </div>
+          </div>
   </article>
-</div>
+      </div>
 <script>'use strict';
 /* ============================================================
    Vespır — tek dosya, sıfır bağımlılık
@@ -7144,6 +7480,7 @@ const DEFAULTS = () => ({
   particles: true,
   reflections: true,
   haptic: true,
+  perf: null,
   cat: {
     name: 'Vespır', gender: 'kiz', breed: 'tekir', scale: 1,
     fur: '#a59482', belly: '#f3ebe0', eyes: '#9cc45c', patch: '#6f6153', patch2: '#423a33',
@@ -7190,6 +7527,7 @@ function loadSettings() {
   s.particles = true;
   s.reflections = true;
   s.haptic = s.haptic !== false;
+  if (s.perf !== true && s.perf !== false) s.perf = null;
   if (s.cat.gender === 'notr' || !GENDERS[s.cat.gender]) s.cat.gender = 'kiz';
   if (!BREEDS[s.cat.breed]) s.cat.breed = 'tekir';
   if (!OUTFITS[s.cat.outfit]) s.cat.outfit = 'none';
@@ -7362,7 +7700,9 @@ const EN = {
   'Ana ekrana ekle': 'Add to home screen',
   'Kurulu': 'Installed',
   'Dil': 'Language',
-  'language': 'dil',
+  'Aydınlık / karanlık': 'Light / dark',
+  'Özel renk seç': 'Choose a custom color',
+  'Renk': 'Color',
   'Uygulama dili': 'App language',
   'Dil değişince arayüz ve bildirimler aynı dili konuşur.': 'When you change the language, the interface and notifications speak the same language.',
   'veya üstteki güneşe dokun': 'or tap the sun above',
@@ -7611,6 +7951,40 @@ const EN = {
   'Vazgeç': 'Cancel',
   'Saat': 'Hours',
   'Dakika': 'Minutes',
+  /* v22: kış görseli ve yeni sürüm notları */
+  'Vespır çam ağacının altında, kış temalı illüstrasyon': 'Vespır under a pine tree, winter illustration',
+  /* v21: eksik kalan arayüz metinleri */
+  'Yeni sürüm hazır': 'New version ready',
+  'Vespır için yeni bir güncelleme yayınlandı. Devam et diyerek güncellemeyi tamamlayabilir ve yeni sürüme geçebilirsin.': 'A new update for Vespır has been released. Choose continue to finish the update and switch to the new version.',
+  'Yenilikler': "What's new",
+  'Performans': 'Performance',
+  'tüm efektleri kapat': 'turn off all effects',
+  'Performans Modu': 'Performance mode',
+  'Tüm efektleri kapatır: animasyon, geçiş, cam bulanıklığı, kar/parçacık ve parıltılar durur. Sayaç, kedi ve ödül akışı aynen çalışır.': 'Turns every effect off: animations, transitions, glass blur, snow/particles and glows stop. The timer, the cat and the reward flow keep working exactly the same.',
+  '25 dakika odak': '25 min focus',
+  'Bugün 0 dk odak': 'Today 0 min focus',
+  '/120 dk': '/120 min',
+  '120 dk kaldı': '120 min left',
+  '0 seans': '0 sessions',
+  'Hedef: 2 sa': 'Goal: 2 hr',
+  'odak arkadaşın': 'your focus friend',
+  'Tekir · Dişi · Zil': 'Tabby · Female · Bell',
+  'Tema': 'Theme',
+  'Odaklan': 'Focus',
+  'Derin Odak': 'Deep Focus',
+  'Saati azalt': 'Decrease hours',
+  'Saati artır': 'Increase hours',
+  'Dakikayı azalt': 'Decrease minutes',
+  'Dakikayı artır': 'Increase minutes',
+  'Ayarları kapat': 'Close settings',
+  'Ana gezinme': 'Main navigation',
+  'Karanlık ve aydınlık tema arasında geçiş yap': 'Switch between light and dark mode',
+  'Özel başlangıç sesini kaldır': 'Remove the custom start sound',
+  'Özel bitiş sesini kaldır': 'Remove the custom end sound',
+  'Giriş için internet gerekir.': 'Signing in requires internet.',
+  'içiyor…': 'is drinking…',
+  'ikram topluyor…': 'is collecting treats…',
+  'yiyor…': 'is eating…',
   'Hedef saat': 'Goal hours',
   'Hedef dakika': 'Goal minutes'
 };
@@ -7793,16 +8167,19 @@ function applyLanguageDom(root) {
     }
   }
 }
-function refreshLanguageChrome() {
-  document.documentElement.lang = S.lang;
-  document.documentElement.dataset.lang = S.lang;
-  const langBtns = $$('#langGroup [data-lang]');
-  langBtns.forEach((b) => {
+function syncLangButtons() {
+  $$('#langGroup [data-lang]').forEach((b) => {
     const on = b.dataset.lang === S.lang;
     b.classList.toggle('active', on);
     b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
+}
+function refreshLanguageChrome() {
+  document.documentElement.lang = S.lang;
+  document.documentElement.dataset.lang = S.lang;
+  syncLangButtons();
   applyLanguageDom(document.body);
+  if (typeof relabelSwatches === 'function') relabelSwatches();
   updateDocumentTitle();
   syncTimerChrome();
   updateTimerDisplay(true);
@@ -7815,7 +8192,6 @@ function refreshLanguageChrome() {
   updateStageMeta();
   updateCatSummary();
   updateBookIdentity();
-  updateCatNote();
   updatePerch();
   if ($('#focusInvite').classList.contains('open')) syncFocusInviteCopy();
   applyLanguageDom(document.body);
@@ -7840,7 +8216,7 @@ let storageWarned = false;
 let resetting = false;
 const SAVE_KEYS = ['v', 'theme', 'mode', 'lang', 'cat', 'focusMin', 'breakMin', 'sessionName', 'autoStart',
   'autoFocus', 'dailyGoal', 'catRhythm', 'hourlyChime', 'notify', 'catMessages', 'lastMsgAt', 'volume', 'chimeVolume',
-  'startSound', 'endSound', 'welcomed', 'stats', 'streak', 'timer', 'completedSessions'];
+  'startSound', 'endSound', 'perf', 'welcomed', 'stats', 'streak', 'timer', 'completedSessions'];
 const copyState = (value) => JSON.parse(JSON.stringify(value));
 const sameState = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 let savedBaseline = copyState(S);
@@ -8032,15 +8408,37 @@ function applyTheme(animate = false, sourceEl = null) {
   }, 200);
 }
 let atmosphereState = '';
+/* Performans modu tek bir bayrakla yönetilir: html[data-lowfx="1"] hem CSS
+   katmanını hem aşağıdaki efekt sistemlerini kapatır. */
+function perfModeOn() {
+  return document.documentElement.dataset.lowfx === '1';
+}
+function applyPerfMode() {
+  const on = S.perf === true;
+  document.documentElement.dataset.lowfx = on ? '1' : '0';
+  try { localStorage.setItem('vespir.lowfx', on ? '1' : '0'); } catch (e) {}
+  buildParticles(true);
+  applyAtmosphere();
+  scheduleAtmosphere();
+  syncSnow();
+  syncSceneEffects();
+  syncSettingsUI();
+  syncTimerChrome();
+  updateTimerDisplay(true);
+  toast(on
+    ? 'Performans modu açık: tüm efektler kapandı.'
+    : 'Performans modu kapalı: efektler geri geldi.');
+}
+
 function applyAtmosphere() {
-  const key = (S.particles ? 'p1' : 'p0') + (S.reflections ? 'r1' : 'r0');
+  const key = (S.particles ? 'p1' : 'p0') + (S.reflections ? 'r1' : 'r0') + (perfModeOn() ? 'f1' : 'f0');
   if (key === atmosphereState) return;
   atmosphereState = key;
   const p = document.getElementById('particles');
-  if (p) p.style.display = S.particles ? '' : 'none';
+  if (p) p.style.display = (S.particles && !perfModeOn()) ? '' : 'none';
   html.dataset.reflections = S.reflections ? 'on' : 'off';
   const sheens = $$('.card-sheen, .preview-shine');
-  sheens.forEach((el) => { el.style.display = S.reflections ? '' : 'none'; });
+  sheens.forEach((el) => { el.style.display = (S.reflections && !perfModeOn()) ? '' : 'none'; });
 }
 let atmosphereTimer = 0;
 function scheduleAtmosphere() {
@@ -8072,7 +8470,7 @@ function buildParticles(force = false) {
     particleKeyStyle.id = 'particleKeys';
     document.head.appendChild(particleKeyStyle);
   }
-  if (!S.particles) {
+  if (!S.particles || perfModeOn()) {
     if (box.childElementCount) box.innerHTML = '';
     particleKeyStyle.textContent = '';
     particleShape = null; particleCount = -1;
@@ -8120,7 +8518,7 @@ const snow = {
   flakes: [], clumps: [], piles: new Map(), surfaces: [], surfaceDirty: true, surfaceRect: null,
   surfaceAnimatingUntil: performance.now() + 1600,
   nextAvalanche: 0, nextEdgeSpill: 0,
-  raf: 0, running: false, last: 0, t: 0, quality: 1, slow: 0
+  raf: 0, running: false, last: 0, drawnAt: 0, t: 0, quality: 1, slow: 0
 };
 const SNOW_PILE_MAX = 15;
 function initSnow() {
@@ -8177,7 +8575,7 @@ function buildSnowFlakes() {
   /* 2560 px geniş ekranda 56 tane tek tek yay çiziminde kare atlaması
      yapıyordu; 48 tane aynı yoğunluk hissini koruyup akıcı kalıyor. */
   /* Düşük bellekli telefonda tane sayısı yarıya iner; kar hissi aynı kalır. */
-  const cap = document.documentElement.dataset.lowfx === '1' ? 28 : 48;
+  const cap = perfModeOn() ? 0 : 48;
   const count = Math.round(Math.min(cap, Math.max(20, (snow.w * snow.h) / 34000)));
   snow.flakes = [];
   for (let i = 0; i < count; i++) snow.flakes.push(makeSnowFlake(true));
@@ -8214,10 +8612,11 @@ if (window.visualViewport) {
 function snowSurfaces(now) {
   const list = snow.surfaces;
   const card = snow.cardEl || (snow.cardEl = document.getElementById('timerCard'));
-  /* Odak sahnesinde sayaç kartı görünmez; sahne geçişinde ise kart
-     kayıp ölçeklenirken kar kütlesi havada asılı kalmasın. */
+  const focusActive = document.body.classList.contains('focus-active');
+  const mobileFocusCard = focusActive && innerWidth <= 768 && innerHeight >= innerWidth;
+  /* Dikey telefon odağında kart görünür; diğer odak görünümlerinde kar kartta birikmesin. */
   const blocked = !card
-    || document.body.classList.contains('focus-active')
+    || (focusActive && !mobileFocusCard)
     || card.classList.contains('is-scene-moving');
   let r = null;
   if (!blocked) {
@@ -8555,6 +8954,7 @@ function resetSnowFlake(f) {
   f.alpha = rand(.42, .96);
 }
 function sceneEffectsVisible() {
+  if (perfModeOn()) return false;
   return !document.hidden && !document.body.classList.contains('focus-active')
     && !document.body.classList.contains('install-invite-open');
 }
@@ -8584,6 +8984,11 @@ function stepSnow(now) {
   const ctx = snow.ctx;
   const canvas = snow.canvas;
   if (!ctx || !canvas) return;
+  /* Kar 60 karede bir yeniden çizilmek zorunda değil: 30 kare gözle
+     ayırt edilmiyor ama tam ekran tuvalin temizleme + dolgu maliyetini
+     yarıya indiriyor. */
+  if (snow.drawnAt && now - snow.drawnAt < 30) { snow.raf = requestAnimationFrame(stepSnow); return; }
+  snow.drawnAt = now;
   const dt = Math.min(.05, Math.max(.001, (now - (snow.last || now)) / 1000));
   snow.last = now;
   snow.t += dt;
@@ -8660,7 +9065,7 @@ function stepSnow(now) {
   snow.raf = requestAnimationFrame(stepSnow);
 }
 function syncSnow() {
-  const on = S.theme === 'noel';
+  const on = S.theme === 'noel' && !perfModeOn();
   if (on) {
     initSnow();
     if (!snow.canvas) return;
@@ -8902,7 +9307,7 @@ function drawHeart(ctx, x, y, s, rot, color, alpha) {
   ctx.restore();
 }
 function spawnBurst(x, y, count = 42, opts = {}) {
-  if (!fx.ctx) return;
+  if (!fx.ctx || perfModeOn()) return;
   const colors = Array.isArray(opts.colors) && opts.colors.length ? opts.colors : themeColors();
   const spread = opts.spread || Math.PI * 2;
   const angle0 = opts.angle != null ? opts.angle : -Math.PI / 2;
@@ -8994,45 +9399,45 @@ function catAccessoryList() {
 function catMarkup(state = 'idle', interactive = false) {
   const outfit = OUTFITS[S.cat.outfit] || OUTFITS.none;
   return `
-  <div class="cat-wrap" data-state="${state}"${interactive ? ` role="button" tabindex="0" aria-label="${escapeHTML(S.cat.name)}’ı sev"` : ' aria-hidden="true"'}>
-    <div class="cat-halo"></div>
-    <div class="cat-shadow"></div>
+  <div class="cat-wrap" data-state="${state}"${interactive ? ` role="button" tabindex="0" aria-label="${S.lang === 'en' ? 'Give ' + escapeHTML(S.cat.name) + ' a hug' : escapeHTML(S.cat.name) + '’ı sev'}"` : ' aria-hidden="true"'}>
+    <div class="cat-halo">      </div>
+    <div class="cat-shadow">      </div>
     <div class="cat3d${S.cat.collarOn ? '' : ' collar-off'}" data-breed="${S.cat.breed}" data-gender="${S.cat.gender}" data-acc="${catAccessoryList().join(' ')}" data-outfit="${escapeHTML(S.cat.outfit)}">
       <div class="cat-tilt">
-        <div class="tail"></div>
+        <div class="tail">      </div>
         <div class="body">
-          <div class="body-pattern"></div>
-          <div class="belly"></div>
-        </div>
+          <div class="body-pattern">      </div>
+          <div class="belly">      </div>
+              </div>
         <div class="outfit" data-kind="${outfit.kind}" aria-hidden="true">
           <i class="of-body"></i>
           <i class="of-collar"></i>
           <b class="of-badge"></b>
           <span class="of-extra"></span>
           <span class="of-extra2"></span>
-        </div>
+              </div>
         <div class="head">
-          <div class="ear left"><i></i></div>
-          <div class="ear right"><i></i></div>
+          <div class="ear left"><i></i>      </div>
+          <div class="ear right"><i></i>      </div>
           <div class="head-base">
-            <div class="face-pattern"></div>
-            <div class="forehead"></div>
-            <div class="eye left"><span class="iris"><span class="pupil"></span><span class="shine"></span></span><span class="lid"></span><span class="shut"></span><span class="lash"></span></div>
-            <div class="eye right"><span class="iris"><span class="pupil"></span><span class="shine"></span></span><span class="lid"></span><span class="shut"></span><span class="lash"></span></div>
-            <div class="muzzle"><span class="nose"></span><span class="mouth"></span><span class="jaw"></span><span class="lick"></span></div>
-            <div class="cheek left"></div>
-            <div class="cheek right"></div>
-            <div class="whiskers left"><i></i><i></i><i></i></div>
-            <div class="whiskers right"><i></i><i></i><i></i></div>
-          </div>
-          <div class="head-snow" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-          <div class="acc acc-bow"><i></i><i></i><b></b></div>
-          <div class="acc acc-flower"><i></i><i></i><i></i><i></i><i></i><b></b></div>
-          <div class="acc acc-crown"></div>
-          <div class="acc acc-glasses"><i></i><b></b><s></s></div>
-          <div class="acc acc-headphones"><i></i><b></b></div>
-          <div class="acc acc-star"></div>
-          <div class="acc acc-santa"><b></b></div>
+            <div class="face-pattern">      </div>
+            <div class="forehead">      </div>
+            <div class="eye left"><span class="iris"><span class="pupil"></span><span class="shine"></span></span><span class="lid"></span><span class="shut"></span><span class="lash"></span>      </div>
+            <div class="eye right"><span class="iris"><span class="pupil"></span><span class="shine"></span></span><span class="lid"></span><span class="shut"></span><span class="lash"></span>      </div>
+            <div class="muzzle"><span class="nose"></span><span class="mouth"></span><span class="jaw"></span><span class="lick"></span>      </div>
+            <div class="cheek left">      </div>
+            <div class="cheek right">      </div>
+            <div class="whiskers left"><i></i><i></i><i></i>      </div>
+            <div class="whiskers right"><i></i><i></i><i></i>      </div>
+                </div>
+          <div class="head-snow" aria-hidden="true"><i></i><i></i><i></i><i></i>      </div>
+          <div class="acc acc-bow"><i></i><i></i><b></b>      </div>
+          <div class="acc acc-flower"><i></i><i></i><i></i><i></i><i></i><b></b>      </div>
+          <div class="acc acc-crown">      </div>
+          <div class="acc acc-glasses"><i></i><b></b><s></s>      </div>
+          <div class="acc acc-headphones"><i></i><b></b>      </div>
+          <div class="acc acc-star">      </div>
+          <div class="acc acc-santa"><b></b>      </div>
           <div class="acc acc-antlers" aria-hidden="true">
             <svg viewBox="0 0 176 86" fill="none">
               <g stroke="#8a5a34" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
@@ -9052,77 +9457,77 @@ function catMarkup(state = 'idle', interactive = false) {
               <circle cx="63" cy="36" r="3" fill="#f4d06a"/>
               <circle cx="113" cy="36" r="3" fill="#f4d06a"/>
             </svg>
-          </div>
-          <div class="acc acc-nose"></div>
-          <div class="acc acc-witchhat"><i></i><b></b></div>
-        </div>
+                </div>
+          <div class="acc acc-nose">      </div>
+          <div class="acc acc-witchhat"><i></i><b></b>      </div>
+              </div>
         <div class="catch-flake f1" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
             <path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7"/>
             <path d="M9 4l3 3 3-3M9 20l3-3 3 3M5 9l4 1-1 4M19 15l-4-1 1-4M19 9l-4 1 1 4M5 15l4-1-1-4"/>
           </svg>
-        </div>
+              </div>
         <div class="catch-flake f2" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
             <path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7"/>
             <path d="M9 4l3 3 3-3M9 20l3-3 3 3M5 9l4 1-1 4M19 15l-4-1 1-4M19 9l-4 1 1 4M5 15l4-1-1-4"/>
           </svg>
-        </div>
+              </div>
         <div class="catch-flake f3" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
             <path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7"/>
             <path d="M9 4l3 3 3-3M9 20l3-3 3 3M5 9l4 1-1 4M19 15l-4-1 1-4M19 9l-4 1 1 4M5 15l4-1-1-4"/>
           </svg>
-        </div>
-        <div class="paw left"><i></i><i></i><i></i></div>
-        <div class="paw right"><i></i><i></i><i></i><b class="paw-pen"></b></div>
+              </div>
+        <div class="paw left"><i></i><i></i><i></i>      </div>
+        <div class="paw right"><i></i><i></i><i></i><b class="paw-pen"></b>      </div>
         <div class="book" aria-hidden="true">
-          <div class="book-page left"><span class="book-kicker"></span><strong class="book-title"></strong><span class="book-copy"></span></div>
-          <div class="book-page right"><span class="book-kicker"></span><span class="book-copy"></span></div>
-          <div class="page-flip"></div>
-          <div class="hl-line"></div>
-          <div class="book-spine"></div>
+          <div class="book-page left"><span class="book-kicker"></span><strong class="book-title"></strong><span class="book-copy"></span>      </div>
+          <div class="book-page right"><span class="book-kicker"></span><span class="book-copy"></span>      </div>
+          <div class="page-flip">      </div>
+          <div class="hl-line">      </div>
+          <div class="book-spine">      </div>
           <i class="book-ribbon"></i>
-        </div>
-        <div class="yarn-toy" aria-hidden="true"><div class="yarn-ball"><i></i><i></i><i></i></div></div>
-        <div class="acc acc-pumpkin" aria-hidden="true"><i></i></div>
+              </div>
+        <div class="yarn-toy" aria-hidden="true"><div class="yarn-ball"><i></i><i></i><i></i>      </div>      </div>
+        <div class="acc acc-pumpkin" aria-hidden="true"><i></i>      </div>
         <div class="reward-bowl" aria-hidden="true">
-          <div class="bowl-glow"></div>
-          <div class="bowl-shadow"></div>
-          <div class="bowl-shell"></div>
+          <div class="bowl-glow">      </div>
+          <div class="bowl-shadow">      </div>
+          <div class="bowl-shell">      </div>
           <div class="bowl-food">
             <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
             <b class="bowl-fish treat-1"></b>
             <b class="bowl-fish treat-2"></b>
             <b class="bowl-fish treat-3"></b>
-          </div>
-          <div class="bowl-rim"></div>
-        </div>
+                </div>
+          <div class="bowl-rim">      </div>
+              </div>
         <div class="reward-cocoa" aria-hidden="true">
-          <div class="cocoa-shadow"></div>
-          <div class="cocoa-steam"><i></i><i></i><i></i></div>
-          <div class="cocoa-mug"><i></i><b>♥</b></div>
-        </div>
+          <div class="cocoa-shadow">      </div>
+          <div class="cocoa-steam"><i></i><i></i><i></i>      </div>
+          <div class="cocoa-mug"><i></i><b>♥</b>      </div>
+              </div>
         <div class="reward-cauldron" aria-hidden="true">
-          <div class="cauldron-glow"></div>
-          <div class="cauldron-shadow"></div>
-          <div class="cauldron-steam"><i></i><i></i><i></i></div>
-          <div class="cauldron-pot"></div>
-          <div class="cauldron-brew"><i></i><i></i><i></i></div>
-          <div class="cauldron-rim"></div>
+          <div class="cauldron-glow">      </div>
+          <div class="cauldron-shadow">      </div>
+          <div class="cauldron-steam"><i></i><i></i><i></i>      </div>
+          <div class="cauldron-pot">      </div>
+          <div class="cauldron-brew"><i></i><i></i><i></i>      </div>
+          <div class="cauldron-rim">      </div>
           <b class="cauldron-candy c1"></b><b class="cauldron-candy c2"></b><b class="cauldron-candy c3"></b>
-        </div>
-        <div class="collar"></div>
-        <div class="cat-tag"><span class="cat-name-text">${escapeHTML(S.cat.name)}</span></div>
+              </div>
+        <div class="collar">      </div>
+        <div class="cat-tag"><span class="cat-name-text">${escapeHTML(S.cat.name)}</span>      </div>
         <span class="bell" aria-hidden="true"></span>
-        <div class="acc acc-bandana"></div>
-        <div class="acc acc-tie"><i></i><b></b></div>
-        <div class="acc acc-scarf"><i></i></div>
-        <div class="acc acc-bowtie"><i></i></div>
-        <div class="zzz" aria-hidden="true"><i>Z</i><i>z</i><i>z</i></div>
-      </div>
-    </div>
-  </div>`;
+        <div class="acc acc-bandana">      </div>
+        <div class="acc acc-tie"><i></i><b></b>      </div>
+        <div class="acc acc-scarf"><i></i>      </div>
+        <div class="acc acc-bowtie"><i></i>      </div>
+        <div class="zzz" aria-hidden="true"><i>Z</i><i>z</i><i>z</i>      </div>
+            </div>
+          </div>
+        </div>`;
 }
 function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
@@ -9205,7 +9610,6 @@ function updateCatVisuals() {
   }
   updateCatSummary();
   updateStageMeta();
-  updateCatNote();
   const nameInput = $('#catNameInput');
   if (nameInput && document.activeElement !== nameInput) nameInput.value = c.name;
   const scaleRange = $('#catScaleRange');
@@ -9462,7 +9866,7 @@ function showBubble(text, opts = {}) {
   const txt = $('#bubbleText');
   if (!txt) return;
   b.classList.add('show');
-  if (opts.typing) {
+  if (opts.typing && !perfModeOn()) {
     txt.textContent = '';
     let i = 0;
     const caret = document.createElement('span');
@@ -9586,11 +9990,11 @@ function stopFocusReward() {
   if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); }
   if (typeof syncTimerChrome === 'function') syncTimerChrome();
   /* Ödül iptal edilirse (sıfırla/sekme değişimi) notlar eski hâline döner. */
-  if (typeof updateCatNote === 'function') updateCatNote();
   if (typeof updatePerch === 'function') updatePerch();
   if (typeof updateStageMeta === 'function') updateStageMeta();
 }
 function playFocusReward(onDone) {
+  if (perfModeOn()) return false;
   const wrap = $('#catMount .cat-wrap');
   if (!wrap) return false;
   if (rewardActive) stopFocusReward();
@@ -9607,7 +10011,6 @@ function playFocusReward(onDone) {
   setCatState('idle', { force: true });
   /* Beş saniyelik sahne boyunca başlat düğmesi beklemede olduğunu söyler. */
   syncTimerChrome();
-  updateCatNote();
   updatePerch();
   updateStageMeta();
   /* Mobilde sahne yukarı kaydıysa kutlama görünür kalsın diye başa dön. */
@@ -9653,7 +10056,6 @@ function playFocusReward(onDone) {
   rewardAfter(REWARD_MS, () => {
     stopFocusReward();
     setCatState('idle', { force: true });
-    updateCatNote();
     updatePerch();
     if (typeof onDone === 'function') onDone();
   });
@@ -9776,7 +10178,6 @@ function setCatState(state, opts = {}) {
   if (!wrap) return;
   if (state !== 'play') clearCatPlay();
   if (wrap.dataset.state === state) {
-    updateCatNote();
     return;
   }
   const now = performance.now();
@@ -9793,7 +10194,6 @@ function setCatState(state, opts = {}) {
   catStateAt = now;
   updateStageMeta();
   updateCatSummary();
-  updateCatNote();
   updatePerch();
 }
 /* Fosforlu kalem: her seferinde başka bir renk seçilir, çizgi patinin
@@ -9863,38 +10263,6 @@ function catMeow(level = .9) {
   lastMeowAt = now;
   synthMeow(level);
 }
-function updateCatNote() {
-  const wrap = cachedEl('#catMount .cat-wrap');
-  const state = wrap ? wrap.dataset.state : 'idle';
-  const note = cachedEl('#catNoteText');
-  const noteBox = cachedEl('#catNote');
-  if (!note) return;
-  const name = S.cat.name;
-  const en = S.lang === 'en';
-  let text = en ? `${name} is ready to start` : `${name} başlamaya hazır`;
-  if (rewardActive) {
-    text = en ? `${name} is eating` : `${name} mama yiyor`;
-  } else if (timer && timer.running && timer.phase === 'focus') {
-    const bookTitle = bookWorld().title;
-    text = en
-      ? (state === 'play' ? `${name} is playing with yarn` : state === 'lonely' ? `${name} is waiting for you` : state === 'read' ? `${name} is reading “${bookTitle}”` : state === 'stretch' ? `${name} is stretching` : state === 'happy' ? `${name} is very happy` : `${name} is sleeping with you`)
-      : (state === 'play' ? `${name} tüy yumağıyla oynuyor` : state === 'lonely' ? `${name} seni bekliyor` : state === 'read' ? `${name} “${bookTitle}” okuyor` : state === 'stretch' ? `${name} geriniyor` : state === 'happy' ? `${name} çok mutlu` : `${name} seninle uyuyor`);
-  } else if (timer && timer.running && timer.phase === 'break') {
-    const bookTitle = bookWorld().title;
-    text = en
-      ? (state === 'read' ? `${name} is reading “${bookTitle}” on break` : `${name} is breathing`)
-      : (state === 'read' ? `${name} molada “${bookTitle}” okuyor` : `${name} nefes alıyor`);
-  } else if (timer && timer.phase === 'break') {
-    text = en ? `${name} is enjoying the break` : `${name} molanın tadını çıkarıyor`;
-  } else if (timer && timer.running) {
-    text = en ? `${name} is by your side` : `${name} yanında`;
-  } else {
-    text = en ? `${name} is ready to start` : `${name} başlamaya hazır`;
-  }
-  if (note.textContent !== text) note.textContent = text;
-  if (noteBox) {
-    noteBox.classList.toggle('pulse', !!(timer && timer.running));
-  }}
 function updatePerch() {
   const time = cachedEl('#perchTime');
   const status = cachedEl('#perchStatus');
@@ -10654,8 +11022,8 @@ async function testNotification() {
 const MSG_GAP = 3 * 3600 * 1000;
 const MSG_RETURN_AFTER = 20 * 60 * 1000;
 const MSG_INAPP_GAP = 3 * 60 * 1000;
-const WEATHER_TTL = 30 * 60 * 1000;
-const WEATHER_MAX_AGE = 3 * 3600 * 1000;
+const WEATHER_TTL = 10 * 60 * 1000;
+const WEATHER_MAX_AGE = 45 * 60 * 1000;
 const MSG_PREFS_CACHE = 'vespir-prefs';
 const MSG_PREFS_PATH = './__vespir-message-prefs';
 const WEATHER_LABELS = { storm: 'Fırtınalı', snow: 'Karlı', rain: 'Yağmurlu', drizzle: 'Çiseliyor', fog: 'Sisli', cloud: 'Bulutlu', sun: 'Açık', night: 'Açık' };
@@ -11142,19 +11510,19 @@ async function explainLocationAsk() {
     const en = S.lang === 'en';
     wrap.innerHTML = `
       <div class="geo-card">
-        <div class="geo-badge" aria-hidden="true">📍</div>
+        <div class="geo-badge" aria-hidden="true">📍      </div>
         <h2 id="geoAskTitle">${en ? 'Location permission needed' : 'Konum izni gerekiyor'}</h2>
         <p class="geo-lead">${en ? 'Your browser is about to ask for permission. Here’s why:' : 'Tarayıcı birazdan izin isteyecek. Neden istendiği:'}</p>
         <ul class="geo-list">
-          <li><span aria-hidden="true">🎯</span><div>${en ? 'Used only for current weather and weather alerts.' : 'Yalnızca güncel hava ve hava uyarısı için kullanılır.'}</div></li>
-          <li><span aria-hidden="true">🔒</span><div>${en ? 'Rounded approximate coordinates (~10 km) are sent to Open-Meteo to get weather information.' : 'Yuvarlanmış yaklaşık koordinat (~10 km), hava bilgisi almak için Open-Meteo’ya iletilir.'}</div></li>
-          <li><span aria-hidden="true">⚙️</span><div>${en ? 'You can decline; the app still works.' : 'Reddedebilirsin; uygulama yine çalışır.'}</div></li>
+          <li><span aria-hidden="true">🎯</span><div>${en ? 'Used only for current weather and weather alerts.' : 'Yalnızca güncel hava ve hava uyarısı için kullanılır.'}      </div></li>
+          <li><span aria-hidden="true">🔒</span><div>${en ? 'Rounded approximate coordinates (~10 km) are sent to Open-Meteo to get weather information.' : 'Yuvarlanmış yaklaşık koordinat (~10 km), hava bilgisi almak için Open-Meteo’ya iletilir.'}      </div></li>
+          <li><span aria-hidden="true">⚙️</span><div>${en ? 'You can decline; the app still works.' : 'Reddedebilirsin; uygulama yine çalışır.'}      </div></li>
         </ul>
         <div class="geo-actions">
           <button type="button" class="btn primary" data-geo="yes">${en ? 'Continue' : 'Devam et'}</button>
           <button type="button" class="btn text" data-geo="later">${en ? 'Not now' : 'Şimdi değil'}</button>
-        </div>
-      </div>`;
+              </div>
+            </div>`;
     const finish = (ok) => {
       document.removeEventListener('keydown', onKey, true);
       wrap.remove();
@@ -11244,6 +11612,13 @@ function bootWeather() {
     }).catch(later);
   } else later();
 }
+/* Vespır hava hakkında konuşurken bayat veri kullanmasın: uygulama açıkken
+   10 dakikada bir, sekme öne gelince de hava yeniden alınır. */
+setInterval(() => {
+  if (document.visibilityState !== 'visible' || weatherDenied || !navigator.geolocation) return;
+  if (weatherBusy || !weatherNow) return; /* izin yoksa kendiliğinden pencere açma */
+  updateWeather(true);
+}, WEATHER_TTL);
 function updateMsgStatus() {
   const el = $('#msgStatus');
   if (!el) return;
@@ -11992,6 +12367,7 @@ function startIconSVG(running) {
 const sceneAnimations = [];
 let sceneMotionTimer = 0;
 function flipBegin() {
+  if (perfModeOn()) return null;
   const before = [$('#catMount'), $('#timerCard')].map((el) => ({ el, rect: el.getBoundingClientRect() }));
   while (sceneAnimations.length) sceneAnimations.pop().cancel();
   return before;
@@ -12061,14 +12437,13 @@ function syncTimerChrome(before = null, scrollY = null) {
     const rewardVerb = rewardMode() === 'cocoa' ? t('içiyor…') : rewardMode() === 'cauldron' ? t('ikram topluyor…') : t('yiyor…');
     label.textContent = rewardActive ? S.cat.name + ' ' + rewardVerb
       : timer.running ? t('Duraklat')
-      : timer.remaining < timer.total - .5 ? t('Devam et')
+      : (timer.id || timer.remaining < timer.total - .5) ? t('Devam et')
       : timer.phase === 'break' ? t('Molaya başla') : t('Başla');
   }
   if (icon) icon.innerHTML = startIconSVG(timer.running);
   const skip = $('#skipBtn');
   if (skip) skip.disabled = timer.phase !== 'break' || rewardActive;
   updatePerch();
-  updateCatNote();
   syncFocusScene(scrollY);
   if (flip) {
     cancelAnimationFrame(stageFitRaf);
@@ -12083,6 +12458,7 @@ function syncTimerChrome(before = null, scrollY = null) {
   }
 }
 function popDigit(el) {
+  if (perfModeOn()) return;
   if (!el) return;
   /* Sekme arkada/ekran kapalıyken boş yere animasyon kuyruğu üretmeyelim. */
   if (document.hidden) return;
@@ -12184,7 +12560,6 @@ function updateTimerDisplay(force = false, digits = null) {
   timer.lastMinText = minText;
   timer.lastSecText = secText;
   updateDocumentTitle();
-  updateCatNote();
 }
 const BASE_TITLE = 'Vespır - En İyi Dostun';
 const LONELY_TITLE = 'Seni özledim, lütfen buraya geri dön 🥺';
@@ -12281,7 +12656,19 @@ function pauseTimer() {
   stopFocusCatch();
   endLoneliness();
   timer.remaining = Math.max(0, (timer.endAt - Date.now()) / 1000);
-  if (timer.remaining <= .01) { timer.remaining = 0; return finishPhase(); }
+    if (timer.remaining <= .01) {
+      timer.remaining = 0;
+      finishPhase();
+      /* Faz yine de kapanmazsa düğme "Duraklat" olarak ölü kalmasın. */
+      setTimeout(() => {
+        if (timer.running && timer.remaining <= .01) {
+          settleZeroTimer();
+          syncTimerChrome();
+          updateTimerDisplay(true);
+        }
+      }, 1400);
+      return;
+    }
   timer.running = false;
   timer.endAt = 0;
   cancelAnimationFrame(timer.interval);
@@ -12299,7 +12686,8 @@ function pauseTimer() {
 function toggleTimer() {
   stopAutoStart();
   if (timer.running) pauseTimer();
-  else if (timer.phase === 'focus' && !hasInstalledPwa()) openFocusInvite();
+  /* "Başla" her tarayıcıda doğrudan sayacı başlatır. Kurulum daveti odaklanmayı
+     engellemez; isteyen Ayarlar > Ana ekrana ekle bölümünden kurar. */
   else startTimer();
 }
 function resetTimer() {
@@ -12377,18 +12765,41 @@ function setPhase(phase, autoStart = false) {
   if (autoStart) scheduleAutoStart(timer.phase, 320);
 }
 let phaseFinishing = false;
+/* Sayaç 00:00'da "Duraklat" olarak asılı kalırsa düğme ölü kalmasın:
+   fazı ilerletemediysek en azından temiz bir "Devam et" durumuna dön. */
+function settleZeroTimer() {
+  if (!timer.running || timer.remaining > .01) return;
+  cancelAnimationFrame(timer.interval);
+  timer.interval = 0;
+  stopFinishTimer();
+  timer.running = false;
+  timer.endAt = 0;
+  timer.remaining = 0;
+  catReset();
+  clearBubbleTimers();
+  setCatState('idle');
+  scheduleIdleCat();
+  syncTimerChrome();
+  updateTimerDisplay(true);
+  persistTimer(true);
+}
 function finishPhase() {
   if (phaseFinishing || !timer.running || resetting) return;
   phaseFinishing = true;
+  let done = false;
   const expectedId = timer.id || timer.phase + ':' + timer.endAt + ':' + timer.total;
   const expectedEndAt = timer.endAt;
   const complete = () => {
+    if (done) return;
     const currentId = timer.id || timer.phase + ':' + timer.endAt + ':' + timer.total;
     if (resetting || !timer.running || currentId !== expectedId || timer.endAt !== expectedEndAt) return;
+    done = true;
     const remote = loadSettings();
     if (remote.completedSessions.includes(expectedId)
         || (remote.timer && S.timer && !sameState(remote.timer, S.timer))) {
       syncStoredState();
+      /* Başka pencere fazı kapatmış olsa da bu pencere 00:00'da asılı kalmasın. */
+      settleZeroTimer();
       return;
     }
     S = mergeStoredState(S, savedBaseline, remote);
@@ -12397,9 +12808,13 @@ function finishPhase() {
     finishPhaseNow();
   };
   if (navigator.locks && typeof navigator.locks.request === 'function') {
+    /* Kilit başka bir pencerede takılı kalırsa (donmuş sekme) faz hiç kapanmıyordu.
+       Kısa bir beklemeden sonra kilidi beklemeden tamamlıyoruz; complete() yalnızca
+       bir kez çalışır, geç gelen kilit boşa döner. */
+    const fallback = setTimeout(() => { phaseFinishing = false; complete(); }, 1200);
     navigator.locks.request('vespir-phase-completion', complete)
-      .catch(() => { phaseFinishing = false; })
-      .finally(() => { phaseFinishing = false; });
+      .catch(() => {})
+      .finally(() => { clearTimeout(fallback); phaseFinishing = false; });
   } else {
     try { complete(); } finally { phaseFinishing = false; }
   }
@@ -12527,6 +12942,7 @@ function restoreTimer() {
   if (timer.remaining <= .01) timer.remaining = timer.total;
   return false;
 }
+const APP_VERSION = 'v22';
 function updateStatsUI() {
   if (rollStatsDay()) saveNow();
   const min = Math.floor(Math.max(0, S.stats.sec) / 60);
@@ -12536,6 +12952,10 @@ function updateStatsUI() {
   if (minEl) minEl.textContent = String(min);
   if (sessionsEl) sessionsEl.textContent = String(S.stats.sessions);
   if (cyclesEl) cyclesEl.textContent = String(Math.floor(S.stats.sessions / 4));
+  const versionEl = $('#appVersion');
+  if (versionEl) versionEl.textContent = APP_VERSION;
+  const todayChip = $('#todayFocusChip');
+  if (todayChip) todayChip.textContent = (S.lang === 'en' ? 'Today ' : 'Bugün ') + min + (S.lang === 'en' ? ' min focus' : ' dk odak');
   syncCycleDots();
   updateGoalUI();
 }
@@ -12563,24 +12983,24 @@ function syncCycleDots() {
 let deferredPrompt = null;
 let swRegistered = false;
 let pwaInstalled = false;
-try { pwaInstalled = localStorage.getItem('vespir.pwaInstalled') === '1'; } catch (e) {}
+try { localStorage.removeItem('vespir.pwaInstalled'); } catch (e) {}
 let focusSceneScrollY = 0;
 let focusInviteCleanup = 0;
 function hasInstalledPwa() {
   if (isStandalone()) return true;
-  /* Tarayıcı hâlâ kurulum penceresi sunabiliyorsa uygulama kurulu değildir;
-     eski kurulumdan kalan bayrak yanlış "Kurulu" demesin. */
+  /* Kurulum penceresi sunuluyorsa uygulama şu anda kurulmamış demektir. */
   if (deferredPrompt || window.__vespirInstall) return false;
   return pwaInstalled;
 }
+/* Davet için gerçek bir kurulum yolu gerekir: Chromium’un kurulum penceresi
+   ya da iOS’ta Safari’nin “Ana Ekrana Ekle” adımı. Diğer tarayıcılarda davet
+   açılmaz; düğme doğrudan sayacı başlatır. */
+
 function rememberPwaInstalled() {
   pwaInstalled = true;
-  try { localStorage.setItem('vespir.pwaInstalled', '1'); } catch (e) {}
 }
 function clearPwaInstalled() {
-  if (!pwaInstalled) return;
   pwaInstalled = false;
-  try { localStorage.removeItem('vespir.pwaInstalled'); } catch (e) {}
 }
 function syncFocusScene(scrollY = null) {
   const active = timer.running && timer.phase === 'focus';
@@ -12597,8 +13017,8 @@ function syncFocusScene(scrollY = null) {
   if (active) {
     snow.piles.delete('timer');
     snow.surfaces = [];
-    snow.surfaceDirty = true;
   }
+  snow.surfaceDirty = true;
   if (!active && focusSceneScrollY) window.scrollTo(0, focusSceneScrollY);
   syncSceneEffects();
 }
@@ -12639,6 +13059,11 @@ function prepareFocusInvite() {
   if (!appStep || !panel) return;
   appStep.hidden = false;
   syncFocusInviteCopy();
+  /* iOS kurulum penceresi sunmaz: “Ana Ekrana Ekle” adımını hemen göster. */
+  if (isIOSDevice() && !(deferredPrompt || window.__vespirInstall)) {
+    const iosStatus = $('#focusInstallStatus');
+    if (iosStatus) iosStatus.textContent = installHint();
+  }
   appStep.classList.remove('enter');
   void appStep.offsetWidth;
   appStep.classList.add('enter');
@@ -12688,6 +13113,12 @@ function skipFocusInstall() {
 async function installForFocus() {
   const btn = $('#focusInstallBtn');
   const status = $('#focusInstallStatus');
+  if (!deferredPrompt && window.__vespirInstall) deferredPrompt = window.__vespirInstall;
+  if (!deferredPrompt) {
+    /* Kurulum penceresi yok (iOS, Safari, Firefox): yolu yaz, butonu kilitleme. */
+    if (status) status.textContent = installHint();
+    return;
+  }
   btn.disabled = true;
   btn.textContent = S.lang === 'en' ? 'Opening install…' : 'Kurulum açılıyor…';
   const outcome = await promptInstall();
@@ -12714,12 +13145,12 @@ function installHint() {
   if (S.lang === 'en') {
     if (location.protocol === 'file:') return 'To install, open Vespır from a secure HTTPS address; installation isn’t possible directly from an HTML file.';
     if (window.top !== window.self) return 'Installation can’t open from an embedded page like Google Sites. Open Vespır’s published HTTPS address in a separate tab and install from the browser menu.';
-    if (isIOSDevice()) return 'In Safari, tap Share, then “Add to Home Screen”. Then open Vespır from its home-screen icon.';
+    if (isIOSDevice()) return 'Open the Share menu, choose “Add to Home Screen”, then open Vespır from its home-screen icon.';
     return 'The browser isn’t offering an install prompt right now. Choose “Install app” or “Add to Home Screen” from the menu; if it’s missing, open the page in a supporting browser.';
   }
   if (location.protocol === 'file:') return 'Kurulum için Vespır’ı güvenli bir HTTPS web adresinden açmalısın; doğrudan HTML dosyasından kurulum yapılamaz.';
   if (window.top !== window.self) return 'Google Sites gibi gömülü bir sayfadan kurulum açılamaz. Vespır’ın yayınlandığı HTTPS adresini ayrı sekmede açıp tarayıcı menüsünden yükle.';
-  if (isIOSDevice()) return 'Safari’de Paylaş düğmesine, sonra “Ana Ekrana Ekle”ye dokun. Ardından Vespır’ı ana ekranındaki simgesinden aç.';
+  if (isIOSDevice()) return 'Paylaş menüsünü aç, “Ana Ekrana Ekle”yi seç, sonra Vespır’ı ana ekranındaki simgesinden aç.';
   return 'Tarayıcı şu an kurulum penceresi sunmuyor. Menüden “Uygulamayı yükle” ya da “Ana ekrana ekle”yi seç; bu seçenek yoksa destekleyen bir tarayıcıda aç.';
 }
 function updatePwaUI() {
@@ -12738,7 +13169,7 @@ function updatePwaUI() {
     else if (installed) detail.textContent = 'Vespır is installed. Open her from the home-screen or app icon to focus without tabs.';
     else if (canPrompt) detail.textContent = `Ready: tap “Add to Home Screen” and confirm in the browser prompt. ${S.cat.name} opens with one tap.`;
     else if (location.protocol === 'file:') detail.textContent = 'Vespır lives in this file. Tap “Add to Home Screen” in the browser menu; her paws will handle the rest.';
-    else if (isIOSDevice()) detail.textContent = 'In Safari, tap Share and choose “Add to Home Screen”. Let Vespır move into your pocket.';
+    else if (isIOSDevice()) detail.textContent = 'Open the Share menu and choose “Add to Home Screen”. Let Vespır move into your pocket.';
     else detail.textContent = 'Works in every browser: choose “Install app” or “Add to Home Screen” from the menu.';
     return;
   }
@@ -12751,7 +13182,7 @@ function updatePwaUI() {
   } else if (location.protocol === 'file:') {
     detail.textContent = 'Vespır bu dosyada yaşıyor. Tarayıcı menüsünden “Ana ekrana ekle”ye dokun; gerisini patileri halleder.';
   } else if (isIOSDevice()) {
-    detail.textContent = 'Safari’de Paylaş düğmesine dokun, “Ana Ekrana Ekle”yi seç. Vespır cebine taşınsın.';
+    detail.textContent = 'Paylaş menüsünü aç, “Ana Ekrana Ekle”yi seç. Vespır cebine taşınsın.';
   } else {
     detail.textContent = 'Her tarayıcıda çalışır: menüden “Uygulamayı yükle” ya da “Ana ekrana ekle”yi seç.';
   }
@@ -12970,10 +13401,30 @@ function buildBreeds() {
   });
 }
 const SWATCH_LABELS = { fur: 'Tüy rengi', belly: 'Göbek ve patiler', eyes: 'Göz rengi', collar: 'Tasma rengi' };
+const SWATCH_LABELS_EN = { fur: 'Fur color', belly: 'Belly & paws', eyes: 'Eye color', collar: 'Collar color' };
+function swatchLabel(key) {
+  const en = S.lang === 'en';
+  return (en ? SWATCH_LABELS_EN[key] : SWATCH_LABELS[key]) || (en ? 'Color' : 'Renk');
+}
+/* Dil değişince mevcut swatch'ların etiketleri de döner. */
+function relabelSwatches() {
+  const en = S.lang === 'en';
+  (typeof catSwatchRows === 'undefined' ? [] : catSwatchRows).forEach((row) => {
+    const label = swatchLabel(row.key);
+    row.container.querySelectorAll('button.swatch[data-color]').forEach((btn) => {
+      btn.setAttribute('aria-label', label + ': ' + btn.dataset.color);
+    });
+    const input = row.container.querySelector('input[type="color"]');
+    if (input) input.setAttribute('aria-label', (en ? 'Custom ' : 'Özel ') + label.toLowerCase());
+    const custom = row.container.querySelector('.swatch.custom');
+    if (custom) custom.title = en ? 'Choose a custom color' : 'Özel renk seç';
+  });
+}
 function buildSwatchRow(containerId, colors, key) {
   const container = document.getElementById(containerId);
   if (!container) return;
-  const label = SWATCH_LABELS[key] || 'Renk';
+  const en = S.lang === 'en';
+  const label = swatchLabel(key);
   container.innerHTML = '';
   colors.forEach((color) => {
     const btn = document.createElement('button');
@@ -12987,11 +13438,11 @@ function buildSwatchRow(containerId, colors, key) {
   });
   const custom = document.createElement('label');
   custom.className = 'swatch custom';
-  custom.title = 'Özel renk seç';
+  custom.title = en ? 'Choose a custom color' : 'Özel renk seç';
   const input = document.createElement('input');
   input.type = 'color';
   input.value = /^#[0-9a-f]{6}$/i.test(S.cat[key]) ? S.cat[key] : '#ffffff';
-  input.setAttribute('aria-label', 'Özel ' + label.toLowerCase());
+  input.setAttribute('aria-label', (en ? 'Custom ' : 'Özel ') + label.toLowerCase());
   custom.appendChild(input);
   container.appendChild(custom);
   container.addEventListener('click', (e) => {
@@ -13148,7 +13599,7 @@ function buildThemeGrid() {
     btn.dataset.themeCard = key;
     btn.innerHTML = `<span class="theme-swatch" data-preview="${key}"></span>
       <span class="theme-info"><span><b>${t.label}</b><small>${t.tag}</small></span>
-      <div class="theme-check">${checkIcon}</div></span>`;
+      <div class="theme-check">${checkIcon}      </div></span>`;
     box.appendChild(btn);
   });
   if (box.dataset.bound) return;
@@ -13258,6 +13709,8 @@ function syncSettingsUI() {
   const collar = $('#collarToggle');
   if (collar) collar.checked = S.cat.collarOn;
   const haptic = $('#hapticToggle');
+  const perfBox = $('#perfModeToggle');
+  if (perfBox) perfBox.checked = perfModeOn();
   if (haptic) haptic.checked = S.haptic;
   const auto = $('#autoStartToggle');
   if (auto) auto.checked = S.autoStart;
@@ -13843,6 +14296,12 @@ function bindStaticEvents() {
     S.haptic = hapticToggle.checked;
     save();
   });
+  const perfToggle = $('#perfModeToggle');
+  if (perfToggle) perfToggle.addEventListener('change', () => {
+    S.perf = perfToggle.checked;
+    applyPerfMode();
+    save();
+  });
   /* time */
   const sessionInput = $('#sessionNameInput');
   if (sessionInput) {
@@ -14187,6 +14646,10 @@ window.addEventListener('error', (e) => {
   document.addEventListener('visibilitychange', syncHidden);
   syncHidden();
   try { if (new URLSearchParams(location.search).get('lowfx') === '0') localStorage.removeItem('vespir.lowfx'); } catch (e) {}
+  /* Elle yapılan seçim (açık ya da kapalı) otomatik ölçümle ezilmez. */
+  let manualPerf = '';
+  try { manualPerf = localStorage.getItem('vespir.lowfx') || ''; } catch (e) {}
+  if (manualPerf === '1' || manualPerf === '0') return;
   let bad = 0;
   const measure = () => {
     if (html.dataset.lowfx === '1') return;
@@ -14220,6 +14683,12 @@ async function boot() {
     if (hv !== '0' && hv !== 'false' && hv !== 'off') S.theme = 'halloween';
   }
   if (['light', 'dark', 'auto'].includes(qp.get('mode'))) S.mode = qp.get('mode');
+  /* Kayıtlı performans tercihi ilk kare kararını da düzeltsin; önbellekteki
+     kopya da aynı kalsın ki bir sonraki açılış doğru kareyle başlasın. */
+  if (S.perf === true || S.perf === false) {
+    document.documentElement.dataset.lowfx = S.perf ? '1' : '0';
+    try { localStorage.setItem('vespir.lowfx', S.perf ? '1' : '0'); } catch (e) {}
+  }
   await restorePersistedSounds();
   prepareSoundState();
   /* Ayar DOM'u ilk açılışta kurulur; boş zamanda önceden hazırlanır.
@@ -14256,7 +14725,8 @@ async function boot() {
   }, 1200);
   bindStaticEvents();
   syncSceneEffects();
-  /* Kayıtlı dil İngilizceyse arayüz ilk açılışta da İngilizce görünsün. */
+  /* Seçili dil düğmesi açılışta da işaretli olsun; İngilizce kayıtlıysa arayüz de çevrilsin. */
+  syncLangButtons();
   if (S.lang === 'en') refreshLanguageChrome();
   fitStage();
   requestAnimationFrame(fitStage);
@@ -14442,7 +14912,74 @@ function paintAccountNote() {
     : 'Şu an HTML dosyasından açık. Google ile giriş için uygulamayı <b>HTTPS veya localhost</b> üzerinden aç.';
 }
 paintAccountNote();
-let fbLoading = false;
+/* Oturum sayfa yenilense de sürsün: Firebase bir kez kurulur, oturum
+   tarayıcının yerel deposunda (IndexedDB) kalıcı tutulur ve açılışta
+   onAuthStateChanged ile geri yüklenir. Önceden yalnızca giriş butonuna
+   basılınca kurulduğu için F5 sonrası oturum yok sayılıyordu. */
+let fbLoading = null;
+let authReady = false;
+/* SDK yüklemesi tek denemede kalmasın: yavaş bağlantıda import hatası
+   oturumun hiç geri yüklenmemesi (F5 sonrası çıkış gibi) demekti. */
+function loadFirebase(attempt = 1) {
+  if (fbLoading) return fbLoading;
+  fbLoading = (async () => {
+    const [appMod, authMod] = await Promise.all([
+      import('https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js'),
+      import('https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js')
+    ]);
+    /* Yeniden denemede aynı uygulamayı ikinci kez kurmayalım. */
+    const app = appMod.getApps && appMod.getApps().length ? appMod.getApp() : appMod.initializeApp(FB_CFG);
+    auth = authMod.getAuth(app);
+    fb = authMod;
+    /* Kalıcılık, dinleyiciler bağlanmadan önce ayarlanır: oturum IndexedDB'de
+       kalır ve sayfa yenilense de onAuthStateChanged ile geri gelir.
+       IndexedDB engelliyse (gizli sekme, katı gizlilik ayarı) oturum belleğe
+       değil sekme deposuna yazılır: sayfa yenilemesinde giriş yine sürer. */
+    let persistence = 'unknown';
+    try {
+      await authMod.setPersistence(auth, authMod.browserLocalPersistence);
+      persistence = 'local';
+    } catch (e) {
+      try {
+        await authMod.setPersistence(auth, authMod.browserSessionPersistence);
+        persistence = 'session';
+      } catch (e2) { persistence = 'none'; }
+    }
+    try { auth.languageCode = en() ? 'en' : 'tr'; } catch (e) {}
+    authMod.onAuthStateChanged(auth, (next) => {
+      authReady = true;
+      /* Tanılama: sorun bildirirken konsoldaki bu satır tek başına yeter. */
+      try {
+        console.info('[Vespir] oturum:', next && next.email ? next.email : 'yok', '· kalıcılık:', persistence);
+      } catch (e) {}
+      paintUser(next);
+    });
+    /* Yönlendirmeli girişten (iPhone/Safari) dönüşte hesabı yakala. */
+    try {
+      const redirected = await authMod.getRedirectResult(auth);
+      if (redirected && redirected.user) {
+        paintUser(redirected.user);
+        setOutStatus(en() ? 'You’re signed in with Google. Welcome!' : 'Google hesabınla giriş yaptın. Hoş geldin!', 'ok');
+      }
+    } catch (e) {}
+    return { auth, authMod };
+  })().catch((err) => {
+    fbLoading = null;
+    if (attempt < 3) {
+      return new Promise((resolve) => setTimeout(resolve, 900 * attempt)).then(() => loadFirebase(attempt + 1));
+    }
+    setStatus(en() ? 'Couldn’t reach the sign-in service. Check your connection and try again.' : 'Giriş servisine ulaşılamadı. Bağlantını kontrol edip tekrar dene.', 'err');
+    throw err;
+  });
+  return fbLoading;
+}
+/* iPhone/iPad Safari açılır pencereyi güvenilir açmaz: orada yönlendirme kullanılır. */
+function useRedirectSignIn() {
+  try {
+    const ua = navigator.userAgent || '';
+    return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  } catch (e) { return false; }
+}
 if (googleBtn) googleBtn.addEventListener('click', async () => {
   if (busy) return;
   if (isFile) { setStatus(en() ? 'To sign in with Google, open Vespır over HTTPS or localhost. Sign-in doesn’t work from a local HTML file.' : 'Google ile giriş için Vespır’ı HTTPS veya localhost üzerinden aç. Doğrudan HTML dosyasından giriş yapılamaz.', 'err'); return; }
@@ -14450,25 +14987,33 @@ if (googleBtn) googleBtn.addEventListener('click', async () => {
   googleLabel.textContent = en() ? 'Opening Google…' : 'Google açılıyor…';
   setStatus(en() ? 'Loading sign-in service…' : 'Giriş servisi yükleniyor…', '');
   try {
-    /* Lazy-load Firebase only when user actually clicks sign-in. */
-    if (!fbLoading) {
-      fbLoading = true;
-      const [appMod, authMod] = await Promise.all([
-        import('https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js'),
-        import('https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js')
-      ]);
-      const app = appMod.initializeApp(FB_CFG);
-      auth = authMod.getAuth(app);
-      fb = authMod;
-      authMod.onAuthStateChanged(auth, paintUser);
+    /* Firebase açılışta kuruldu; burada hazır olduğundan emin olunur. */
+    await loadFirebase();
+    const makeProvider = () => {
+      const provider = new fb.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      return provider;
+    };
+    if (useRedirectSignIn()) {
+      setStatus(en() ? 'Taking you to Google…' : 'Google’a yönlendiriliyorsun…', '');
+      await fb.signInWithRedirect(auth, makeProvider());
+      return;
     }
     setStatus(en() ? 'Choose your Google account in the window that opens.' : 'Açılan pencereden Google hesabını seç.', '');
-    const provider = new fb.GoogleAuthProvider();
-    provider.setCustomParameters({ prompt: 'select_account' });
-    const cred = await fb.signInWithPopup(auth, provider);
+    const cred = await fb.signInWithPopup(auth, makeProvider());
     paintUser(cred.user);
     setOutStatus(en() ? 'You’re signed in with Google. Welcome!' : 'Google hesabınla giriş yaptın. Hoş geldin!', 'ok');
   } catch (err) {
+    const code = (err && err.code) || '';
+    if (code === 'auth/popup-blocked' || code === 'auth/operation-not-supported-in-this-environment' || code === 'auth/cancelled-popup-request') {
+      try {
+        setStatus(en() ? 'Taking you to Google…' : 'Google’a yönlendiriliyorsun…', '');
+        const provider = new fb.GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: 'select_account' });
+        await fb.signInWithRedirect(auth, provider);
+        return;
+      } catch (e2) {}
+    }
     setStatus(msgFor(err), 'err');
   } finally {
     googleLabel.textContent = en() ? 'Continue with Google' : 'Google ile devam et';
@@ -14477,6 +15022,8 @@ if (googleBtn) googleBtn.addEventListener('click', async () => {
   }
 });
 if (noteEl && isFile) paintAccountNote();
+/* Açılışta oturumu geri yükle: F5 / yenileme sonrası giriş görünür kalır. */
+if (!isFile) loadFirebase().catch(() => {});
 if (signOutBtn) signOutBtn.addEventListener('click', async () => {
   if (busy || !fb || !auth) { setStatus(en() ? 'Sign-in service not loaded.' : 'Giriş servisi yüklenmedi.', 'err'); return; }
   setBusy(true);
@@ -14491,54 +15038,227 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
   }
 });
 </script>
-<!-- Güncelleme Bildirimi Banner (Zorunlu) -->
-<div id="updateBanner">
-  <h3>Yeni sürüm mevcut</h3>
-  <p>Yapımcı az önce bir güncelleme yayınladı. Uygulamaya devam etmek için aşağıdaki tuşla en yeni sürüme geçmelisiniz.</p>
-  <button class="btn-update" id="btnUpdateNow">Güncelle ve Devam Et</button>
-</div>
+<script>
+/* ============================================================
+   İNGİT: Uygulama içi tarayıcı tespiti ve kilit ekranı
+   Instagram, Facebook, TikTok gibi in-app browser'ları engeller.
+   Normal tarayıcılar ve kurulu PWA (standalone) etkilenmez.
+   ============================================================ */
+(function() {
+  if (document.readyState !== 'complete') {
+    window.addEventListener('DOMContentLoaded', runInAppCheck);
+    return;
+  }
+  runInAppCheck();
+
+  function runInAppCheck() {
+    /* PWA veya standalone moddaysa hiçbir şey yapma */
+    if (window.navigator.standalone === true) return;
+    if (window.matchMedia && matchMedia('(display-mode: standalone)').matches) return;
+
+    const ua = navigator.userAgent || '';
+    const isInApp = /Instagram|FBAN|FBAV|FB_iOS|FBAB|FB4A|FB_iPad|TikTok|BytedanceWebview|Musical_ly|LinkedIn|Snapchat|Twitter|X__|WhatsApp|Line|KakaoTalk|WeChat/i.test(ua);
+    const isAndroid = /Android/i.test(ua);
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    if (!isInApp) return;
+
+    const currentUrl = window.location.href;
+    const isTr = document.documentElement.dataset.lang !== 'en';
+
+    /* Android: Direkt varsayılan tarayıcıda aç (intent://) */
+    if (isAndroid) {
+      const intentUrl = 'intent:#Intent;action=android.intent.action.VIEW;scheme=https;package=com.android.chrome;S.url=' + encodeURIComponent(currentUrl) + ';end;';
+      try {
+        window.location.replace(intentUrl);
+      } catch (e) {
+        window.location.href = intentUrl;
+      }
+      return;
+    }
+
+    /* iOS'ta dış tarayıcıya geçiş zorlanamadığı için bağlantıyı kopyalama yolu sun. */
+    const lock = document.createElement('div');
+    lock.id = 'inAppLock';
+    lock.innerHTML = `
+      <div class="badge">Vespır      </div>
+      <h3 id="inAppLockTitle">${isTr ? 'Vespır’ı tarayıcıda aç' : 'Open Vespır in your browser'}</h3>
+      <p id="inAppLockDescription">${isTr ? 'Bu uygulama içi tarayıcıda bazı özellikler çalışmayabilir. Paylaş menüsünden “Safari’de Aç”ı seç. Bu seçenek yoksa bağlantıyı kopyalayıp Safari’ye yapıştır.' : 'Some features may not work in this in-app browser. Choose “Open in Safari” from the share menu. If it is unavailable, copy the link and paste it into Safari.'}</p>
+      <button type="button" class="btn-copy" id="btnCopyBrowserUrl">${isTr ? 'Bağlantıyı kopyala' : 'Copy link'}</button>
+      <input class="browser-url" id="browserUrl" type="url" readonly hidden>
+      <p class="hint" id="browserCopyStatus" role="status" aria-live="polite"></p>
+    `;
+    lock.setAttribute('role', 'dialog');
+    lock.setAttribute('aria-modal', 'true');
+    lock.setAttribute('aria-labelledby', 'inAppLockTitle');
+    lock.setAttribute('aria-describedby', 'inAppLockDescription');
+    document.body.appendChild(lock);
+    lock.classList.add('show');
+
+    /* Arkadaki uygulamanın etkileşimini tamamen engelle */
+    document.documentElement.style.overflow = 'hidden';
+    Array.from(document.body.children).forEach((child) => {
+      if (child === lock) return;
+      child.inert = true;
+      child.setAttribute('aria-hidden', 'true');
+    });
+    const copyButton = lock.querySelector('#btnCopyBrowserUrl');
+    const urlField = lock.querySelector('#browserUrl');
+    const copyStatus = lock.querySelector('#browserCopyStatus');
+    urlField.value = currentUrl;
+    copyButton.addEventListener('click', async () => {
+      try {
+        if (!navigator.clipboard || !navigator.clipboard.writeText) throw new Error('Clipboard API unavailable');
+        await navigator.clipboard.writeText(currentUrl);
+        urlField.hidden = true;
+        copyStatus.textContent = isTr ? 'Bağlantı kopyalandı. Safari’yi açıp yapıştır.' : 'Link copied. Open Safari and paste it.';
+      } catch (e) {
+        urlField.hidden = false;
+        urlField.focus({ preventScroll: true });
+        urlField.select();
+        copyStatus.textContent = isTr
+          ? 'Otomatik kopyalama kullanılamıyor. Seçili bağlantıyı kopyalayıp Safari’ye yapıştır.'
+          : 'Automatic copy is unavailable. Copy the selected link and paste it into Safari.';
+      }
+    });
+    copyButton.focus({ preventScroll: true });
+  }
+})();
+</script>
+<!-- Liquid Glass alt bar - yalnızca iOS/Apple cihazlarda, resimdeki gibi -->
+<nav id="bottomNav" aria-label="Ana gezinme">
+  <button class="item active" id="navOdak" aria-label="Odaklan" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.9" stroke-dasharray="2.2 3.1" opacity=".45"/><ellipse cx="9.3" cy="9.1" rx="1.15" ry="1.5"/><ellipse cx="14.7" cy="9.1" rx="1.15" ry="1.5"/><ellipse cx="6.9" cy="12.3" rx=".95" ry="1.2"/><ellipse cx="17.1" cy="12.3" rx=".95" ry="1.2"/><path d="M12 11.7c2.2 0 4 1.6 4 3.3 0 1.4-1.3 2.3-2.8 2.3-.6 0-1-.3-1.2-.3s-.6.3-1.2.3c-1.5 0-2.8-.9-2.8-2.3 0-1.7 1.8-3.3 4-3.3Z"/></svg>
+    <span>Odaklan</span>
+  </button>
+  <button class="item" id="navTema" aria-label="Karanlık ve aydınlık tema arasında geçiş yap" type="button">
+    <span class="nav-ico">
+      <svg class="nav-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.6v1.9M12 19.5v1.9M2.6 12h1.9M19.5 12h1.9M5.4 5.4l1.35 1.35M17.25 17.25l1.35 1.35M18.6 5.4l-1.35 1.35M6.75 17.25 5.4 18.6" opacity=".65"/><path d="M8.5 8.4 8 6.2l2.1.8M15.5 8.4l.5-2.2-2.1.8"/><circle cx="10.4" cy="11.4" r=".8" fill="currentColor" stroke="none"/><circle cx="13.6" cy="11.4" r=".8" fill="currentColor" stroke="none"/><path d="M11.1 13.3c.3.45.6.65.9.65s.6-.2.9-.65"/></svg>
+      <svg class="nav-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15.2 3.4a8.8 8.8 0 1 0 5.4 13.2A10 10 0 0 1 15.2 3.4Z"/><path d="M4.6 6.4c.8.45 1.7.6 2.6.45" opacity=".5"/><path d="M19.4 3.6v1.9M18.45 4.55h1.9" opacity=".85"/></svg>
+    </span>
+    <span>Tema</span>
+  </button>
+  <button class="item" id="navAyarlar" aria-label="Ayarlar" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.9v1.9M12 19.2v1.9M2.9 12h1.9M19.2 12h1.9M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4" opacity=".55"/><circle cx="12" cy="12" r="5.6"/><ellipse cx="10.1" cy="10.4" rx=".8" ry="1.05"/><ellipse cx="13.9" cy="10.4" rx=".8" ry="1.05"/><path d="M12 12.5c1.25 0 2.2.85 2.2 1.8 0 .8-.75 1.25-1.5 1.25-.35 0-.5-.15-.7-.15s-.35.15-.7.15c-.75 0-1.5-.45-1.5-1.25 0-.95.95-1.8 2.2-1.8Z"/></svg>
+    <span>Ayarlar</span>
+  </button>
+  <button class="item" id="navHesap" aria-label="Hesap" type="button">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.3 8.6 4.5 4.1l3.9 1.4M18.7 8.6l.8-4.5-3.9 1.4"/><path d="M12 5.4c3.9 0 7 2.9 7 6.5s-3.1 6.6-7 6.6-7-3-7-6.6 3.1-6.5 7-6.5Z"/><circle cx="9.5" cy="11.4" r=".88" fill="currentColor" stroke="none"/><circle cx="14.5" cy="11.4" r=".88" fill="currentColor" stroke="none"/><path d="M11.2 13.7h1.6l-.8 1.1Z" fill="currentColor" stroke="none"/><path d="M8.2 17.4c1.1.8 2.4 1.2 3.8 1.2s2.7-.4 3.8-1.2" opacity=".55"/></svg>
+    <span>Hesap</span>
+  </button>
+</nav>
 
 <script>
-/* --- PWA Güncelleme Bildirimi (Zorunlu) --- */
+/* Güncelleme ekranı: sürüm değiştiğinde bir kez gösterilir.
+   İlk ziyarette (kayıtlı sürüm yokken) açılmaz. */
 (function() {
-  if (!('serviceWorker' in navigator)) return;
-
-  const banner = document.getElementById('updateBanner');
-  const btnUpdate = document.getElementById('btnUpdateNow');
-
-  if (!banner || !btnUpdate) return;
-
-  function showBanner() {
-    banner.classList.add('show');
+  const overlay = document.getElementById('updateOverlay');
+  const list = document.getElementById('newsList');
+  const verEl = document.getElementById('updateVer');
+  const btn = document.getElementById('updateContinueBtn');
+  if (!overlay || !list || !btn) return;
+  const KEY = 'vespir.seenVersion';
+  const NEWS = {
+    v22: {
+      tr: [
+        'Sayaç halkasının içi yeniden dengelendi: "Bugün X dk odak" etiketi halkanın altına taşındı, rakamlar tam ortada.',
+        'Apple cihazlarda Liquid Glass alt bar: Odaklan · Tema · Ayarlar · Hesap; ikonlar artık Vespır’a özel.',
+        'Google ile giriş sayfa yenilense de sürüyor; oturum bu tarayıcıda saklanıyor. iPhone/Safari’de yönlendirmeli giriş.',
+        'Hakkımızda sayfasına yeni kış (Noel) görseli eklendi.',
+        'Güncelleme ekranındaki "Yenilikler" listesi gerçek sürüm notlarını gösteriyor.',
+        'Çevrimdışı açılışta eski sürüm yerine güncel arayüz yükleniyor; mum artık bal kabağının içinde değil.'
+      ],
+      en: [
+        'The inside of the timer ring is balanced again: "Today X min focus" moved under the ring and the digits sit dead centre.',
+        'Liquid Glass bottom bar on Apple devices: Focus · Theme · Settings · Account, now with Vespır’s own icons.',
+        'Google sign-in survives a page refresh; your session is kept in this browser, with redirect sign-in on iPhone/Safari.',
+        'A new winter (Christmas) illustration was added to the What is Vespır page.',
+        'The "What’s new" list on the update screen now shows real release notes.',
+        'Offline starts load the current interface instead of an old version; the candle is no longer inside the pumpkin.'
+      ]
+    }
+  };
+  const lang = () => (document.documentElement.dataset.lang === 'en' ? 'en' : 'tr');
+  function paint(version) {
+    const pack = NEWS[version];
+    if (verEl) verEl.textContent = version || '';
+    list.innerHTML = '';
+    if (!pack) return;
+    (pack[lang()] || pack.tr).forEach((line) => {
+      const li = document.createElement('li');
+      li.textContent = line;
+      list.appendChild(li);
+    });
   }
-
-  btnUpdate.addEventListener('click', () => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistration().then(reg => {
-        if (reg && reg.waiting) {
-          reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-        }
-        window.location.reload();
-      });
+  function close() {
+    overlay.hidden = true;
+    document.body.classList.remove('update-open');
+    try { localStorage.setItem(KEY, document.getElementById('appVersion') ? document.getElementById('appVersion').textContent : ''); } catch (e) {}
+  }
+  btn.addEventListener('click', close);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay || e.target.classList.contains('update-backdrop')) close(); });
+  const version = (document.getElementById('appVersion') || {}).textContent || '';
+  let seen = '';
+  try { seen = localStorage.getItem(KEY) || ''; } catch (e) {}
+  if (!version) return;
+  if (!seen) {
+    /* Daha önce Vespır kullanılmışsa (yerel ayar kaydı varsa) bu bir güncelleme:
+       yenilikler bir kez gösterilir. İlk ziyarette ekran açılmaz. */
+    let usedBefore = false;
+    try { usedBefore = !!localStorage.getItem('vespir.v1'); } catch (e) {}
+    if (!usedBefore) { try { localStorage.setItem(KEY, version); } catch (e) {} return; }
+    seen = 'v0';
+  }
+  if (seen === version) return;
+  paint(version);
+  overlay.hidden = false;
+  document.body.classList.add('update-open');
+  setTimeout(() => { try { btn.focus({ preventScroll: true }); } catch (e) {} }, 260);
+})();
+</script>
+<script>
+/* Alt bar - yalnızca iOS/Apple cihazlarda görünür.
+   Sıra: Odaklan · Tema (karanlık/aydınlık) · Ayarlar · Hesap */
+(function() {
+  const nav = document.getElementById('bottomNav');
+  if (!nav) return;
+  if (!document.documentElement.classList.contains('ios-glass')) { nav.remove(); return; }
+  const items = Array.from(nav.querySelectorAll('.item'));
+  const setActive = (id) => items.forEach((i) => {
+    const on = i.id === id;
+    i.classList.toggle('active', on);
+    if (on) i.setAttribute('aria-current', 'page');
+    else i.removeAttribute('aria-current');
+  });
+  const closeAll = () => {
+    ['about', 'contact', 'privacy', 'account'].forEach((key) => {
+      const el = document.getElementById(key);
+      if (!el || !el.classList.contains('open')) return;
+      const closer = { about: 'closeAbout', contact: 'closeContact', privacy: 'closePrivacy', account: 'closeAccount' }[key];
+      try { if (typeof window[closer] === 'function') window[closer](); } catch (e) {}
+    });
+  };
+  nav.addEventListener('click', (e) => {
+    const btn = e.target.closest('.item');
+    if (!btn) return;
+    if (btn.id === 'navOdak') {
+      setActive(btn.id);
+      closeAll();
+      if (typeof closeSettings === 'function') closeSettings();
+      const card = document.getElementById('timerCard');
+      if (card && card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (btn.id === 'navTema') {
+      if (typeof toggleScheme === 'function') toggleScheme();
+      btn.classList.add('active');
+      setTimeout(() => setActive('navOdak'), 480);
     } else {
-      window.location.reload();
+      setActive(btn.id);
+      if (btn.id === 'navAyarlar' && typeof openSettings === 'function') openSettings('cat');
+      if (btn.id === 'navHesap' && typeof openAccount === 'function') openAccount();
     }
   });
-
-  navigator.serviceWorker.register('./sw.js').then(reg => {
-    reg.addEventListener('updatefound', () => {
-      const newWorker = reg.installing;
-      if (!newWorker) return;
-      newWorker.addEventListener('statechange', () => {
-        if (newWorker.state === 'installed' && !navigator.serviceWorker.controller) {
-          return;
-        }
-        if (newWorker.state === 'installed') {
-          showBanner();
-        }
-      });
-    });
-  }).catch(() => {});
+  /* Dil değişince etiketler sözlükten gelir; burada yalnızca durum tazelenir. */
+  document.addEventListener('vespir:lang', () => setActive(nav.querySelector('.item.active') ? nav.querySelector('.item.active').id : 'navOdak'));
 })();
 </script>
 </body>
