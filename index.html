@@ -6883,7 +6883,7 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
   <div class="settings-backdrop" id="settingsBackdrop" data-close-settings>      </div>
   <div class="settings-panel glass-strong" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <header class="settings-head">
-      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p><div class="settings-meta"><span class="app-version" id="appVersion">v25</span></div>      </div>
+      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p><div class="settings-meta"><span class="app-version" id="appVersion">v26</span></div>      </div>
       <button class="settings-close" id="settingsClose" type="button" aria-label="Ayarları kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <button class="about-cta contact-cta" id="accountBtn" type="button" data-account>
@@ -8673,7 +8673,6 @@ const snow = {
   canvas: null, ctx: null, w: 0, h: 0, dpr: 1,
   flakes: [], clumps: [], piles: new Map(), surfaces: [], surfaceDirty: true, surfaceRect: null,
   surfaceAnimatingUntil: performance.now() + 1600,
-  nextAvalanche: 0, nextEdgeSpill: 0,
   raf: 0, running: false, last: 0, drawnAt: 0, t: 0, quality: 1, slow: 0
 };
 const SNOW_PILE_MAX = 15;
@@ -8696,7 +8695,7 @@ function resizeSnow() {
      her karede milyonlarca pikseli temizliyor; 0.7-1.0 arası bir tampon
      görüntüyü bozmadan maliyeti ciddi biçimde düşürüyor. */
   const area = Math.max(1, window.innerWidth * window.innerHeight);
-  snow.dpr = Math.min(1, Math.max(.7, Math.sqrt(1900000 / area)));
+  snow.dpr = Math.min(1, Math.max(.7, Math.sqrt(1500000 / area)));
   snow.w = window.innerWidth;
   snow.h = window.innerHeight;
   canvas.width = Math.max(1, Math.floor(snow.w * snow.dpr));
@@ -8704,9 +8703,6 @@ function resizeSnow() {
   snow.surfaces = [];
   snow.surfaceDirty = true;
   snow.piles.clear();
-  snow.clumps = [];
-  snow.nextAvalanche = 0;
-  snow.nextEdgeSpill = 0;
   buildSnowFlakes();
 }
 function makeSnowFlake(initial = false) {
@@ -8731,7 +8727,7 @@ function buildSnowFlakes() {
   /* 2560 px geniş ekranda 56 tane tek tek yay çiziminde kare atlaması
      yapıyordu; 48 tane aynı yoğunluk hissini koruyup akıcı kalıyor. */
   /* Düşük bellekli telefonda tane sayısı yarıya iner; kar hissi aynı kalır. */
-  const cap = perfModeOn() ? 0 : 48;
+  const cap = perfModeOn() ? 0 : 40;
   const count = Math.round(Math.min(cap, Math.max(20, (snow.w * snow.h) / 34000)));
   snow.flakes = [];
   for (let i = 0; i < count; i++) snow.flakes.push(makeSnowFlake(true));
@@ -8968,133 +8964,6 @@ function drawSnowPile(ctx, surface) {
   }
   ctx.globalAlpha = 1;
 }
-/* Biriken kar arada bir çığ gibi öne dökülür. */
-function spawnAvalanche(surface, pile) {
-  const n = pile.cols;
-  const span = surface.right - surface.left;
-  const step = span / n;
-  let best = -1, bestH = 0;
-  for (let i = 2; i < n - 2; i++) {
-    const x = surface.left + (i + .5) * step;
-    if (snowEdgeFade(surface, x) < .28) continue;
-    if (pile.heights[i] > bestH) { bestH = pile.heights[i]; best = i; }
-  }
-  const need = Math.max(4.6, (best >= 0 ? pile.ceil[best] : 8) * .42);
-  if (best < 0 || bestH < need) return false;
-  const x = surface.left + (best + .5) * step;
-  const baseY = snowSurfaceY(surface, x);
-  const topY = baseY - bestH;
-  const count = randInt(6, 11);
-  const dir = x < (surface.left + surface.right) * .5 ? -1 : 1;
-  for (let k = 0; k < count; k++) {
-    snow.clumps.push({
-      x: x + rand(-4.5, 4.5),
-      y: topY + rand(-1.5, 2),
-      vx: dir * rand(1.5, 10) + rand(-5, 5),
-      vy: rand(1, 9),
-      r: rand(1.2, 3.2),
-      a: rand(.5, .92),
-      life: rand(1.4, 2.8),
-      bottom: surface.bottom
-    });
-  }
-  const cut = Math.min(pile.heights[best], rand(2.1, 4.1));
-  pile.heights[best] -= cut;
-  for (let d = 1; d <= 2; d++) {
-    if (best - d >= 0) pile.heights[best - d] = Math.max(0, pile.heights[best - d] - cut * (.34 / d));
-    if (best + d < n) pile.heights[best + d] = Math.max(0, pile.heights[best + d] - cut * (.34 / d));
-  }
-  pile.dirty = true;
-  return true;
-}
-function maybeAvalanche(now, surfaces) {
-  if (!snow.nextAvalanche) snow.nextAvalanche = now + 5200;
-  if (now < snow.nextAvalanche) return;
-  snow.nextAvalanche = now + rand(4800, 9800);
-  for (let s = 0; s < surfaces.length; s++) {
-    const pile = snow.piles.get(surfaces[s].key);
-    if (pile && spawnAvalanche(surfaces[s], pile)) break;
-  }
-}
-/* Kenar birikimi arada bir yandan dışarı taşar: karlar kartın köşesinden
-   sokağa dökülüyormuş gibi yana savrulur. */
-function spawnEdgeSpill(surface, pile) {
-  const n = pile.cols;
-  if (n < 8) return false;
-  const step = (surface.right - surface.left) / n;
-  const side = Math.random() < .5 ? -1 : 1;
-  const limit = Math.max(3, Math.floor(n * .2));
-  /* Kenar bölgesinde yeterince kalın bir sütun bulunana kadar birkaç kez dene. */
-  let i = -1;
-  let h = 0;
-  for (let attempt = 0; attempt < 6; attempt++) {
-    const col = side < 0 ? randInt(1, limit) : randInt(n - limit - 1, n - 2);
-    const colH = pile.heights[col];
-    if (colH > h) { h = colH; i = col; }
-    if (colH >= 2) { i = col; h = colH; break; }
-  }
-  if (i < 0 || h < 2) return false;
-  const x = surface.left + (i + .5) * step;
-  const y = snowSurfaceY(surface, x) - h;
-  const count = randInt(3, 6);
-  for (let k = 0; k < count; k++) {
-    snow.clumps.push({
-      x: x + rand(-2.5, 2.5),
-      y: y + rand(-1.2, 1.4),
-      vx: side * rand(12, 30) + rand(-3, 3),
-      vy: rand(-5, 4),
-      r: rand(.9, 2.5),
-      a: rand(.45, .9),
-      life: rand(1.1, 2.1),
-      bottom: surface.bottom
-    });
-  }
-  pile.heights[i] = Math.max(0, h - rand(1.1, 2.3));
-  const inner = i - side;
-  if (inner >= 0 && inner < n) pile.heights[inner] = Math.max(0, pile.heights[inner] - rand(.3, .9));
-  pile.dirty = true;
-  return true;
-}
-function maybeEdgeSpill(now, surfaces) {
-  if (!snow.nextEdgeSpill) snow.nextEdgeSpill = now + 3200;
-  if (now < snow.nextEdgeSpill) return;
-  snow.nextEdgeSpill = now + rand(2600, 5800);
-  for (let s = 0; s < surfaces.length; s++) {
-    const pile = snow.piles.get(surfaces[s].key);
-    if (pile && spawnEdgeSpill(surfaces[s], pile)) break;
-  }
-}
-function updateSnowClumps(dt) {
-  for (let i = snow.clumps.length - 1; i >= 0; i--) {
-    const c = snow.clumps[i];
-    c.vy += 640 * dt;
-    c.vx *= .995;
-    c.x += c.vx * dt;
-    c.y += c.vy * dt;
-    c.life -= dt;
-    if (c.life <= 0 || c.y > c.bottom + 26 || c.y > snow.h + 30) snow.clumps.splice(i, 1);
-  }
-}
-function drawSnowClumps(ctx) {
-  ctx.fillStyle = '#fff';
-  ctx.strokeStyle = 'rgba(246,252,255,1)';
-  ctx.lineCap = 'round';
-  for (let i = 0; i < snow.clumps.length; i++) {
-    const c = snow.clumps[i];
-    const trail = Math.min(10, c.vy * .055);
-    ctx.globalAlpha = c.a * .34;
-    ctx.lineWidth = c.r * 1.15;
-    ctx.beginPath();
-    ctx.moveTo(c.x - c.vx * .018, c.y - trail);
-    ctx.lineTo(c.x, c.y);
-    ctx.stroke();
-    ctx.globalAlpha = c.a;
-    ctx.beginPath();
-    ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-  ctx.globalAlpha = 1;
-}
 function resetSnowFlake(f) {
   /* Aynı taneyi yerinde diriltiyoruz; her inişte yeni nesne üretmek zayıf
      cihazlarda çöp toplama dalgalanması (mikro takılma) yapıyordu. */
@@ -9213,11 +9082,7 @@ function stepSnow(now) {
     ctx.fill();
   }
   ctx.globalAlpha = 1;
-  maybeAvalanche(now, surfaces);
-  maybeEdgeSpill(now, surfaces);
-  updateSnowClumps(dt);
   for (let s = 0; s < surfaces.length; s++) drawSnowPile(ctx, surfaces[s]);
-  drawSnowClumps(ctx);
   snow.raf = requestAnimationFrame(stepSnow);
 }
 function syncSnow() {
@@ -9239,11 +9104,8 @@ function syncSnow() {
       snow.running = false;
       cancelAnimationFrame(snow.raf);
       snow.flakes = [];
-      snow.clumps = [];
       snow.piles.clear();
       snow.surfaces = [];
-      snow.nextAvalanche = 0;
-      snow.nextEdgeSpill = 0;
       if (snow.ctx) {
         snow.ctx.setTransform(1, 0, 0, 1, 0, 0);
         snow.ctx.clearRect(0, 0, snow.canvas.width, snow.canvas.height);
@@ -9325,14 +9187,14 @@ function cleanHeadSnow(opts = {}) {
   const r = wrap.getBoundingClientRect();
   /* Baş önce silkelensin; kar ancak hareketin hızlandığı anda kopsun. */
   const scatter = () => {
-    spawnBurst(r.left + r.width * .5, r.top + r.height * .24, 24, {
+    spawnBurst(r.left + r.width * .5, r.top + r.height * .24, 12, {
       colors: ['#ffffff', '#eaf7ff', '#d8ecfb', '#ffffff'],
       speed: 5.4, gravity: .1, spread: Math.PI * 1.15, angle: -Math.PI / 2, lift: 1.6
     });
     /* Kafadan kopan iri kümeler gerçekten düşsün: toz bulutunun yanında
        yerçekimiyle dönen, birbirinden farklı boyutlarda kar parçaları. */
     const clumps = [];
-    for (let i = 0; i < 11; i++) {
+    for (let i = 0; i < 6; i++) {
       const clump = document.createElement('b');
       clump.className = 'snow-clump';
       clump.setAttribute('aria-hidden', 'true');
@@ -13100,7 +12962,7 @@ function restoreTimer() {
   if (timer.remaining <= .01) timer.remaining = timer.total;
   return false;
 }
-const APP_VERSION = 'v25';
+const APP_VERSION = 'v26';
 function updateStatsUI() {
   if (rollStatsDay()) saveNow();
   const min = Math.floor(Math.max(0, S.stats.sec) / 60);
@@ -15317,6 +15179,18 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
   if (!overlay || !list || !btn) return;
   const KEY = 'vespir.seenVersion';
   const NEWS = {
+    v26: {
+      tr: [
+        'Sayaç üstünde biriken kar artık dökülmüyor: çığ ve kenar taşması kaldırıldı, kar yalnızca birikiyor.',
+        'Kar yoğunluğu ve tuval çözünürlüğü azaltıldı; kar aynı görünüyor, kare maliyeti düştü.',
+        'Kedi başını silkeleyince kopan kar parçaları ve toz bulutu yarıya indirildi; o an artık daha akıcı.'
+      ],
+      en: [
+        'Snow piled on the timer no longer falls off: the avalanche and edge spill are gone, the snow just settles.',
+        'Snow density and canvas resolution were lowered; the snow looks the same with a lighter frame cost.',
+        'The snow clumps and dust burst from the cat shaking its head are halved, so that moment runs smoother.'
+      ]
+    },
     v25: {
       tr: [
         'Her temanın süsü mobil ve masaüstünde tek tek kontrol edildi; açık modda kaybolan yıldız, bulut ve baloncuk motifleri koyulaştırıldı.',
