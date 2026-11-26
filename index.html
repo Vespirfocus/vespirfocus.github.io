@@ -6151,16 +6151,9 @@ html[data-lowfx="1"] .intro-cat-holder * {
 /* Sayaç halkasının hemen altındaki günlük odak etiketi. */
 .ring-today { display: flex; margin: 0 auto 10px; align-self: center; width: max-content; max-width: 92%; }
 main.app.focus-active .ring-today { display: none !important; }
-/* Hakkımızda sayfasındaki kış görseli. */
-.about-hero {
-  margin: 4px 0 18px; padding: 0; overflow: hidden;
-  border-radius: 22px; border: 1px solid var(--line);
-  box-shadow: 0 26px 54px -38px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .42);
-}
-img.about-hero-img {
-  display: block; width: 100%; height: auto; aspect-ratio: 1392 / 752;
-  border-radius: 22px !important; object-fit: cover;
-}
+/* "Vespır Nedir?" satırındaki logo yerine her zamanki kış görseli. */
+.about-cta-ico-photo { background: #eef6fb; }
+img.about-cta-img { width: 100%; height: 100%; display: block; object-fit: cover; object-position: 50% 58%; }
 /* Alt bar: Vespır'a özel ikonlar. */
 #bottomNav .nav-ico { display: grid; place-items: center; width: 25px; height: 25px; }
 #bottomNav .nav-ico svg { grid-area: 1 / 1; width: 25px; height: 25px; }
@@ -6335,7 +6328,45 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
 }
 @keyframes counterSnowFall {
   to { transform: translateY(100vh); }
-}</style>
+}
+/* ============ OKUNURLUK: METİN TAŞIYAN YÜZEYLER ============ */
+/* Cam hissi yalnızca küçük öğelerde kalır (alt bar, çipler, mini düğmeler).
+   Metin taşıyan büyük yüzeyler temanın zemininden türetilmiş, neredeyse
+   tamamen opak bir katmana oturur; arkadaki animasyonlu dünya yazıyı
+   yıkayamaz. Renkler tema değişkenlerinden türetildiği için 8 temanın
+   tamamında (açık/koyu) aynı okunurluk korunur. */
+:root {
+  --panel: color-mix(in srgb, var(--bg-0) 94%, var(--glass-3));
+  --panel-in: color-mix(in srgb, var(--bg-0) 87%, var(--ink) 5%);
+  --panel-line: color-mix(in srgb, var(--ink) 14%, transparent);
+}
+.timer-card,
+.settings-panel,
+.about-card,
+.update-card,
+.intro-card {
+  background: var(--panel);
+  background-image: linear-gradient(164deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, 0) 46%);
+  border-color: var(--panel-line);
+}
+.update-news,
+.sound-slot,
+.duration-summary,
+.legal-note,
+.pwa-card {
+  background: var(--panel-in);
+  border-color: var(--panel-line);
+}
+.update-intro,
+.news-list li { color: var(--ink-2); }
+.update-title { color: var(--ink); }
+.news-list li::before { background: var(--accent); }
+/* Güncelleme kartı: metin bloğu kartın içinde kaldığı sürece kaydırma
+   gölgesi kesilmesin. */
+.update-body { padding-bottom: 12px; }
+/* Hakkımızda: büyük görsel kalkınca metin başlığa yapışmasın. */
+#aboutScroll { padding-top: 14px; }
+</style>
 </head>
 <body>
 <!-- ============ GÜNCELLEME EKRANI (TAM EKRAN OVERLAY) ============ -->
@@ -6725,7 +6756,7 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
   <div class="settings-backdrop" id="settingsBackdrop" data-close-settings>      </div>
   <div class="settings-panel glass-strong" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
     <header class="settings-head">
-      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p><div class="settings-meta"><span class="app-version" id="appVersion">v22</span></div>      </div>
+      <div><span class="eyebrow">Vespır'ı şekillendir</span><h2 id="settingsTitle">Ayarlar</h2><p>Odak ayarların bu tarayıcıda saklanır. Hesap verileri gizlilik sayfasında açıklanır.</p><div class="settings-meta"><span class="app-version" id="appVersion">v23</span></div>      </div>
       <button class="settings-close" id="settingsClose" type="button" aria-label="Ayarları kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <button class="about-cta contact-cta" id="accountBtn" type="button" data-account>
@@ -6928,7 +6959,7 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
         <div class="field-label">Hakkımızda <small>Vespır'ın hikâyesi ve sözleşmeler</small>      </div>
         <div class="about-stack">
           <button class="about-cta" id="aboutBtn" type="button">
-            <span class="about-cta-ico" aria-hidden="true"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#fdf3f7"/><path d="M16 26 14 12l12 8h12l12-8-2 14c2 4 3 9 3 14 0 11-9 16-19 16s-19-5-19-16c0-5 1-10 3-14z" fill="#c96a8c"/><circle cx="25" cy="36" r="2.6" fill="#2b2230"/><circle cx="39" cy="36" r="2.6" fill="#2b2230"/><path d="M30 42h4l-2 3z" fill="#2b2230"/></svg></span>
+            <span class="about-cta-ico about-cta-ico-photo" aria-hidden="true"><img class="about-cta-img" src="assets/noel-vespir.jpg" alt="" width="1392" height="752" decoding="async"></span>
             <span class="about-cta-copy"><b>Vespır Nedir?</b><small>Hikâyesi, karakteri ve onu hayata geçiren tek kişi</small></span>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
           </button>
@@ -6963,7 +6994,6 @@ html.ios-glass[data-lowfx="1"] .icon-btn.glass-mini {
       <button class="about-close" id="aboutClose" type="button" aria-label="Vespır Nedir sayfasını kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="about-scroll" id="aboutScroll">
-      <figure class="about-hero"><img class="about-hero-img" src="assets/noel-vespir.jpg" alt="Vespır çam ağacının altında, kış temalı illüstrasyon" width="1392" height="752" decoding="async"></figure>
       <p class="about-copy">Vespır, pomodoro tekniğiyle çalışan bir odak uygulaması ve tepede yaşayan sevimli bir kedi arkadaşıdır. 😺 Sen çalışırken o da boş durmaz: kitap okur, not alır, rengârenk yumağıyla oynar; molada gerinir, iyi iş çıkardığında ödül mamasını hak eder. Arada sana yazar: "Bugün ne yapıyorsun, çalışalım mı?" Saate, hafta sonuna ve istersen bulunduğun yerin havasına göre değişen bu mesajlarla seni yalnız bırakmaz; uzaktayken özlediğini bildirir. Kediyi, temaları ve sesleri kendine göre süsleyebilir; günlük hedefini ve istatistiklerini takip edebilirsin. Uygulamayı cihazına kurabilir, dilersen Google hesabınla giriş yapabilirsin; verilerin cihazında kalır. 🤩 Hadi, oyalanmayı bırak; Vespır ile odaklan!</p>
       <h3 class="about-sub">VESPIR'IN ARKASINDA KİM VAR?</h3>
       <p class="about-copy">Vespır kolay bir yoldan gelmedi. Arkasında ne kalabalık bir ekip vardı ne de büyük bir bütçe; onu tek bir bağımsız geliştirici hayata geçirdi. Evet, sadece bir kişi. İlk kod hatalıydı; ikincisi de, üçüncüsü de... Ama pes edilmedi. Denemeler, düzeltmeler ve uykusuz geceler sonunda Vespır doğdu. Mükemmel değildi ama gerçekti. Belki de önemli olan budur: mükemmellik soğuktur, gerçeklik sıcak. Değil mi?</p>
@@ -7952,7 +7982,6 @@ const EN = {
   'Saat': 'Hours',
   'Dakika': 'Minutes',
   /* v22: kış görseli ve yeni sürüm notları */
-  'Vespır çam ağacının altında, kış temalı illüstrasyon': 'Vespır under a pine tree, winter illustration',
   /* v21: eksik kalan arayüz metinleri */
   'Yeni sürüm hazır': 'New version ready',
   'Vespır için yeni bir güncelleme yayınlandı. Devam et diyerek güncellemeyi tamamlayabilir ve yeni sürüme geçebilirsin.': 'A new update for Vespır has been released. Choose continue to finish the update and switch to the new version.',
@@ -12942,7 +12971,7 @@ function restoreTimer() {
   if (timer.remaining <= .01) timer.remaining = timer.total;
   return false;
 }
-const APP_VERSION = 'v22';
+const APP_VERSION = 'v23';
 function updateStatsUI() {
   if (rollStatsDay()) saveNow();
   const min = Math.floor(Math.max(0, S.stats.sec) / 60);
@@ -15159,6 +15188,20 @@ if (signOutBtn) signOutBtn.addEventListener('click', async () => {
   if (!overlay || !list || !btn) return;
   const KEY = 'vespir.seenVersion';
   const NEWS = {
+    v23: {
+      tr: [
+        'Hakkımızda sayfasındaki büyük kış görseli kaldırıldı; aynı görsel artık "Vespır Nedir?" satırındaki logo yerinde duruyor.',
+        'Okunurluk düzeltmesi: güncelleme ekranı, nokta paneli, Ayarlar, Hakkımızda, İletişim ve Gizlilik yüzeyleri neredeyse opak zemine taşındı.',
+        'Yazılar artık arkadaki hareketli zeminden ve cam katmanlardan etkilenmiyor; 8 temanın hepsinde aynı kontrast.',
+        'Ayarlar paneli ve büyük kartlar daha hızlı açılıyor; bulanık katman sayısı azaldı.'
+      ],
+      en: [
+        'The large winter illustration was removed from the What is Vespır page; the same image now sits where the logo was on the "What is Vespır?" row.',
+        'Readability fix: the update screen, the dot panel, Settings, About, Contact and Privacy surfaces now use near-opaque backgrounds.',
+        'Text is no longer washed out by the animated background or glass layers, with the same contrast across all 8 themes.',
+        'The settings panel and large cards open faster; fewer blur layers are composited.'
+      ]
+    },
     v22: {
       tr: [
         'Sayaç halkasının içi yeniden dengelendi: "Bugün X dk odak" etiketi halkanın altına taşındı, rakamlar tam ortada.',
