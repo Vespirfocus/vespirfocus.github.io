@@ -842,6 +842,31 @@ html[data-theme] main.app.focus-active #timerCard { padding-top: 22px; }
   html[data-theme] .timer-card { padding-top: 22px; }
 }
 @keyframes noelLightsGlow { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
+/* Odak sahnesinde kart şeffaf olduğu için düz ışık dizisi havada asılı
+   kalıyordu. Burada dizi halkanın üst kenarına sarılır: tel halkanın dış
+   yayını izler, ampuller o yayın üstüne oturur. Yalnızca üst yay kaplanır,
+   halkanın geri kalanı ve süre boş kalır. */
+.focus-lights {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  z-index: 2; pointer-events: none; display: none; opacity: .9;
+  /* Gölge sabit: animasyon yalnızca opacity'yi değiştirir. */
+  filter: drop-shadow(0 0 6px rgba(255, 226, 170, .55));
+  animation: noelLightsGlow 3.4s ease-in-out infinite;
+  will-change: opacity;
+}
+.focus-lights .fl-wire {
+  fill: none; stroke: color-mix(in srgb, var(--ink) 38%, transparent);
+  stroke-width: 1.6; stroke-linecap: round;
+}
+.focus-lights circle { stroke: rgba(255, 255, 255, .34); stroke-width: .7; }
+.focus-lights .fl-b1 { fill: #93d6ff; }
+.focus-lights .fl-b2 { fill: #7be0a3; }
+.focus-lights .fl-b3 { fill: #ffd166; }
+.focus-lights .fl-b4 { fill: #ff737b; }
+.focus-lights .fl-b5 { fill: #ffd166; }
+.focus-lights .fl-b6 { fill: #7be0a3; }
+.focus-lights .fl-b7 { fill: #93d6ff; }
+html[data-theme="noel"] main.app.focus-active .focus-lights { display: block; }
 /* ============ TEMA SÜSLERİ ============ */
 /* Her tema sayacın üst kenarında kendi motifini taşır; Noel'in ışık dizisi
    ayrı kalır. Motifler yalnızca CSS ile çizilir: ek resim ya da istek yok. */
@@ -5384,8 +5409,8 @@ body.focus-active .particles { opacity: 0 !important; pointer-events: none; }
     left: -5px; top: 16px; bottom: auto;
     border: 0; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line);
   }
-  /* Noel'de kedi ışıkların üstünde uyur: ışık dizisi odak sahnesinde de açık kalır. */
-  body.focus-active main.app.focus-active .noel-lights { opacity: .9 !important; }
+  /* Odak sahnesinde ışık dizisi kartın üstünde asılı kalmaz; yerini halkanın
+     üst kenarına sarılan .focus-lights dizisine bırakır (yukarıya bakınız). */
 }
 /* Yalnız görünmeyen hareketler bekler; sahne geri gelince aynı animasyon sürer. */
 html.page-hidden *, html.page-hidden *::before, html.page-hidden *::after,
@@ -5850,6 +5875,7 @@ html[data-lowfx="1"] .cat-halo,
 html[data-lowfx="1"] .cat-shadow,
 html[data-lowfx="1"] .brand-mark::after,
 html[data-lowfx="1"] .noel-lights,
+html[data-lowfx="1"] .focus-lights,
 html[data-lowfx="1"] .intro-spark,
 html[data-lowfx="1"] .ring-deco,
 html[data-lowfx="1"] .ring-glow,

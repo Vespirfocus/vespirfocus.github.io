@@ -8,6 +8,16 @@
   if (!overlay || !list || !btn) return;
   const KEY = 'vespir.seenVersion';
   const NEWS = {
+    v29: {
+      tr: [
+        'Odak sahnesindeki Noel ışıkları artık havada asılı durmuyor: halkanın üst kenarına sarılıyor, yalnızca üst yayı kaplıyor.',
+        'Işık dizisi telefon, tablet ve masaüstünde aynı davranıyor; geri kalan ekran ve süre boş kalıyor.'
+      ],
+      en: [
+        'The Christmas lights in the focus scene no longer hang in the air: they now wrap the top rim of the ring and cover only the upper arc.',
+        'The light string behaves the same on phone, tablet and desktop; the rest of the scene and the timer stay clear.'
+      ]
+    },
     v28: {
       tr: [
         'Arka plandaki hava kontrolünün izi düzeltildi: tercihler yeniden yazıldığında silinmiyor, böylece “son üç saatte bakıldı” kuralı gerçekten uygulanıyor.',
