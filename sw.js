@@ -8,10 +8,15 @@
    Hava uyarısı için worker, uyandığı anda Open-Meteo'dan güncel havayı kendisi alır;
    sayfanın en son açıldığı andaki eski veriye bağımlı değildir. Bunun için tercih kaydında
    yalnızca 0,1° (~10 km) yuvarlanmış yaklaşık koordinat tutulur. */
-const APP_CACHE = 'vespir-app-v26';
+const APP_CACHE = 'vespir-app-v27';
 const SHELL_PATHS = ['index.html'];
 /* Simgeler ve manifest de önbelleğe alınır: çevrimdışıyken de ana ekran simgesi ve bildirim görseli eksiksiz olur. */
 const STATIC_PATHS = ['manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'icon-round-192.png', 'icon-apple-180.png', 'assets/vespir-noel.webp'];
+/* Uygulama dosyalari: stil ve betikler artik ayri dosyalarda. Bunlar her zaman
+   once agdan (tarayici HTTP onbellegi devrede) denenir; ag yoksa onbellekten
+   donulur. Boylece yeni HTML ile eski betik eslesmezligi olusmaz ve cevrimdisi
+   acilis bozulmaz. */
+const ASSET_PATHS = ['app.css', 'js/install-prompt.js', 'js/boot.js', 'js/app.js', 'js/firebase-auth.js', 'js/in-app-guard.js', 'js/update-screen.js', 'js/bottom-bar.js'];
 async function fetchWithDeadline(input, options = {}, delay = 5000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), delay);
@@ -33,7 +38,7 @@ self.addEventListener('install', (e) => e.waitUntil((async () => {
       }
     }
     await Promise.all(SHELL_PATHS.map((path) => cacheShell(new URL(path, self.registration.scope).href)));
-    await Promise.all(STATIC_PATHS.map((path) => cacheStatic(new URL(path, self.registration.scope).href)));
+    await Promise.all(STATIC_PATHS.concat(ASSET_PATHS).map((path) => cacheStatic(new URL(path, self.registration.scope).href)));
   } catch (err) {}
   await self.skipWaiting();
 })()));
@@ -115,6 +120,21 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (req.mode !== 'navigate') {
+    /* Stil ve betikler: once ag, erisilemezse onbellek. */
+    if (ASSET_PATHS.some((p) => new URL(p, self.registration.scope).href === url.origin + url.pathname)) {
+      e.respondWith((async () => {
+        try {
+          const res = await fetch(req);
+          if (res && res.ok) { try { await (await caches.open(APP_CACHE)).put(url.origin + url.pathname, res.clone()); } catch (err) {} }
+          if (res && res.status < 500) return res;
+        } catch (err) {}
+        const cache = await caches.open(APP_CACHE);
+        const hit = await cache.match(url.origin + url.pathname);
+        if (hit) return hit;
+        return fetch(req);
+      })());
+      return;
+    }
     /* Simgeler ve manifest: önce önbellek, yoksa ağ (ve önbelleğe yaz). */
     const known = STATIC_PATHS.some((p) => new URL(p, self.registration.scope).href === url.origin + url.pathname);
     if (!known) return;
