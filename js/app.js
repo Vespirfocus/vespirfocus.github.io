@@ -622,6 +622,7 @@ const EN = {
   'İskelet Kedi': 'Skeleton cat', 'Toga': 'Toga', 'Laboratuvar': 'Lab coat', 'Kolej Ceketi': 'Varsity jacket',
   'Fırfırlı Elbise': 'Ruffled dress', 'Noel Kazağı': 'Christmas sweater',
   'Çam': 'Chime', 'Miyav': 'Meow', 'Su damlası': 'Water drop', 'Nefes': 'Breath', 'Sessiz': 'Silent',
+  'Kendi sesim': 'My own sound',
   'Özel renk seç': 'Pick a custom color', 'Renk': 'Color', 'Tasma rengi': 'Collar color',
   'meraklı': 'curious', 'uyuyor': 'sleeping', 'okuyor': 'reading', 'mutlu': 'happy',
   'selam veriyor': 'waving', 'geriniyor': 'stretching', 'tüy yumağıyla oynuyor': 'playing with yarn',
@@ -5630,7 +5631,7 @@ function restoreTimer() {
   if (timer.remaining <= .01) timer.remaining = timer.total;
   return false;
 }
-const APP_VERSION = 'v30';
+const APP_VERSION = 'v31';
 function updateStatsUI() {
   if (rollStatsDay()) saveNow();
   const min = Math.floor(Math.max(0, S.stats.sec) / 60);
@@ -6359,8 +6360,13 @@ function setBreakMinutes(value) {
   if (next === S.breakMin) return;
   S.breakMin = next;
   if (!timer.running && timer.phase === 'break') {
-    timer.total = next * 60;
-    timer.remaining = timer.total;
+    const oldTotal = timer.total;
+    const nextTotal = next * 60;
+    /* Duraklatılmış molada süre değişince geçen süre korunur; kalan süre
+       toplam süredeki fark kadar kayar (önce mola baştan başlıyordu). */
+    const started = !!timer.id && timer.remaining < oldTotal - .5;
+    timer.total = nextTotal;
+    timer.remaining = started ? clamp(timer.remaining + (nextTotal - oldTotal), 1, nextTotal) : nextTotal;
     timer.shown = -1;
     updateTimerDisplay(true);
     syncTimerChrome();
@@ -6375,8 +6381,13 @@ function setFocusMinutes(value, source = 'ui') {
   if (next === S.focusMin) return;
   S.focusMin = next;
   if (!timer.running && timer.phase === 'focus') {
-    timer.total = next * 60;
-    timer.remaining = timer.total;
+    const oldTotal = timer.total;
+    const nextTotal = next * 60;
+    /* Duraklatılmış seansta süre değişince geçen süre korunur; kalan süre
+       toplam süredeki fark kadar kayar (önce seans baştan başlıyordu). */
+    const started = !!timer.id && timer.remaining < oldTotal - .5;
+    timer.total = nextTotal;
+    timer.remaining = started ? clamp(timer.remaining + (nextTotal - oldTotal), 1, nextTotal) : nextTotal;
     timer.shown = -1;
     updateTimerDisplay(true);
     syncTimerChrome();

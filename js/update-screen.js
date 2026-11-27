@@ -8,6 +8,16 @@
   if (!overlay || !list || !btn) return;
   const KEY = 'vespir.seenVersion';
   const NEWS = {
+    v31: {
+      tr: [
+        'İngilizce arayüzde ses seçeneklerindeki özel ses etiketi artık çevriliyor: “My own sound”.',
+        'Duraklatılmış bir seansta odak veya mola süresi değiştirildiğinde geçen süre korunuyor; sayaç sıfırdan başlamıyor, kalan süre fark kadar kayıyor.'
+      ],
+      en: [
+        'The custom sound option in the sound picker is now translated in the English interface (“My own sound”).',
+        'Changing the focus or break length of a paused session keeps the elapsed time: the timer no longer starts over, the remaining time shifts by the difference.'
+      ]
+    },
     v30: {
       tr: [
         'Bir sürüm geri alındığında “yeni sürüm hazır” ekranı artık açılmıyor: kayıtlı sürüm daha yeniyse kayıt sessizce güncelleniyor.',
