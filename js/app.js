@@ -5610,7 +5610,12 @@ function restoreTimer() {
     return false;
   }
   timer.phase = saved.phase;
-  timer.id = typeof saved.id === 'string' ? saved.id : saved.phase + ':' + saved.endAt + ':' + saved.total;
+  /* Henüz başlamamış (id'si olmayan) bir seansa kimlik uydurulmuyor:
+     uydurulan kimlik, molanın düğmesini yanlışlıkla "Devam et" yapıyordu. */
+  const savedTotal = Number(saved.total);
+  const savedRemaining = Number(saved.remaining);
+  const untouched = saved.running !== true && Number.isFinite(savedTotal) && Number.isFinite(savedRemaining) && savedRemaining >= savedTotal - .5;
+  timer.id = typeof saved.id === 'string' ? saved.id : (untouched ? null : saved.phase + ':' + saved.endAt + ':' + saved.total);
   timer.total = clamp(Number(saved.total) || (saved.phase === 'focus' ? S.focusMin * 60 : S.breakMin * 60), 60, 14400);
   const endAt = Number(saved.endAt);
   const validRunning = saved.running === true && Number.isFinite(endAt) && endAt > 0;
@@ -5631,7 +5636,7 @@ function restoreTimer() {
   if (timer.remaining <= .01) timer.remaining = timer.total;
   return false;
 }
-const APP_VERSION = 'v31';
+const APP_VERSION = 'v32';
 function updateStatsUI() {
   if (rollStatsDay()) saveNow();
   const min = Math.floor(Math.max(0, S.stats.sec) / 60);
