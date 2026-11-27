@@ -8,6 +8,18 @@
   if (!overlay || !list || !btn) return;
   const KEY = 'vespir.seenVersion';
   const NEWS = {
+    v30: {
+      tr: [
+        'Bir sürüm geri alındığında “yeni sürüm hazır” ekranı artık açılmıyor: kayıtlı sürüm daha yeniyse kayıt sessizce güncelleniyor.',
+        'Çevrimdışıyken service worker güncellemesi başarısız olduğunda konsola hata düşmesi giderildi.',
+        'Kurulum açılış ekranı ve durum çubuğu rengi uygulamanın gerçek arka planıyla eşleşiyor.'
+      ],
+      en: [
+        'The “new version ready” screen no longer appears when the app is moved back to an older version: if the saved version is newer, the record is updated quietly.',
+        'Fixed a console error when the service worker update fails while offline.',
+        'The install splash screen and status bar colour now match the app’s actual background.'
+      ]
+    },
     v28: {
       tr: [
         'Arka plandaki hava kontrolünün izi düzeltildi: tercihler yeniden yazıldığında silinmiyor, böylece “son üç saatte bakıldı” kuralı gerçekten uygulanıyor.',
@@ -108,6 +120,11 @@
     }
   };
   const lang = () => (document.documentElement.dataset.lang === 'en' ? 'en' : 'tr');
+  /* Sürüm numarası: "v28" → 28. Karşılaştırma için yeterli; bilinmeyen biçim -1. */
+  function versionNumber(value) {
+    const match = /^v(\d+)$/.exec(String(value || '').trim());
+    return match ? Number(match[1]) : -1;
+  }
   function paint(version) {
     const pack = NEWS[version];
     if (verEl) verEl.textContent = version || '';
@@ -139,6 +156,13 @@
     seen = 'v0';
   }
   if (seen === version) return;
+  /* Bir sürüm geri alındığında (v29 → v28) elde kalan daha yeni kayıt,
+     "yeni sürüm hazır" ekranını açmamalı: kullanıcı zaten daha yenisini görmüştü.
+     Kayıt sessizce güncellenir ki bir sonraki gerçek güncelleme yine gösterilsin. */
+  if (versionNumber(seen) > versionNumber(version)) {
+    try { localStorage.setItem(KEY, version); } catch (e) {}
+    return;
+  }
   paint(version);
   overlay.hidden = false;
   document.body.classList.add('update-open');

@@ -5630,7 +5630,7 @@ function restoreTimer() {
   if (timer.remaining <= .01) timer.remaining = timer.total;
   return false;
 }
-const APP_VERSION = 'v28';
+const APP_VERSION = 'v30';
 function updateStatsUI() {
   if (rollStatsDay()) saveNow();
   const min = Math.floor(Math.max(0, S.stats.sec) / 60);
@@ -5955,7 +5955,14 @@ function setupPWA() {
         else toast('Vespır güncellendi. Bir sonraki açılışta yeni sürüm hazır.');
       } catch (e) {}
     });
-    const checkUpdate = (reg) => { try { reg.update(); } catch (e) {} };
+    /* update() bir söz döndürür: çevrimdışıyken ret bildirimi yakalanmazsa
+       konsola "Failed to update a ServiceWorker" hatası düşüyordu. */
+    const checkUpdate = (reg) => {
+      try {
+        const pending = reg.update();
+        if (pending && typeof pending.catch === 'function') pending.catch(() => {});
+      } catch (e) {}
+    };
     navigator.serviceWorker.register('./sw.js', { scope: './', updateViaCache: 'none' }).then((reg) => {
       swRegistered = true;
       updatePwaUI();
