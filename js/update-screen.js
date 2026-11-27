@@ -8,6 +8,16 @@
   if (!overlay || !list || !btn) return;
   const KEY = 'vespir.seenVersion';
   const NEWS = {
+    v28: {
+      tr: [
+        'Arka plandaki hava kontrolünün izi düzeltildi: tercihler yeniden yazıldığında silinmiyor, böylece “son üç saatte bakıldı” kuralı gerçekten uygulanıyor.',
+        'Bildirim davranışı aynı: hava uyarısı günde en fazla bir kez, 23.00–05.00 arası sessiz.'
+      ],
+      en: [
+        'Fixed the bookkeeping of the background weather check: it is no longer dropped when preferences are rewritten, so the “checked within the last three hours” rule now really applies.',
+        'Notification behaviour is unchanged: at most one weather alert a day, quiet between 23:00 and 05:00.'
+      ]
+    },
     v27: {
       tr: [
         'Uygulama tek dev dosya olmaktan çıktı: stil ve betikler ayrı dosyalarda; her açılışta indirilen HTML 955 KB’den 75 KB’ye indi.',

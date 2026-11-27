@@ -8,7 +8,7 @@
    Hava uyarısı için worker, uyandığı anda Open-Meteo'dan güncel havayı kendisi alır;
    sayfanın en son açıldığı andaki eski veriye bağımlı değildir. Bunun için tercih kaydında
    yalnızca 0,1° (~10 km) yuvarlanmış yaklaşık koordinat tutulur. */
-const APP_CACHE = 'vespir-app-v27';
+const APP_CACHE = 'vespir-app-v28';
 const SHELL_PATHS = ['index.html'];
 /* Simgeler ve manifest de önbelleğe alınır: çevrimdışıyken de ana ekran simgesi ve bildirim görseli eksiksiz olur. */
 const STATIC_PATHS = ['manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'icon-round-192.png', 'icon-apple-180.png', 'assets/vespir-noel.webp'];
@@ -359,11 +359,22 @@ async function fetchWeatherNow(geo) {
     clearTimeout(stop);
   }
 }
+/* Hava kontrolü freni. Sayfa (js/app.js) tercih kaydını yeniden yazarken yalnızca
+   `umbrellaCheckedDay` alanını olduğu gibi taşıyor; `umbrellaCheckedAt` alanı kayıtta
+   bulunmadığı için düşüyordu. İşaret artık sayfanın koruduğu alana metin zaman
+   damgası olarak yazılır (sayfa yalnızca string alanları korur). Eski kayıtlarla
+   uyum için iki alan da okunur; ikisi de aynı anlamı taşır: son hava kontrolünün
+   zaman damgası (ms). */
+function lastWeatherCheck(prefs) {
+  const fromDay = Number(prefs.umbrellaCheckedDay);
+  const fromAt = Number(prefs.umbrellaCheckedAt);
+  return Math.max(Number.isFinite(fromDay) ? fromDay : 0, Number.isFinite(fromAt) ? fromAt : 0);
+}
 /* Hava uyarısı: günde en fazla bir kez; saat sınırı yok, yalnızca sessiz saatler (23:00–05:00) dışında. */
 async function maybeWeatherAlert(prefs, now, hour) {
   const today = localDay(now);
   if (prefs.umbrellaDay === today) return false;     /* bugün uyarı gitti */
-  if (now - (Number(prefs.umbrellaCheckedAt) || 0) < MSG_GAP) return false; /* son 3 saatte baktık, uyarılacak bir şey yoktu */
+  if (now - lastWeatherCheck(prefs) < MSG_GAP) return false; /* son 3 saatte baktık, uyarılacak bir şey yoktu */
   if (await anyVisibleWindow()) return false;
   let condition = '';
   const live = await fetchWeatherNow(prefs.geo);
@@ -383,7 +394,7 @@ async function maybeWeatherAlert(prefs, now, hour) {
   prefs = latest;
   if (prefs.umbrellaDay === localDay(Date.now())) return false;
   if (!condition || !WEATHER_ALERTS[condition]) {
-    await savePrefs({ umbrellaCheckedAt: now });
+    await savePrefs({ umbrellaCheckedAt: now, umbrellaCheckedDay: String(now) });
     return false;
   }
   const alerts = prefs.lang === 'en' ? WEATHER_ALERTS_EN : WEATHER_ALERTS;
@@ -394,7 +405,7 @@ async function maybeWeatherAlert(prefs, now, hour) {
     tag: UMBRELLA_TAG,
     data: { url: safeAppUrl(prefs.url || self.registration.scope) }
   });
-  await savePrefs({ umbrellaDay: today, umbrellaCheckedAt: now });
+  await savePrefs({ umbrellaDay: today, umbrellaCheckedAt: now, umbrellaCheckedDay: String(now) });
   return true;
 }
 /* Genel mesaj (özlem / davet / hava). En az MSG_GAP aralıkla. */
