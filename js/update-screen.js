@@ -8,6 +8,18 @@
   if (!overlay || !list || !btn) return;
   const KEY = 'vespir.seenVersion';
   const NEWS = {
+    v34: {
+      tr: [
+        'Yeni sürüm yayına girdiğinde uygulama kendiliğinden yenileniyor; artık iki kez yenilemek gerekmiyor.',
+        'Varsayılan görünüm değişti: uygulama Sakura teması ve aydınlık modla, performans modu kapalı olarak açılıyor.',
+        'Sıvı cam yüzeyler okunur hâle geldi: alt bar ve üst düğmeler artık temayla bütünleşik ve daha opak.'
+      ],
+      en: [
+        'When a new version is published the app now reloads itself, so you no longer have to refresh twice.',
+        'New default look: the app opens in the Sakura theme with light mode and performance mode off.',
+        'Liquid glass surfaces are readable now: the bottom bar and top buttons are opaque and blend into the theme.'
+      ]
+    },
     v33: {
       tr: [
         'Yeni sürüm yayına girdiğinde uygulama kendiliğinden yenileniyor; artık iki kez yenilemek gerekmiyor.',

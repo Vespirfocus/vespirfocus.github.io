@@ -347,6 +347,8 @@ function loadSettings() {
   if (!saved.v || Number(saved.v) < 5) {
     s.theme = base.theme;
     s.mode = base.mode;
+    /* Performans modu da eski kuraldan kalma açık kayıtla gelmesin. */
+    s.perf = base.perf;
   }
   if (!['tr', 'en'].includes(s.lang)) s.lang = base.lang;
   s.motion = 'high';
@@ -5638,7 +5640,7 @@ function restoreTimer() {
   if (timer.remaining <= .01) timer.remaining = timer.total;
   return false;
 }
-const APP_VERSION = 'v33';
+const APP_VERSION = 'v34';
 function updateStatsUI() {
   if (rollStatsDay()) saveNow();
   const min = Math.floor(Math.max(0, S.stats.sec) / 60);
