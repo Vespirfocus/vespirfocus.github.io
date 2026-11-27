@@ -297,15 +297,15 @@ function updateBookIdentity() {
   });
 }
 const DEFAULTS = () => ({
-  v: 4,
-  theme: 'noel',
-  mode: 'dark',
+  v: 5,
+  theme: 'sakura',
+  mode: 'light',
   lang: 'tr',
   motion: 'high',
   particles: true,
   reflections: true,
   haptic: true,
-  perf: null,
+  perf: false,
   cat: {
     name: 'Vespır', gender: 'kiz', breed: 'tekir', scale: 1,
     fur: '#a59482', belly: '#f3ebe0', eyes: '#9cc45c', patch: '#6f6153', patch2: '#423a33',
@@ -341,9 +341,10 @@ function loadSettings() {
   s.stats = Object.assign({}, base.stats, saved.stats || {});
   if (!THEMES[s.theme]) s.theme = base.theme;
   if (!['light', 'dark', 'auto'].includes(s.mode)) s.mode = base.mode;
-  /* v3: uygulama karanlık Noel temasıyla açılır. Bu kural yalnızca bir kez
-     uygulanır; kullanıcı sonradan temasını/modunu değiştirirse tercihi korunur. */
-  if (!saved.v || Number(saved.v) < 4) {
+  /* v5: varsayılan görünüm Sakura teması + aydınlık mod. Noel ve karanlık mod
+     kendiliğinden gelmiyor. Bu kural yalnızca bir kez uygulanır; kullanıcı
+     sonradan temasını/modunu değiştirirse tercihi korunur. */
+  if (!saved.v || Number(saved.v) < 5) {
     s.theme = base.theme;
     s.mode = base.mode;
   }
@@ -352,7 +353,8 @@ function loadSettings() {
   s.particles = true;
   s.reflections = true;
   s.haptic = s.haptic !== false;
-  if (s.perf !== true && s.perf !== false) s.perf = null;
+  /* Performans modu varsayılan olarak kapalıdır; yalnızca kullanıcı açarsa açılır. */
+  if (s.perf !== true) s.perf = false;
   if (s.cat.gender === 'notr' || !GENDERS[s.cat.gender]) s.cat.gender = 'kiz';
   if (!BREEDS[s.cat.breed]) s.cat.breed = 'tekir';
   if (!OUTFITS[s.cat.outfit]) s.cat.outfit = 'none';
@@ -402,7 +404,7 @@ function loadSettings() {
   ['fur', 'belly', 'eyes', 'patch', 'patch2', 'collar'].forEach((k) => {
     if (!/^#[0-9a-f]{6}$/i.test(s.cat[k] || '')) s.cat[k] = base.cat[k];
   });
-  s.v = 4;
+  s.v = 5;
   s.stats.sec = Number.isFinite(Number(s.stats.sec)) ? Math.max(0, Number(s.stats.sec)) : 0;
   s.stats.sessions = Number.isFinite(Number(s.stats.sessions)) ? Math.max(0, Math.round(Number(s.stats.sessions))) : 0;
   s.stats.hourMark = Number.isFinite(Number(s.stats.hourMark)) ? Math.max(0, Math.floor(Number(s.stats.hourMark))) : 0;
@@ -5636,7 +5638,7 @@ function restoreTimer() {
   if (timer.remaining <= .01) timer.remaining = timer.total;
   return false;
 }
-const APP_VERSION = 'v32';
+const APP_VERSION = 'v33';
 function updateStatsUI() {
   if (rollStatsDay()) saveNow();
   const min = Math.floor(Math.max(0, S.stats.sec) / 60);
@@ -5991,6 +5993,32 @@ function setupPWA() {
       window.addEventListener('online', () => checkUpdate(reg));
     }).catch(() => { swRegistered = false; });
   }
+  /* Eski sürümde takılı kalma koruması: yeni service worker kendi önbelleğini
+     kurduğunda (vespir-app-vNN) sayfa bunu görür ve kendiliğinden yeni sürüme
+     geçer; kullanıcı iki kez yenilemek zorunda kalmaz. Aynı hedef sürüm için
+     yalnızca bir kez yenilenir, böylece yenileme döngüsü oluşmaz. */
+  const runningVersion = Number((/^v(d+)$/.exec(APP_VERSION) || [])[1] || 0);
+  const switchToNewerVersion = async () => {
+    if (timer.running) return;
+    let target = 0;
+    try {
+      const keys = await caches.keys();
+      keys.forEach((key) => {
+        const match = /^vespir-app-v(d+)$/.exec(key);
+        if (!match) return;
+        const num = Number(match[1]);
+        if (num > runningVersion && num > target) target = num;
+      });
+    } catch (e) { return; }
+    if (!target) return;
+    let done = 0;
+    try { done = Number(sessionStorage.getItem('vespir.switchedTo') || 0); } catch (e) {}
+    if (done >= target) return;
+    try { sessionStorage.setItem('vespir.switchedTo', String(target)); } catch (e) {}
+    location.reload();
+  };
+  setTimeout(switchToNewerVersion, 1200);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) switchToNewerVersion(); });
   /* Durum sekmeye dönünce tazelenir: teklif sonradan gelse de kart çalışır. */
   window.addEventListener('focus', updatePwaUI);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) updatePwaUI(); });

@@ -3,15 +3,14 @@
       var isAppleTouch = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       document.documentElement.classList.toggle('ios-glass', isAppleTouch);
     } catch (eG) {}
-    /* Cihaz gücü: düşük bellekli telefonlarda ağır arka plan süslemeleri
-       kapanır (CSS tarafında html[data-lowfx="1"]). Ana animasyonlar kalır. */
+    /* Performans modu: html[data-lowfx="1"] ağır arka plan süslemelerini
+       kapatır. Varsayılan kapalıdır, kullanıcı isterse açar. */
     try {
-      var dm = navigator.deviceMemory || 8;
-      var coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;
-      var cores = navigator.hardwareConcurrency || 8, forced = '';
+      var forced = '';
       try { forced = localStorage.getItem('vespir.lowfx') || ''; } catch (eF) {}
-      /* forced: '' = otomatik, '1' = kullanıcı açtı, '0' = kullanıcı kapattı. */
-      document.documentElement.dataset.lowfx = (forced === '1' || (forced !== '0' && coarse && (dm <= 4 || cores <= 4))) ? '1' : '0';
+      /* Performans modu varsayılan olarak KAPALI. Yalnızca kullanıcı kendisi
+         açtıysa ('1') devreye girer; cihaz gücüne göre kendiliğinden açılmaz. */
+      document.documentElement.dataset.lowfx = forced === '1' ? '1' : '0';
     } catch (eL) {}
     try {
       var raw = localStorage.getItem('vespir.v1');
