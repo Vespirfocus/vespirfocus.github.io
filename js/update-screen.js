@@ -8,6 +8,18 @@
   if (!overlay || !list || !btn) return;
   const KEY = 'vespir.seenVersion';
   const NEWS = {
+    v35: {
+      tr: [
+        'Kurulu değilse odak başlamadan önce “Vespır’ı uygulama olarak ekleyelim mi?” ekranı yeniden açılıyor.',
+        '“Tamam, yapalım” tarayıcının kurulum penceresini açar; “Hayır, şimdi değil” kurulumsuz odaklanmayı başlatır.',
+        'Ekran yalnızca uygulama ana ekranda/kurulu değilken çıkar; kurulduysa bir daha sorulmaz.'
+      ],
+      en: [
+        'The “Add Vespır as an app?” screen is back before a focus session when the app is not installed.',
+        '“Okay, let’s do it” opens the browser install prompt; “Not now” starts focusing without installing.',
+        'The screen appears only while the app is not installed; once installed it is not asked again.'
+      ]
+    },
     v34: {
       tr: [
         'Yeni sürüm yayına girdiğinde uygulama kendiliğinden yenileniyor; artık iki kez yenilemek gerekmiyor.',

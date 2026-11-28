@@ -5379,8 +5379,9 @@ function pauseTimer() {
 function toggleTimer() {
   stopAutoStart();
   if (timer.running) pauseTimer();
-  /* "Başla" her tarayıcıda doğrudan sayacı başlatır. Kurulum daveti odaklanmayı
-     engellemez; isteyen Ayarlar > Ana ekrana ekle bölümünden kurar. */
+  /* Kurulu değilse odak başlamadan önce "uygulama olarak ekleyelim mi?"
+     daveti açılır; "Hayır, şimdi değil" doğrudan sayacı başlatır. */
+  else if (timer.phase === 'focus' && !hasInstalledPwa()) openFocusInvite();
   else startTimer();
 }
 function resetTimer() {
@@ -5640,7 +5641,7 @@ function restoreTimer() {
   if (timer.remaining <= .01) timer.remaining = timer.total;
   return false;
 }
-const APP_VERSION = 'v34';
+const APP_VERSION = 'v35';
 function updateStatsUI() {
   if (rollStatsDay()) saveNow();
   const min = Math.floor(Math.max(0, S.stats.sec) / 60);
